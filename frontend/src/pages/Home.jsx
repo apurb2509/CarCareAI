@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import {
   Box,
   Heading,
@@ -15,7 +15,7 @@ import {
   FaArrowRight,
   FaCogs,
   FaDatabase,
-  FaMagic,
+  FaRobot,
 } from "react-icons/fa";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -31,16 +31,79 @@ const blink = keyframes`
   100% { opacity: 1; box-shadow: 0 0 10px #48BB78; }
 `;
 
+// ============================================================================
+// COMPLEX ROAD MATH
+// ============================================================================
+
+// X-Axis: Sines and Cosines for irregular turns
+const getRoadX = (progress, centerX, amplitude) => {
+  const wave1 = Math.sin(progress * Math.PI * 5);
+  const wave2 = Math.cos(progress * Math.PI * 8) * 0.2;
+  return centerX + (wave1 + wave2) * amplitude;
+};
+
+// Y-Axis: UPDATED - Removed buffer so road goes edge-to-edge
+const getRoadY = (progress, height) => {
+  return progress * height;
+};
+
+// Sub-component for typing effect to prevent re-rendering the main 3D scene
+const TypewriterText = () => {
+  const fullText = "SMART AUTOMOTIVE CARE";
+  const [displayedText, setDisplayedText] = useState("");
+
+  React.useEffect(() => {
+    let index = 0;
+    let timeoutId;
+
+    const type = () => {
+      if (index < fullText.length) {
+        setDisplayedText(fullText.slice(0, index + 1));
+        index++;
+        // Random typing delay (50ms to 150ms) for human-like effect
+        const randomDelay = Math.random() * 100 + 50; 
+        timeoutId = setTimeout(type, randomDelay);
+      }
+    };
+
+    type();
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  return (
+    <Box as="span" display="inline-flex" alignItems="center">
+      <Text
+        as="span"
+        bgGradient="linear(to-b, white, gray.600)"
+        bgClip="text"
+        color="transparent" 
+      >
+        {displayedText}
+      </Text>
+      <Box
+        as="span"
+        ml={2}
+        w="4px" 
+        h="0.9em" 
+        bg="gray.500"
+        animation={`${blink} 0.9s step-end infinite`} // step-end creates the hard flicker
+      />
+    </Box>
+  );
+};
+
 const Home = () => {
   const mainRef = useRef(null);
+  const wrapperRef = useRef(null);
+  const carRef = useRef(null);
+  const [pathData, setPathData] = useState("");
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       // =========================================================
       // 1. HERO ANIMATIONS
       // =========================================================
-      
-      // Initial Reveal (Timeline)
+
       const tl = gsap.timeline();
       tl.from(".hero-animate", {
         y: 50,
@@ -52,7 +115,6 @@ const Home = () => {
         delay: 0.2,
       });
 
-      // Blur OUT on Scroll (The effect you want replicated)
       gsap.to(".hero-top-content", {
         scrollTrigger: {
           trigger: ".hero-section",
@@ -66,7 +128,6 @@ const Home = () => {
         ease: "none",
       });
 
-      // Parallax
       gsap.to(".hero-content", {
         yPercent: 50,
         ease: "none",
@@ -79,10 +140,9 @@ const Home = () => {
       });
 
       // =========================================================
-      // 2. MISSION & VISION ANIMATIONS
+      // 2. CONTENT REVEAL ANIMATIONS
       // =========================================================
 
-      // A. ENTRY ANIMATION (Slide Up - existing)
       const slideSections = gsap.utils.toArray(".gsap-slide-up");
       slideSections.forEach((section) => {
         gsap.fromTo(
@@ -103,23 +163,20 @@ const Home = () => {
         );
       });
 
-      // B. EXIT ANIMATION (Blur OUT - NEW)
-      // This replicates the Hero blur effect for Mission Section
+      // Blur-out effects on exit
       gsap.to(".mission-content", {
         scrollTrigger: {
           trigger: ".mission-content",
-          start: "top 20%", // Start blurring when it nears the top
-          end: "bottom top", // Fully blurred when it leaves
+          start: "top 20%",
+          end: "bottom top",
           scrub: true,
         },
         opacity: 0,
-        filter: "blur(5px)", // Same blur amount as hero
+        filter: "blur(5px)",
         y: -50,
         ease: "none",
       });
 
-      // C. EXIT ANIMATION (Blur OUT - NEW)
-      // This replicates the Hero blur effect for Vision/Goals Section
       gsap.to(".vision-goals-content", {
         scrollTrigger: {
           trigger: ".vision-goals-content",
@@ -134,28 +191,80 @@ const Home = () => {
       });
 
       // =========================================================
-      // 3. OTHER ANIMATIONS
+      // 3. ROAD GENERATION & CAR PHYSICS
       // =========================================================
 
-      // Long Neon Line
-      gsap.fromTo(
-        ".neon-line-long",
-        { scaleY: 0, backgroundColor: "#333", boxShadow: "none" },
-        {
-          scaleY: 1,
-          backgroundColor: "#0BC5EA",
-          boxShadow: "0px 0px 20px rgba(11, 197, 234, 0.6)",
+      if (wrapperRef.current) {
+        const height = wrapperRef.current.offsetHeight;
+        const width = wrapperRef.current.offsetWidth;
+        const centerX = width / 2;
+        // Keep road central to avoid edge clipping
+        const amplitude = width > 768 ? width * 0.18 : width * 0.3;
+
+        // A. GENERATE SVG PATH DATA
+        const points = [];
+        const steps = 500; // High resolution for smoothness
+        for (let i = 0; i <= steps; i++) {
+          const p = i / steps;
+          const px = getRoadX(p, centerX, amplitude);
+          const py = getRoadY(p, height); // Use new edge-to-edge Y
+          points.push(`${px},${py}`);
+        }
+        setPathData(`M${points.join(" L")}`);
+
+        // B. ANIMATE CAR ALONG PATH
+        const progressObj = { val: 0 };
+        let previousVal = 0;
+
+        gsap.to(progressObj, {
+          val: 1,
           ease: "none",
           scrollTrigger: {
-            trigger: ".mission-vision-wrapper",
-            start: "top 40%",
-            end: "bottom 80%",
-            scrub: 1,
+            trigger: wrapperRef.current,
+            start: "top bottom",
+            // 'bottom top' makes the car travel the path slower relative to scroll
+            end: "bottom top",
+            scrub: 1.5, // Increased scrub for smoother inertia
           },
-        }
-      );
+          onUpdate: () => {
+            const p = progressObj.val;
 
-      // Staggered Cards (Unique Features)
+            // 1. Calculate Position (Edge-to-Edge)
+            const y = getRoadY(p, height);
+            const x = getRoadX(p, centerX, amplitude);
+
+            // 2. Look Ahead (Tangent)
+            const nextP = p + 0.005;
+            const nextY = getRoadY(nextP, height);
+            const nextX = getRoadX(nextP, centerX, amplitude);
+
+            const deltaX = nextX - x;
+            const deltaY = nextY - y;
+            let angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+
+            // 3. U-Turn Logic
+            if (p < previousVal) {
+              angle += 180;
+            }
+            previousVal = p;
+
+            // 4. Apply to Car
+            if (carRef.current) {
+              gsap.set(carRef.current, {
+                x: x,
+                y: y,
+                rotation: angle + 90,
+                overwrite: "auto",
+              });
+            }
+          },
+        });
+      }
+
+      // =========================================================
+      // 4. OTHER ANIMATIONS
+      // =========================================================
+
       gsap.from(".feature-card", {
         y: 80,
         opacity: 0,
@@ -175,7 +284,14 @@ const Home = () => {
   }, []);
 
   return (
-    <Box ref={mainRef} w="100%" overflowX="hidden">
+    // bg="transparent" ensures the 3D background from App.jsx is visible
+    <Box
+      ref={mainRef}
+      w="100%"
+      overflowX="hidden"
+      bg="transparent"
+      position="relative"
+    >
       {/* 1. HERO SECTION */}
       <Box
         className="hero-section"
@@ -185,6 +301,7 @@ const Home = () => {
         justifyContent="center"
         overflow="hidden"
         position="relative"
+        zIndex="20"
       >
         <Container maxW="container.xl" className="hero-content">
           <Box className="hero-top-content">
@@ -233,26 +350,29 @@ const Home = () => {
                 letterSpacing="-0.03em"
                 py={2}
               >
-                {/* 1. CARCARE AI (Cyan Gradient) */}
-                <Text 
-                  as="span" 
-                  fontSize={{ base: "50px", md: "60px", lg: "70px", xl: "95px" }}
-                  bgGradient="linear(to-r, cyan.300, blue.500)" 
+                <Text
+                  as="span"
+                  fontSize={{
+                    base: "50px",
+                    md: "60px",
+                    lg: "70px",
+                    xl: "95px",
+                  }}
+                  bgGradient="linear(to-r, cyan.300, blue.500)"
                   bgClip="text"
                 >
                   CARCARE AI
                 </Text>
-                
+
                 <br />
 
-                {/* 2. SMART AUTOMOTIVE CARE (Original White/Gray Gradient) */}
-                <Text 
-                  as="span" 
-                  bgGradient="linear(to-b, white, gray.600)" 
+                <TypewriterText
+                  as="span"
+                  bgGradient="linear(to-b, white, gray.600)"
                   bgClip="text"
                 >
                   SMART AUTOMOTIVE CARE
-                </Text>
+                </TypewriterText>
               </Heading>
 
               <Text
@@ -305,37 +425,161 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* WRAPPER FOR MISSION & VISION */}
+      {/* ================================================================= */}
+      {/* 2. MAIN WRAPPER (ROAD + CONTENT)                                  */}
+      {/* ================================================================= */}
       <Box
-        className="mission-vision-wrapper"
+        ref={wrapperRef}
+        className="main-content-wrapper"
         position="relative"
-        bg="blackAlpha.600"
+        bg="transparent" // Allow 3D background to show through
+        zIndex="10"
+        overflow="hidden"
       >
-        <Container maxW="container.lg" position="relative">
-          {/* THE LONG NEON LINE */}
-          <Box
-            position="absolute"
-            left="50%"
-            top={{ lg: "280px" }}
-            bottom="0"
-            w="2px"
-            bg="gray.800"
-            transform="translateX(-50%)"
-            display={{ base: "none", lg: "block" }}
-            zIndex="0"
+        {/* === ROAD SVG LAYER (zIndex: 0 -> BEHIND TEXT) === */}
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          w="100%"
+          h="100%"
+          zIndex="0"
+          pointerEvents="none"
+        >
+          <svg
+            width="100%"
+            height="100%"
+            style={{ position: "absolute", top: 0, left: 0 }}
           >
-            <Box
-              className="neon-line-long"
-              w="100%"
-              h="100%"
-              bg="#0BC5EA"
-              transformOrigin="top"
+            {/* Asphalt Base */}
+            <path
+              d={pathData}
+              fill="none"
+              stroke="#222"
+              strokeWidth="140"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
-          </Box>
+            {/* Asphalt Highlight */}
+            <path
+              d={pathData}
+              fill="none"
+              stroke="#333"
+              strokeWidth="120"
+              strokeLinecap="round"
+              strokeOpacity="0.4"
+            />
+            {/* Road Edge Lines */}
+            <path
+              d={pathData}
+              fill="none"
+              stroke="#444"
+              strokeWidth="150"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeOpacity="0.5"
+              style={{ mixBlendMode: "overlay" }}
+            />
+            {/* Center Stripes */}
+            <path
+              d={pathData}
+              fill="none"
+              stroke="white"
+              strokeWidth="4"
+              strokeDasharray="40 60"
+              strokeOpacity="0.7"
+            />
+          </svg>
 
-          {/* 2. ABOUT SECTION */}
-          {/* Added 'mission-content' class here to target for blur */}
-          <Box py={32} position="relative" zIndex="1" className="mission-content">
+          {/* === 3D CAR SVG MODEL === */}
+          <Box
+            ref={carRef}
+            position="absolute"
+            top={0}
+            left={0}
+            w="60px"
+            h="100px"
+            zIndex="2"
+            transform="translate(-50%, -50%)"
+            filter="drop-shadow(0px 20px 20px rgba(0,0,0,0.9))"
+          >
+            <svg
+              viewBox="0 0 200 400"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20,80 Q10,120 10,200 Q10,350 30,380 L170,380 Q190,350 190,200 Q190,120 180,80 Q180,30 100,20 Q20,30 20,80"
+                fill="url(#carGradient)"
+                stroke="#111"
+                strokeWidth="2"
+              />
+              <path
+                d="M40,110 L160,110 L150,160 L50,160 Z"
+                fill="#222"
+                stroke="#444"
+                strokeWidth="2"
+              />
+              <path d="M50,165 L150,165 L145,260 L55,260 Z" fill="#111" />
+              <path d="M55,265 L145,265 L155,300 L45,300 Z" fill="#333" />
+              <ellipse
+                cx="35"
+                cy="70"
+                rx="10"
+                ry="15"
+                fill="#0BC5EA"
+                filter="blur(2px)"
+              />
+              <ellipse
+                cx="165"
+                cy="70"
+                rx="10"
+                ry="15"
+                fill="#0BC5EA"
+                filter="blur(2px)"
+              />
+              <rect
+                x="30"
+                y="380"
+                width="40"
+                height="10"
+                rx="2"
+                fill="#ff0000"
+              />
+              <rect
+                x="130"
+                y="380"
+                width="40"
+                height="10"
+                rx="2"
+                fill="#ff0000"
+              />
+              <path
+                d="M90,20 L110,20 L110,380 L90,380 Z"
+                fill="rgba(0,0,0,0.3)"
+              />
+              <defs>
+                <linearGradient
+                  id="carGradient"
+                  x1="100"
+                  y1="0"
+                  x2="100"
+                  y2="400"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#0BC5EA" />
+                  <stop offset="0.5" stopColor="#006080" />
+                  <stop offset="1" stopColor="#002030" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </Box>
+        </Box>
+
+        {/* === CONTENT LAYER (zIndex: 10 -> ABOVE ROAD) === */}
+        <Container maxW="container.lg" position="relative" zIndex="10">
+          {/* A. MISSION SECTION */}
+          <Box py={32} className="mission-content">
             <Stack spacing={12}>
               <Box textAlign={{ base: "left", lg: "center" }}>
                 <Heading
@@ -384,9 +628,8 @@ const Home = () => {
             </Stack>
           </Box>
 
-          {/* 3. VISION & GOALS */}
-          <Box py={24} position="relative" zIndex="1">
-            {/* Added 'vision-goals-content' class here to target for blur */}
+          {/* B. VISION & GOALS SECTION */}
+          <Box py={24}>
             <Stack
               className="vision-goals-content"
               direction={{ base: "column", lg: "row" }}
@@ -415,7 +658,7 @@ const Home = () => {
                 </Text>
               </Box>
 
-              <Box w={{ base: "0px", lg: "2px" }} />
+              <Box w={{ base: "0px", lg: "20px" }} />
 
               <Box flex={1} py={10} pl={{ lg: 20 }}>
                 <Heading
@@ -448,7 +691,7 @@ const Home = () => {
                       Trust
                     </Text>
                     <Text color="gray.500">
-                      Blockchain-verified service history.
+                      Customer-verified service history.
                     </Text>
                   </Box>
                 </Stack>
@@ -456,74 +699,153 @@ const Home = () => {
             </Stack>
           </Box>
         </Container>
-      </Box>
 
-      {/* 4. UNIQUE FEATURES */}
-      <Box py={32}>
-        <Container maxW="container.xl">
-          <Heading
-            className="gsap-slide-up"
-            textAlign="center"
-            size="2xl"
-            mb={20}
-          >
-            Engineered for Excellence
-          </Heading>
-          <SimpleGrid
-            columns={{ base: 1, md: 3 }}
-            spacing={10}
-            className="features-grid"
-          >
-            <Box
-              className="feature-card"
-              p={8}
-              bg="rgba(255,255,255,0.03)"
-              border="1px solid rgba(255,255,255,0.1)"
-              borderRadius="2xl"
+        {/* C. FEATURES (ENGINEERED FOR EXCELLENCE) */}
+        <Box py={32} position="relative" zIndex="10">
+          <Container maxW="container.xl">
+            <Heading
+              className="gsap-slide-up"
+              textAlign="center"
+              size="2xl"
+              mb={20}
+              color="white"
             >
-              <Icon as={FaMagic} w={10} h={10} color="purple.400" mb={6} />
-              <Heading size="lg" mb={4}>
-                Predictive AI
-              </Heading>
-              <Text color="gray.400" fontSize="lg">
-                Our model doesn't just find mechanics; it finds specialists for
-                your specific engine fault codes.
-              </Text>
-            </Box>
-            <Box
-              className="feature-card"
-              p={8}
-              bg="rgba(255,255,255,0.03)"
-              border="1px solid rgba(255,255,255,0.1)"
-              borderRadius="2xl"
+              Engineered for Excellence
+            </Heading>
+
+            <SimpleGrid
+              columns={{ base: 1, md: 3 }}
+              spacing={10}
+              className="features-grid"
             >
-              <Icon as={FaDatabase} w={10} h={10} color="cyan.400" mb={6} />
-              <Heading size="lg" mb={4}>
-                Live Inventory
-              </Heading>
-              <Text color="gray.400" fontSize="lg">
-                We sync with garage databases to ensure the parts you need are
-                physically on the shelf.
-              </Text>
-            </Box>
-            <Box
-              className="feature-card"
-              p={8}
-              bg="rgba(255,255,255,0.03)"
-              border="1px solid rgba(255,255,255,0.1)"
-              borderRadius="2xl"
-            >
-              <Icon as={FaCogs} w={10} h={10} color="pink.400" mb={6} />
-              <Heading size="lg" mb={4}>
-                3D Diagnostics
-              </Heading>
-              <Text color="gray.400" fontSize="lg">
-                Visualize your car's health with our immersive 3D digital twin
-                technology.
-              </Text>
-            </Box>
-          </SimpleGrid>
-        </Container>
+              {/* CARD 1: Predictive AI */}
+              <Box
+                className="feature-card"
+                p={8}
+                bg="rgba(255,255,255,0.03)"
+                border="1px solid rgba(255,255,255,0.1)"
+                borderRadius="2xl"
+                h="full"
+                transition="transform 0.1s ease-out"
+                style={{
+                  transformStyle: "preserve-3d",
+                  willChange: "transform",
+                }}
+                onMouseMove={(e) => {
+                  const card = e.currentTarget;
+                  const rect = card.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const y = e.clientY - rect.top;
+                  const centerX = rect.width / 2;
+                  const centerY = rect.height / 2;
+
+                  // Increased intensity to 20 for a stronger tilt
+                  const rotateX = ((centerY - y) / centerY) * 20;
+                  const rotateY = ((x - centerX) / centerX) * 20;
+
+                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform =
+                    "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+                }}
+              >
+                <Icon as={FaRobot} w={10} h={10} color="purple.400" mb={6} />
+                <Heading size="lg" mb={4} color="white">
+                  Predictive AI
+                </Heading>
+                <Text color="gray.400" fontSize="lg">
+                  Our model doesn't just find mechanics; it finds specialists
+                  for your specific engine fault codes.
+                </Text>
+              </Box>
+
+              {/* CARD 2: Live Inventory */}
+              <Box
+                className="feature-card"
+                p={8}
+                bg="rgba(255,255,255,0.03)"
+                border="1px solid rgba(255,255,255,0.1)"
+                borderRadius="2xl"
+                h="full"
+                transition="transform 0.1s ease-out"
+                style={{
+                  transformStyle: "preserve-3d",
+                  willChange: "transform",
+                }}
+                onMouseMove={(e) => {
+                  const card = e.currentTarget;
+                  const rect = card.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const y = e.clientY - rect.top;
+                  const centerX = rect.width / 2;
+                  const centerY = rect.height / 2;
+
+                  // Increased intensity to 20
+                  const rotateX = ((centerY - y) / centerY) * 20;
+                  const rotateY = ((x - centerX) / centerX) * 20;
+
+                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform =
+                    "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+                }}
+              >
+                <Icon as={FaDatabase} w={10} h={10} color="cyan.400" mb={6} />
+                <Heading size="lg" mb={4} color="white">
+                  Live Inventory
+                </Heading>
+                <Text color="gray.400" fontSize="lg">
+                  We sync with garage databases to ensure the parts you need are
+                  physically on the shelf.
+                </Text>
+              </Box>
+
+              {/* CARD 3: 3D Diagnostics */}
+              <Box
+                className="feature-card"
+                p={8}
+                bg="rgba(255,255,255,0.03)"
+                border="1px solid rgba(255,255,255,0.1)"
+                borderRadius="2xl"
+                h="full"
+                transition="transform 0.1s ease-out"
+                style={{
+                  transformStyle: "preserve-3d",
+                  willChange: "transform",
+                }}
+                onMouseMove={(e) => {
+                  const card = e.currentTarget;
+                  const rect = card.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const y = e.clientY - rect.top;
+                  const centerX = rect.width / 2;
+                  const centerY = rect.height / 2;
+
+                  // Increased intensity to 20
+                  const rotateX = ((centerY - y) / centerY) * 20;
+                  const rotateY = ((x - centerX) / centerX) * 20;
+
+                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform =
+                    "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+                }}
+              >
+                <Icon as={FaCogs} w={10} h={10} color="pink.400" mb={6} />
+                <Heading size="lg" mb={4} color="white">
+                  3D Diagnostics
+                </Heading>
+                <Text color="gray.400" fontSize="lg">
+                  Visualize your car's health with our immersive 3D digital twin
+                  technology.
+                </Text>
+              </Box>
+            </SimpleGrid>
+          </Container>
+        </Box>
       </Box>
 
       <Footer />
