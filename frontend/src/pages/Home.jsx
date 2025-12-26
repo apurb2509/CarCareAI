@@ -36,7 +36,11 @@ const Home = () => {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. HERO ANIMATION (Initial Reveal)
+      // =========================================================
+      // 1. HERO ANIMATIONS
+      // =========================================================
+      
+      // Initial Reveal (Timeline)
       const tl = gsap.timeline();
       tl.from(".hero-animate", {
         y: 50,
@@ -48,7 +52,7 @@ const Home = () => {
         delay: 0.2,
       });
 
-      // 2. HERO BLUR ON SCROLL (REDUCED INTENSITY)
+      // Blur OUT on Scroll (The effect you want replicated)
       gsap.to(".hero-top-content", {
         scrollTrigger: {
           trigger: ".hero-section",
@@ -57,12 +61,12 @@ const Home = () => {
           scrub: true,
         },
         opacity: 0,
-        filter: "blur(5px)", // Reduced from 20px to 5px
+        filter: "blur(5px)",
         y: -50,
         ease: "none",
       });
 
-      // 3. HERO PARALLAX
+      // Parallax
       gsap.to(".hero-content", {
         yPercent: 50,
         ease: "none",
@@ -74,12 +78,16 @@ const Home = () => {
         },
       });
 
-      // 4. NEW: SLIDE REVEAL (NO BLUR) for Content
+      // =========================================================
+      // 2. MISSION & VISION ANIMATIONS
+      // =========================================================
+
+      // A. ENTRY ANIMATION (Slide Up - existing)
       const slideSections = gsap.utils.toArray(".gsap-slide-up");
       slideSections.forEach((section) => {
         gsap.fromTo(
           section,
-          { opacity: 0, y: 50 }, // Removed filter: blur()
+          { opacity: 0, y: 50 },
           {
             opacity: 1,
             y: 0,
@@ -95,14 +103,44 @@ const Home = () => {
         );
       });
 
-      // 5. LONG NEON LINE
+      // B. EXIT ANIMATION (Blur OUT - NEW)
+      // This replicates the Hero blur effect for Mission Section
+      gsap.to(".mission-content", {
+        scrollTrigger: {
+          trigger: ".mission-content",
+          start: "top 20%", // Start blurring when it nears the top
+          end: "bottom top", // Fully blurred when it leaves
+          scrub: true,
+        },
+        opacity: 0,
+        filter: "blur(5px)", // Same blur amount as hero
+        y: -50,
+        ease: "none",
+      });
+
+      // C. EXIT ANIMATION (Blur OUT - NEW)
+      // This replicates the Hero blur effect for Vision/Goals Section
+      gsap.to(".vision-goals-content", {
+        scrollTrigger: {
+          trigger: ".vision-goals-content",
+          start: "top 20%",
+          end: "bottom top",
+          scrub: true,
+        },
+        opacity: 0,
+        filter: "blur(5px)",
+        y: -50,
+        ease: "none",
+      });
+
+      // =========================================================
+      // 3. OTHER ANIMATIONS
+      // =========================================================
+
+      // Long Neon Line
       gsap.fromTo(
         ".neon-line-long",
-        {
-          scaleY: 0,
-          backgroundColor: "#333",
-          boxShadow: "none",
-        },
+        { scaleY: 0, backgroundColor: "#333", boxShadow: "none" },
         {
           scaleY: 1,
           backgroundColor: "#0BC5EA",
@@ -110,14 +148,14 @@ const Home = () => {
           ease: "none",
           scrollTrigger: {
             trigger: ".mission-vision-wrapper",
-            start: "top 40%", // Adjusted trigger point
+            start: "top 40%",
             end: "bottom 80%",
             scrub: 1,
           },
         }
       );
 
-      // 6. STAGGERED CARDS
+      // Staggered Cards (Unique Features)
       gsap.from(".feature-card", {
         y: 80,
         opacity: 0,
@@ -183,7 +221,7 @@ const Home = () => {
                   fontFamily="'Courier New', Courier, monospace"
                   textShadow="0 0 8px rgba(72, 187, 120, 0.8)"
                 >
-                  System Online
+                  Server Online
                 </Text>
               </Box>
 
@@ -258,13 +296,11 @@ const Home = () => {
         bg="blackAlpha.600"
       >
         <Container maxW="container.lg" position="relative">
-          
-          {/* THE LONG NEON LINE (Absolute Center of Container) */}
-          {/* ADJUSTED TOP: Starts at 280px to clear the header text */}
+          {/* THE LONG NEON LINE */}
           <Box
             position="absolute"
             left="50%"
-            top={{ lg: "280px" }} 
+            top={{ lg: "280px" }}
             bottom="0"
             w="2px"
             bg="gray.800"
@@ -282,10 +318,9 @@ const Home = () => {
           </Box>
 
           {/* 2. ABOUT SECTION */}
-          <Box py={32} position="relative" zIndex="1">
+          {/* Added 'mission-content' class here to target for blur */}
+          <Box py={32} position="relative" zIndex="1" className="mission-content">
             <Stack spacing={12}>
-              
-              {/* MISSION HEADER (Centered Above Line) */}
               <Box textAlign={{ base: "left", lg: "center" }}>
                 <Heading
                   className="gsap-slide-up"
@@ -293,7 +328,7 @@ const Home = () => {
                   mb={6}
                   color="white"
                 >
-                THE MISSION
+                  THE MISSION
                 </Heading>
                 <Text
                   className="gsap-slide-up"
@@ -305,7 +340,6 @@ const Home = () => {
                 </Text>
               </Box>
 
-              {/* MISSION TEXT COLUMNS */}
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={32}>
                 <Text
                   className="gsap-slide-up"
@@ -336,12 +370,13 @@ const Home = () => {
 
           {/* 3. VISION & GOALS */}
           <Box py={24} position="relative" zIndex="1">
+            {/* Added 'vision-goals-content' class here to target for blur */}
             <Stack
+              className="vision-goals-content"
               direction={{ base: "column", lg: "row" }}
               spacing={0}
               align="stretch"
             >
-              {/* VISION (Left) */}
               <Box flex={1} py={10} pr={{ lg: 20 }}>
                 <Heading
                   className="gsap-slide-up"
@@ -364,10 +399,8 @@ const Home = () => {
                 </Text>
               </Box>
 
-              {/* Spacer for line area */}
               <Box w={{ base: "0px", lg: "2px" }} />
 
-              {/* GOALS (Right) */}
               <Box flex={1} py={10} pl={{ lg: 20 }}>
                 <Heading
                   className="gsap-slide-up"
