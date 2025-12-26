@@ -227,21 +227,37 @@ const Home = () => {
 
               <Heading
                 className="hero-animate"
-                fontSize={{ base: "50px", md: "55px", lg: "60px", xl: "70px" }}
+                fontSize={{ base: "40px", md: "45px", lg: "55px", xl: "65px" }}
                 fontWeight="900"
                 lineHeight="0.9"
                 letterSpacing="-0.03em"
-                bgGradient="linear(to-b, white, gray.600)"
-                bgClip="text"
                 py={2}
               >
-                INTELLIGENT <br />
-                AUTOMOTIVE CARE
+                {/* 1. CARCARE AI (Cyan Gradient) */}
+                <Text 
+                  as="span" 
+                  fontSize={{ base: "50px", md: "60px", lg: "70px", xl: "95px" }}
+                  bgGradient="linear(to-r, cyan.300, blue.500)" 
+                  bgClip="text"
+                >
+                  CARCARE AI
+                </Text>
+                
+                <br />
+
+                {/* 2. SMART AUTOMOTIVE CARE (Original White/Gray Gradient) */}
+                <Text 
+                  as="span" 
+                  bgGradient="linear(to-b, white, gray.600)" 
+                  bgClip="text"
+                >
+                  SMART AUTOMOTIVE CARE
+                </Text>
               </Heading>
 
               <Text
                 className="hero-animate"
-                fontSize={{ base: "xl", md: "3xl" }}
+                fontSize={{ base: "xl", md: "2xl" }}
                 color="gray.400"
                 maxW="4xl"
                 lineHeight="1.3"
