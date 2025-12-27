@@ -170,7 +170,7 @@ const Sidebar = () => {
                 }}
                 transition={smoothTransition}
               >
-                Sign In
+                Sign In / Sign Up
               </Button>
             </Box>
 
