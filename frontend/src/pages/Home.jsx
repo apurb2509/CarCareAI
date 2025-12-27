@@ -8,6 +8,7 @@ import {
   Stack,
   SimpleGrid,
   Icon,
+  useToast, // Import Toast for error handling
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import {
@@ -16,6 +17,7 @@ import {
   FaCogs,
   FaDatabase,
   FaRobot,
+  FaMapMarkerAlt, // Added icon for loading state
 } from "react-icons/fa";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -42,12 +44,12 @@ const getRoadX = (progress, centerX, amplitude) => {
   return centerX + (wave1 + wave2) * amplitude;
 };
 
-// Y-Axis: UPDATED - Removed buffer so road goes edge-to-edge
+// Y-Axis: Edge-to-edge
 const getRoadY = (progress, height) => {
   return progress * height;
 };
 
-// Sub-component for typing effect to prevent re-rendering the main 3D scene
+// Sub-component for typing effect
 const TypewriterText = () => {
   const fullText = "SMART AUTOMOTIVE CARE";
   const [displayedText, setDisplayedText] = useState("");
@@ -60,7 +62,6 @@ const TypewriterText = () => {
       if (index < fullText.length) {
         setDisplayedText(fullText.slice(0, index + 1));
         index++;
-        // Random typing delay (50ms to 150ms) for human-like effect
         const randomDelay = Math.random() * 100 + 50; 
         timeoutId = setTimeout(type, randomDelay);
       }
@@ -86,7 +87,7 @@ const TypewriterText = () => {
         w="4px" 
         h="0.9em" 
         bg="gray.500"
-        animation={`${blink} 0.9s step-end infinite`} // step-end creates the hard flicker
+        animation={`${blink} 0.9s step-end infinite`} 
       />
     </Box>
   );
@@ -97,13 +98,78 @@ const Home = () => {
   const wrapperRef = useRef(null);
   const carRef = useRef(null);
   const [pathData, setPathData] = useState("");
+  
+  // -- NEW STATE FOR LOCATION --
+  const [isLocating, setIsLocating] = useState(false);
+  const toast = useToast();
+
+// -- LOCATION HANDLER (UPDATED) --
+const handleLocateService = () => {
+  if (!navigator.geolocation) {
+    toast({
+      title: "Error",
+      description: "Geolocation is not supported by your browser.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    return;
+  }
+
+  setIsLocating(true);
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      
+      // Success! Redirect to Google Maps
+      const query = "car service stations near me";
+      // Using the official Google Maps search URL format
+      const mapUrl = `https://www.google.com/maps/search/${query}/@${latitude},${longitude},13z`;
+      
+      setIsLocating(false);
+      window.open(mapUrl, "_blank");
+    },
+    (error) => {
+      setIsLocating(false);
+      let errorMessage = "Unable to retrieve your location.";
+      
+      // Detailed error handling
+      switch(error.code) {
+          case error.PERMISSION_DENIED:
+              errorMessage = "Location permission denied. Please enable it in your browser settings.";
+              break;
+          case error.POSITION_UNAVAILABLE:
+              errorMessage = "Location information is unavailable.";
+              break;
+          case error.TIMEOUT:
+              errorMessage = "The request to get your location timed out. Please try again.";
+              break;
+          default:
+              errorMessage = "An unknown error occurred.";
+              break;
+      }
+
+      toast({
+        title: "Location Error",
+        description: errorMessage,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+    // -- UPDATED OPTIONS --
+    {
+      enableHighAccuracy: false, // Set to false for faster, rough location (WiFi/IP)
+      timeout: 30000,            // Wait 30 seconds before timing out
+      maximumAge: 60000          // Accept a cached location if it is less than 1 minute old
+    }
+  );
+};
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // =========================================================
       // 1. HERO ANIMATIONS
-      // =========================================================
-
       const tl = gsap.timeline();
       tl.from(".hero-animate", {
         y: 50,
@@ -139,10 +205,7 @@ const Home = () => {
         },
       });
 
-      // =========================================================
       // 2. CONTENT REVEAL ANIMATIONS
-      // =========================================================
-
       const slideSections = gsap.utils.toArray(".gsap-slide-up");
       slideSections.forEach((section) => {
         gsap.fromTo(
@@ -190,29 +253,24 @@ const Home = () => {
         ease: "none",
       });
 
-      // =========================================================
-      // 3. ROAD GENERATION & CAR PHYSICS
-      // =========================================================
-
+      // 3. ROAD GENERATION
       if (wrapperRef.current) {
         const height = wrapperRef.current.offsetHeight;
         const width = wrapperRef.current.offsetWidth;
         const centerX = width / 2;
-        // Keep road central to avoid edge clipping
         const amplitude = width > 768 ? width * 0.18 : width * 0.3;
 
-        // A. GENERATE SVG PATH DATA
         const points = [];
-        const steps = 500; // High resolution for smoothness
+        const steps = 500; 
         for (let i = 0; i <= steps; i++) {
           const p = i / steps;
           const px = getRoadX(p, centerX, amplitude);
-          const py = getRoadY(p, height); // Use new edge-to-edge Y
+          const py = getRoadY(p, height); 
           points.push(`${px},${py}`);
         }
         setPathData(`M${points.join(" L")}`);
 
-        // B. ANIMATE CAR ALONG PATH
+        // CAR ANIMATION
         const progressObj = { val: 0 };
         let previousVal = 0;
 
@@ -222,18 +280,14 @@ const Home = () => {
           scrollTrigger: {
             trigger: wrapperRef.current,
             start: "top bottom",
-            // 'bottom top' makes the car travel the path slower relative to scroll
             end: "bottom top",
-            scrub: 1.5, // Increased scrub for smoother inertia
+            scrub: 1.5, 
           },
           onUpdate: () => {
             const p = progressObj.val;
-
-            // 1. Calculate Position (Edge-to-Edge)
             const y = getRoadY(p, height);
             const x = getRoadX(p, centerX, amplitude);
 
-            // 2. Look Ahead (Tangent)
             const nextP = p + 0.005;
             const nextY = getRoadY(nextP, height);
             const nextX = getRoadX(nextP, centerX, amplitude);
@@ -242,13 +296,11 @@ const Home = () => {
             const deltaY = nextY - y;
             let angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
 
-            // 3. U-Turn Logic
             if (p < previousVal) {
               angle += 180;
             }
             previousVal = p;
 
-            // 4. Apply to Car
             if (carRef.current) {
               gsap.set(carRef.current, {
                 x: x,
@@ -261,10 +313,7 @@ const Home = () => {
         });
       }
 
-      // =========================================================
       // 4. OTHER ANIMATIONS
-      // =========================================================
-
       gsap.from(".feature-card", {
         y: 80,
         opacity: 0,
@@ -284,7 +333,6 @@ const Home = () => {
   }, []);
 
   return (
-    // bg="transparent" ensures the 3D background from App.jsx is visible
     <Box
       ref={mainRef}
       w="100%"
@@ -366,13 +414,7 @@ const Home = () => {
 
                 <br />
 
-                <TypewriterText
-                  as="span"
-                  bgGradient="linear(to-b, white, gray.600)"
-                  bgClip="text"
-                >
-                  SMART AUTOMOTIVE CARE
-                </TypewriterText>
+                <TypewriterText />
               </Heading>
 
               <Text
@@ -392,6 +434,7 @@ const Home = () => {
                 spacing={8}
                 pt={6}
               >
+                {/* --- UPDATED LOCATE SERVICE BUTTON --- */}
                 <Button
                   size="lg"
                   h="70px"
@@ -401,10 +444,15 @@ const Home = () => {
                   color="black"
                   rounded="full"
                   _hover={{ bg: "gray.200", transform: "scale(1.05)" }}
-                  rightIcon={<FaSearch />}
+                  rightIcon={isLocating ? <FaMapMarkerAlt /> : <FaSearch />}
+                  onClick={handleLocateService}
+                  isLoading={isLocating}
+                  loadingText="Locating..."
                 >
                   Locate Service
                 </Button>
+                {/* -------------------------------------- */}
+
                 <Button
                   size="lg"
                   h="70px"
@@ -425,18 +473,16 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* ================================================================= */}
-      {/* 2. MAIN WRAPPER (ROAD + CONTENT)                                  */}
-      {/* ================================================================= */}
+      {/* 2. MAIN WRAPPER (ROAD + CONTENT) */}
       <Box
         ref={wrapperRef}
         className="main-content-wrapper"
         position="relative"
-        bg="transparent" // Allow 3D background to show through
+        bg="transparent"
         zIndex="10"
         overflow="hidden"
       >
-        {/* === ROAD SVG LAYER (zIndex: 0 -> BEHIND TEXT) === */}
+        {/* ROAD SVG LAYER */}
         <Box
           position="absolute"
           top="0"
@@ -451,7 +497,6 @@ const Home = () => {
             height="100%"
             style={{ position: "absolute", top: 0, left: 0 }}
           >
-            {/* Asphalt Base */}
             <path
               d={pathData}
               fill="none"
@@ -460,7 +505,6 @@ const Home = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-            {/* Asphalt Highlight */}
             <path
               d={pathData}
               fill="none"
@@ -469,7 +513,6 @@ const Home = () => {
               strokeLinecap="round"
               strokeOpacity="0.4"
             />
-            {/* Road Edge Lines */}
             <path
               d={pathData}
               fill="none"
@@ -480,7 +523,6 @@ const Home = () => {
               strokeOpacity="0.5"
               style={{ mixBlendMode: "overlay" }}
             />
-            {/* Center Stripes */}
             <path
               d={pathData}
               fill="none"
@@ -491,7 +533,7 @@ const Home = () => {
             />
           </svg>
 
-          {/* === 3D CAR SVG MODEL === */}
+          {/* 3D CAR SVG MODEL */}
           <Box
             ref={carRef}
             position="absolute"
@@ -576,7 +618,7 @@ const Home = () => {
           </Box>
         </Box>
 
-        {/* === CONTENT LAYER (zIndex: 10 -> ABOVE ROAD) === */}
+        {/* CONTENT LAYER */}
         <Container maxW="container.lg" position="relative" zIndex="10">
           {/* A. MISSION SECTION */}
           <Box py={32} className="mission-content">
@@ -739,7 +781,6 @@ const Home = () => {
                   const centerX = rect.width / 2;
                   const centerY = rect.height / 2;
 
-                  // Increased intensity to 20 for a stronger tilt
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
 
@@ -781,7 +822,6 @@ const Home = () => {
                   const centerX = rect.width / 2;
                   const centerY = rect.height / 2;
 
-                  // Increased intensity to 20
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
 
@@ -823,7 +863,6 @@ const Home = () => {
                   const centerX = rect.width / 2;
                   const centerY = rect.height / 2;
 
-                  // Increased intensity to 20
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
 
