@@ -10,6 +10,9 @@ from flask_cors import CORS
 
 # Initialize setup
 lemmatizer = WordNetLemmatizer()
+
+# Load necessary files
+print("⏳ Loading Chatbot Brain...")
 intents = json.loads(open('intents.json').read())
 words = pickle.load(open('words.pkl', 'rb'))
 classes = pickle.load(open('classes.pkl', 'rb'))
@@ -62,24 +65,34 @@ def get_response(ints, intents_json):
 
 @app.route('/')
 def home():
-    return "CarCareAI Chatbot is Alive!"
+    return "CarCareAI Expert Chatbot is Alive!"
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    message = request.json.get('message')
-    
-    # Predict the intent
-    ints = predict_class(message, model)
-    
-    # If confidence is high, get response. Else, fallback.
-    if ints and float(ints[0]['probability']) > 0.7:
-        response = get_response(ints, intents)
-    else:
-        # Fallback for unknown questions
-        response = "I don't know this answer. Sorry. I only answer questions related to cars and CarCareAI."
-    
-    return jsonify({"response": response})
+    try:
+        data = request.get_json()
+        message = data.get('message')
+        
+        # Predict the intent
+        ints = predict_class(message, model)
+        
+        # DEBUG: Print what the bot found to the terminal
+        print(f"User: {message}")
+        print(f"Predicted Intent: {ints}") 
+
+        # If confidence is high (> 0.7), get response. Else, fallback.
+        if ints and float(ints[0]['probability']) > 0.7:
+            response = get_response(ints, intents)
+        else:
+            # Fallback for unknown questions
+            response = "I'm not sure I understand. Could you rephrase that? (Try asking about 'engine', 'maintenance', or 'parts')"
+        
+        return jsonify({"response": response})
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"response": "Sorry, I am having trouble thinking right now."})
 
 if __name__ == '__main__':
-    # Run on a different port (5001) so it doesn't clash with the Price Estimator (5000)
+    # Run on Port 5001
     app.run(debug=True, port=5001)

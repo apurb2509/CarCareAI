@@ -3,14 +3,13 @@
     {
       "tag": "greeting",
       "patterns": [
-        "Hi", "Hello", "Hey", "Good morning", "Good afternoon", "Good evening",
-        "Yo", "Whats up", "Is anyone there?", "Hola", "Greetings", "Hey Carlo",
-        "Hi bot", "Hello there", "Namaste", "Hiya"
+        "Hi", "Hello", "Hey", "Good morning", "Good afternoon", "Yo", "Whats up",
+        "Is anyone there?", "Hola", "Greetings", "Hey Carlo", "Hi bot", "Start chat"
       ],
       "responses": [
         "Hello! I am Carlo, your expert automotive assistant. How can I help you today?",
-        "Hi there! I'm Carlo from CarCareAI. Ready to assist with your car needs.",
-        "Greetings! I am at your service. Ask me about repairs, parts, or maintenance."
+        "Hi there! Ready to assist with your car needs. Ask me about repairs, parts, or diagnostics.",
+        "Greetings! I am at your service. What is your car telling you today?"
       ]
     },
     {
@@ -41,100 +40,172 @@
       "tag": "capabilities",
       "patterns": [
         "What can you do?", "Who are you?", "What is your purpose?",
-        "How can you help me?", "Are you a human?", "What is Carlo?",
-        "Introduce yourself", "Your features"
+        "How can you help me?", "Are you a human?", "What is Carlo?"
       ],
       "responses": [
         "I am Carlo, an advanced AI trained to help you with car diagnostics, repair cost estimation, and vehicle maintenance advice.",
-        "I am your virtual mechanic! I can estimate repair prices, explain car parts, and give maintenance tips."
+        "I am your virtual mechanic! I can explain car parts, diagnose issues based on symptoms, and guide you to our Price Estimator."
       ]
     },
     {
-      "tag": "car_parts_general",
+      "tag": "price_inquiry",
       "patterns": [
-        "What is a carburetor?", "Explain clutch plate", "What does a spark plug do?",
-        "Tell me about brake pads", "What is a radiator?", "What is the engine?",
-        "Transmission function", "What is an alternator?", "Explain suspension",
-        "What is a catalytic converter?", "How does a turbo work?", "What is a fuel pump?",
-        "Meaning of ABS", "What is power steering?"
+        "Wiper price?", "How much for a new bonnet?", "Cost of engine repair",
+        "Price of oil change", "Estimate for denting", "Repair cost",
+        "How expensive is a service?", "Rate card", "Labor charges",
+        "How much to fix clutch?", "Price for painting", "Cost?", "Price?"
       ],
       "responses": [
-        "I can explain that! A car is a complex machine. Could you specify which part you want to know about? (e.g., 'What does a spark plug do?')",
-        "From engines to exhaust pipes, I understand the mechanics. Please ask about a specific component."
+        "I specialize in technical advice. For accurate market prices, please use the **'AI Repair Cost Estimator'** form on our homepage.",
+        "I cannot calculate exact live prices here. Please check the Estimate tool below for real-time rates!",
+        "For costs, please use our dedicated Price Estimator feature. I can help you diagnose the problem first though!"
       ]
     },
     {
-      "tag": "maintenance_tips",
+      "tag": "define_bonnet",
       "patterns": [
-        "How often should I change oil?", "Tyre pressure guide", "Maintenance tips",
-        "How to maintain my car?", "When to service my car?", "Car service schedule",
-        "How to increase mileage?", "Tips for long drive", "Coolant change interval",
-        "Brake fluid check", "Battery maintenance"
+        "What is a bonnet?", "Bonnet means?", "Define bonnet",
+        "What is the hood?", "Car hood meaning", "Bonnet function"
       ],
       "responses": [
-        "Regular maintenance is key! Change engine oil every 7,500 km, check tyre pressure monthly (30-35 PSI), and rotate tyres every 10,000 km.",
-        "Keep your car healthy: Check fluid levels weekly, inspect brakes every 20,000 km, and don't skip your scheduled service."
+        "The **Bonnet** (or Hood) is the hinged cover over the engine compartment. It protects the engine and allows access for maintenance."
       ]
     },
     {
-      "tag": "engine_issues",
+      "tag": "define_bumper",
       "patterns": [
-        "My car is making a noise", "Engine overheating", "Car won't start",
-        "Smoke coming from engine", "Check engine light is on", "Engine knocking sound",
-        "Low pickup", "Car vibrating", "White smoke from exhaust", "Black smoke",
-        "Car stalling", "Engine misfire"
+        "What is a bumper?", "Bumper meaning", "Define bumper",
+        "Front bumper function", "Rear bumper function"
       ],
       "responses": [
-        "Engine issues can be serious. Common causes include low oil, coolant leaks, or spark plug failure. Please use our 'Locate Service' feature to find a mechanic immediately.",
-        "If your check engine light is blinking, stop the car safely. It could be a serious misfire or catalytic converter issue. Get it scanned ASAP."
+        "The **Bumper** is a shield made of plastic or metal attached to the front and rear of the car. It is designed to absorb impact in minor collisions."
       ]
     },
     {
-      "tag": "tyre_issues",
+      "tag": "define_chassis",
       "patterns": [
-        "Flat tyre", "Tyre puncture", "Wheel alignment needed", "Car pulling to left",
-        "Car pulling to right", "Uneven tyre wear", "Tyre burst", "Stepney change"
+        "What is chassis?", "Chassis meaning", "Define chassis",
+        "Car frame meaning"
       ],
       "responses": [
-        "If your car pulls to one side, you likely need a Wheel Alignment. If you have uneven wear, check your suspension and balancing.",
-        "For a flat tyre, ensure you change to the spare safely on level ground. Don't drive on a flat tyre as it damages the rim."
+        "The **Chassis** is the internal framework or 'skeleton' of the car. It supports the engine, wheels, and body."
       ]
     },
     {
-      "tag": "battery_issues",
+      "tag": "define_windshield",
       "patterns": [
-        "Car battery dead", "Car clicking sound when starting", "Lights are dim",
-        "Battery not charging", "Jump start car", "Corrosion on battery"
+        "What is windshield?", "Windshield meaning", "Front glass name",
+        "Windscreen function"
       ],
       "responses": [
-        "A clicking sound usually means the starter motor is fine but the battery is dead. Try a jump start or check for corrosion on terminals.",
-        "Car batteries typically last 3-5 years. If yours is older, it might need replacement. Dim lights are a classic sign of a weak battery."
+        "The **Windshield** is the front window of the car. It protects occupants from wind and debris and contributes to the structural strength of the vehicle."
       ]
     },
     {
-      "tag": "ac_issues",
+      "tag": "define_engine",
       "patterns": [
-        "AC not cooling", "Bad smell from AC", "AC making noise",
-        "Heater not working", "AC gas refill", "Hot air from AC"
+        "What is the engine?", "Define engine", "How does a car engine work?",
+        "Internal combustion engine"
       ],
       "responses": [
-        "If the AC blows hot air, you might be low on refrigerant gas or have a compressor clutch issue.",
-        "A bad smell from the AC usually means fungus in the cabin filter. It's a cheap fix—just replace the cabin air filter."
+        "The **Engine** is the heart of your car. It converts fuel into mechanical motion to turn the wheels."
       ]
     },
     {
-      "tag": "out_of_scope",
+      "tag": "define_piston",
       "patterns": [
-        "Who is the president?", "What is the weather?", "Tell me a joke",
-        "How do I cook pasta?", "Write code for me", "football match score",
-        "stock market", "politics", "Who won the match?", "I love you",
-        "Are you single?", "What is 2+2?", "Sing a song"
+        "What is a piston?", "Piston meaning", "Pistons in car"
       ],
       "responses": [
-        "I don't know this answer. Sorry. I only answer questions related to cars and CarCareAI.",
-        "My expertise is strictly limited to automobiles and repair services. I cannot answer that.",
-        "I am Carlo, a car expert. Please ask me something about vehicles, repairs, or maintenance!"
+        "A **Piston** is a moving metal cylinder inside the engine. It moves up and down to compress fuel and transfer energy to the crankshaft."
       ]
+    },
+    {
+      "tag": "define_transmission",
+      "patterns": [
+        "What is transmission?", "Gearbox explained", "Transmission function"
+      ],
+      "responses": [
+        "The **Transmission** (or Gearbox) transfers power from the engine to the wheels, allowing you to change speeds efficiently."
+      ]
+    },
+    {
+      "tag": "define_clutch",
+      "patterns": [
+        "What is a clutch?", "Clutch plate meaning", "Clutch function"
+      ],
+      "responses": [
+        "The **Clutch** connects and disconnects the engine from the wheels. It allows you to change gears without stalling the engine."
+      ]
+    },
+    {
+      "tag": "define_brakes",
+      "patterns": [
+        "How do brakes work?", "What are brakes?", "Braking system"
+      ],
+      "responses": [
+        "**Brakes** slow down your car using friction. When you press the pedal, brake pads clamp onto a spinning disc (rotor) to stop the wheels."
+      ]
+    },
+    {
+      "tag": "define_abs",
+      "patterns": [
+        "What is ABS?", "Anti-lock braking system", "ABS meaning"
+      ],
+      "responses": [
+        "**ABS (Anti-lock Braking System)** prevents your wheels from locking up during sudden stops, helping you steer while braking."
+      ]
+    },
+    {
+      "tag": "define_suspension",
+      "patterns": [
+        "What is suspension?", "Suspension system", "Car springs"
+      ],
+      "responses": [
+        "The **Suspension** system (springs and shock absorbers) connects the vehicle to its wheels and cushions the ride from bumps."
+      ]
+    },
+    {
+      "tag": "define_battery",
+      "patterns": [
+        "What does the battery do?", "Car battery function"
+      ],
+      "responses": [
+        "The **Battery** stores electricity to start the engine and power electronics (lights, radio) when the engine is off."
+      ]
+    },
+    {
+      "tag": "define_alternator",
+      "patterns": [
+        "What is an alternator?", "Alternator function"
+      ],
+      "responses": [
+        "The **Alternator** generates electricity while the engine is running to charge the battery and power the car's electrical systems."
+      ]
+    },
+    {
+      "tag": "define_radiator",
+      "patterns": [
+        "What is a radiator?", "Radiator function"
+      ],
+      "responses": [
+        "The **Radiator** keeps the engine cool. It passes hot coolant through thin metal fins to release heat into the air."
+      ]
+    },
+    {
+      "tag": "issue_smoke_white",
+      "patterns": ["White smoke", "White smoke from exhaust", "Steam from engine"],
+      "responses": ["**White Smoke** usually indicates coolant is leaking into the engine (often a blown Head Gasket). Check your coolant levels immediately."]
+    },
+    {
+      "tag": "issue_smoke_black",
+      "patterns": ["Black smoke", "Black smoke from exhaust"],
+      "responses": ["**Black Smoke** means the engine is burning too much fuel. This could be a clogged air filter or a fuel injector issue."]
+    },
+    {
+      "tag": "issue_smoke_blue",
+      "patterns": ["Blue smoke", "Blue smoke from exhaust"],
+      "responses": ["**Blue Smoke** indicates the engine is burning oil. This is serious and usually means worn piston rings or valve seals."]
     }
   ]
 }
