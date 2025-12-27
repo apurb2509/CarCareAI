@@ -1,0 +1,140 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi", "Hello", "Hey", "Good morning", "Good afternoon", "Good evening",
+        "Yo", "Whats up", "Is anyone there?", "Hola", "Greetings", "Hey Carlo",
+        "Hi bot", "Hello there", "Namaste", "Hiya"
+      ],
+      "responses": [
+        "Hello! I am Carlo, your expert automotive assistant. How can I help you today?",
+        "Hi there! I'm Carlo from CarCareAI. Ready to assist with your car needs.",
+        "Greetings! I am at your service. Ask me about repairs, parts, or maintenance."
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye", "See you later", "Goodbye", "Exit", "Close", "End chat",
+        "Talk to you later", "Cya", "Good night", "I am done", "Leaving now"
+      ],
+      "responses": [
+        "Goodbye! Drive safe and take care of your car.",
+        "See you later! Feel free to return if you have more questions.",
+        "Bye! Remember, regular maintenance keeps your car running smooth."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks", "Thank you", "That's helpful", "Thanks a lot", "Cool, thanks",
+        "Appreciate it", "Thank you so much", "Thanks buddy", "Ty", "Thx"
+      ],
+      "responses": [
+        "You are welcome! Happy to help.",
+        "Anytime! Safe driving.",
+        "No problem at all! Let me know if you need anything else."
+      ]
+    },
+    {
+      "tag": "capabilities",
+      "patterns": [
+        "What can you do?", "Who are you?", "What is your purpose?",
+        "How can you help me?", "Are you a human?", "What is Carlo?",
+        "Introduce yourself", "Your features"
+      ],
+      "responses": [
+        "I am Carlo, an advanced AI trained to help you with car diagnostics, repair cost estimation, and vehicle maintenance advice.",
+        "I am your virtual mechanic! I can estimate repair prices, explain car parts, and give maintenance tips."
+      ]
+    },
+    {
+      "tag": "car_parts_general",
+      "patterns": [
+        "What is a carburetor?", "Explain clutch plate", "What does a spark plug do?",
+        "Tell me about brake pads", "What is a radiator?", "What is the engine?",
+        "Transmission function", "What is an alternator?", "Explain suspension",
+        "What is a catalytic converter?", "How does a turbo work?", "What is a fuel pump?",
+        "Meaning of ABS", "What is power steering?"
+      ],
+      "responses": [
+        "I can explain that! A car is a complex machine. Could you specify which part you want to know about? (e.g., 'What does a spark plug do?')",
+        "From engines to exhaust pipes, I understand the mechanics. Please ask about a specific component."
+      ]
+    },
+    {
+      "tag": "maintenance_tips",
+      "patterns": [
+        "How often should I change oil?", "Tyre pressure guide", "Maintenance tips",
+        "How to maintain my car?", "When to service my car?", "Car service schedule",
+        "How to increase mileage?", "Tips for long drive", "Coolant change interval",
+        "Brake fluid check", "Battery maintenance"
+      ],
+      "responses": [
+        "Regular maintenance is key! Change engine oil every 7,500 km, check tyre pressure monthly (30-35 PSI), and rotate tyres every 10,000 km.",
+        "Keep your car healthy: Check fluid levels weekly, inspect brakes every 20,000 km, and don't skip your scheduled service."
+      ]
+    },
+    {
+      "tag": "engine_issues",
+      "patterns": [
+        "My car is making a noise", "Engine overheating", "Car won't start",
+        "Smoke coming from engine", "Check engine light is on", "Engine knocking sound",
+        "Low pickup", "Car vibrating", "White smoke from exhaust", "Black smoke",
+        "Car stalling", "Engine misfire"
+      ],
+      "responses": [
+        "Engine issues can be serious. Common causes include low oil, coolant leaks, or spark plug failure. Please use our 'Locate Service' feature to find a mechanic immediately.",
+        "If your check engine light is blinking, stop the car safely. It could be a serious misfire or catalytic converter issue. Get it scanned ASAP."
+      ]
+    },
+    {
+      "tag": "tyre_issues",
+      "patterns": [
+        "Flat tyre", "Tyre puncture", "Wheel alignment needed", "Car pulling to left",
+        "Car pulling to right", "Uneven tyre wear", "Tyre burst", "Stepney change"
+      ],
+      "responses": [
+        "If your car pulls to one side, you likely need a Wheel Alignment. If you have uneven wear, check your suspension and balancing.",
+        "For a flat tyre, ensure you change to the spare safely on level ground. Don't drive on a flat tyre as it damages the rim."
+      ]
+    },
+    {
+      "tag": "battery_issues",
+      "patterns": [
+        "Car battery dead", "Car clicking sound when starting", "Lights are dim",
+        "Battery not charging", "Jump start car", "Corrosion on battery"
+      ],
+      "responses": [
+        "A clicking sound usually means the starter motor is fine but the battery is dead. Try a jump start or check for corrosion on terminals.",
+        "Car batteries typically last 3-5 years. If yours is older, it might need replacement. Dim lights are a classic sign of a weak battery."
+      ]
+    },
+    {
+      "tag": "ac_issues",
+      "patterns": [
+        "AC not cooling", "Bad smell from AC", "AC making noise",
+        "Heater not working", "AC gas refill", "Hot air from AC"
+      ],
+      "responses": [
+        "If the AC blows hot air, you might be low on refrigerant gas or have a compressor clutch issue.",
+        "A bad smell from the AC usually means fungus in the cabin filter. It's a cheap fix—just replace the cabin air filter."
+      ]
+    },
+    {
+      "tag": "out_of_scope",
+      "patterns": [
+        "Who is the president?", "What is the weather?", "Tell me a joke",
+        "How do I cook pasta?", "Write code for me", "football match score",
+        "stock market", "politics", "Who won the match?", "I love you",
+        "Are you single?", "What is 2+2?", "Sing a song"
+      ],
+      "responses": [
+        "I don't know this answer. Sorry. I only answer questions related to cars and CarCareAI.",
+        "My expertise is strictly limited to automobiles and repair services. I cannot answer that.",
+        "I am Carlo, a car expert. Please ask me something about vehicles, repairs, or maintenance!"
+      ]
+    }
+  ]
+}
