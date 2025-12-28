@@ -3,6 +3,7 @@ import Sidebar from "./layout/Sidebar";
 // We removed MobileNav import because Sidebar now handles everything
 import ThreeBackground from "./components/ThreeBackground";
 import Home from "./pages/Home";
+import ChatWidget from "./components/ChatWidget"; // <--- 1. Import ChatWidget
 
 function App() {
   return (
@@ -27,6 +28,10 @@ function App() {
         <Home />
       </Box>
       
+      {/* 4. Chat Widget */}
+      {/* The component handles its own fixed positioning (bottom-right) */}
+      <ChatWidget /> 
+
     </Box>
   );
 }
