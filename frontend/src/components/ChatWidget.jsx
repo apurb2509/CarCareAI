@@ -111,6 +111,16 @@ const ChatWidget = () => {
     });
   };
 
+  // Add this NEW useEffect to auto-scroll when the chat window opens
+  useEffect(() => {
+    if (isOpen) {
+      // Small timeout ensures the DOM is rendered before scrolling
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+    }
+  }, [isOpen]);
+
   // Render
   return (
     <Box position="fixed" bottom="30px" right="30px" zIndex="1000">
