@@ -66,11 +66,13 @@ const ChatWidget = () => {
     setIsTyping(true);
 
     try {
-      // Call the Python Chatbot API (Port 5001)
-      const response = await fetch("http://127.0.0.1:5001/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMsg.text }),
+      const response = await fetch('http://localhost:5001/api/chat', { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        // CHANGE THIS LINE:
+        body: JSON.stringify({ message: userMsg.text }) 
       });
 
       const data = await response.json();
