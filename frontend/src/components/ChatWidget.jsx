@@ -17,6 +17,7 @@ import { FaRobot, FaPaperPlane, FaTimes, FaCommentDots } from "react-icons/fa";
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [isOnline, setIsOnline] = useState(false);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
@@ -121,6 +122,25 @@ const ChatWidget = () => {
     }
   }, [isOpen]);
 
+  // NEW: Check Server Status
+  useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        // Simple fetch to root endpoint to check connectivity
+        const res = await fetch("http://localhost:5001/");
+        setIsOnline(res.ok);
+      } catch (error) {
+        console.error("Server check failed:", error); 
+        setIsOnline(false);
+      }
+    };
+
+    checkStatus(); // Check immediately
+    const interval = setInterval(checkStatus, 10000); // Poll every 10s
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Render
   return (
     <Box position="fixed" bottom="30px" right="30px" zIndex="1000">
@@ -151,11 +171,11 @@ const ChatWidget = () => {
               <HStack>
                 <Avatar icon={<FaRobot />} bg="white" color="cyan.600" size="sm" />
                 <VStack align="start" spacing={0}>
-                  <Text fontWeight="bold" color="white" fontSize="md">
+                <Text fontWeight="bold" color="white" fontSize="md">
                     CarloBot
                   </Text>
-                  <Text fontSize="xs" color="cyan.100">
-                    Online • AI Assistant
+                  <Text fontSize="xs" color={isOnline ? "green.300" : "red.300"}>
+                    {isOnline ? "Online" : "Offline"} • AI Assistant
                   </Text>
                 </VStack>
               </HStack>
