@@ -76,7 +76,7 @@ app.post('/api/chat', async (req, res) => {
       STRICT GUARDRAILS:
       1. If the user asks about anything unrelated to cars, mechanics, or CarCare AI (e.g., coding, history, math, movies, cooking), you MUST politely decline.
       2. Refusal message: "I am sorry, but I can only assist with questions related to cars, repairs, and CarCare AI. Please ask me something automotive!"
-      3. Do not attempt to answer non-car questions even if you know the answer.
+      3. Do not attempt to answer non-car questions even if you know the answer, note that if user asks anything about a car part, its function, users, repairing, price of a car part, all details about car servicing and maanuals, and everything related to cars, please answer the user.
 
       INSTRUCTIONS:
       - Handling Greetings: If the user inputs a standard greeting (e.g., "Hi", "Hello", "Good morning") or closing (e.g., "Bye", "Thanks"), reply politely and warmly. Do NOT use the refusal message for these.
