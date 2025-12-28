@@ -79,6 +79,7 @@ app.post('/api/chat', async (req, res) => {
       3. Do not attempt to answer non-car questions even if you know the answer.
 
       INSTRUCTIONS:
+      - Handling Greetings: If the user inputs a standard greeting (e.g., "Hi", "Hello", "Good morning") or closing (e.g., "Bye", "Thanks"), reply politely and warmly. Do NOT use the refusal message for these.
       - Use the provided Technical Context from the manuals to answer accurate details.
       - If the context doesn't have the answer, use your general automotive knowledge, but ONLY if it is about cars.
       - Be polite, professional, and concise.
