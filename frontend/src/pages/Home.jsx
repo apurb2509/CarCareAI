@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState, useEffect } from "react"; // <--- FIXED: Added useEffect here
 import {
   Box,
   Heading,
@@ -8,7 +8,7 @@ import {
   Stack,
   SimpleGrid,
   Icon,
-  useToast, // Import Toast for error handling
+  useToast,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import {
@@ -17,7 +17,7 @@ import {
   FaCogs,
   FaDatabase,
   FaRobot,
-  FaMapMarkerAlt, // Added icon for loading state
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -26,25 +26,30 @@ import Footer from "../layout/Footer";
 // Register GSAP Plugin
 gsap.registerPlugin(ScrollTrigger);
 
-// 1. Blink Animation
+// 1. Blink Animation (Green)
 const blink = keyframes`
   0% { opacity: 1; box-shadow: 0 0 10px #48BB78; }
   50% { opacity: 0.4; box-shadow: 0 0 2px #48BB78; }
   100% { opacity: 1; box-shadow: 0 0 10px #48BB78; }
 `;
 
+// 1b. Red Blink Animation (for Offline State) <--- NEW
+const blinkRed = keyframes`
+  0% { opacity: 1; box-shadow: 0 0 10px #F56565; }
+  50% { opacity: 0.4; box-shadow: 0 0 2px #F56565; }
+  100% { opacity: 1; box-shadow: 0 0 10px #F56565; }
+`;
+
 // ============================================================================
 // COMPLEX ROAD MATH
 // ============================================================================
 
-// X-Axis: Sines and Cosines for irregular turns
 const getRoadX = (progress, centerX, amplitude) => {
   const wave1 = Math.sin(progress * Math.PI * 5);
   const wave2 = Math.cos(progress * Math.PI * 8) * 0.2;
   return centerX + (wave1 + wave2) * amplitude;
 };
 
-// Y-Axis: Edge-to-edge
 const getRoadY = (progress, height) => {
   return progress * height;
 };
@@ -54,7 +59,7 @@ const TypewriterText = () => {
   const fullText = "SMART AUTOMOTIVE CARE";
   const [displayedText, setDisplayedText] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => { // <--- This works now because we imported useEffect
     let index = 0;
     let timeoutId;
 
@@ -103,69 +108,86 @@ const Home = () => {
   const [isLocating, setIsLocating] = useState(false);
   const toast = useToast();
 
-// -- LOCATION HANDLER (UPDATED) --
-const handleLocateService = () => {
-  if (!navigator.geolocation) {
-    toast({
-      title: "Error",
-      description: "Geolocation is not supported by your browser.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-    return;
-  }
+  // -- NEW: SERVER STATUS STATE --
+  const [isServerOnline, setIsServerOnline] = useState(false);
 
-  setIsLocating(true);
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      
-      // Success! Redirect to Google Maps
-      const query = "car service stations near me";
-      // Using the official Google Maps search URL format
-      const mapUrl = `https://www.google.com/maps/search/${query}/@${latitude},${longitude},13z`;
-      
-      setIsLocating(false);
-      window.open(mapUrl, "_blank");
-    },
-    (error) => {
-      setIsLocating(false);
-      let errorMessage = "Unable to retrieve your location.";
-      
-      // Detailed error handling
-      switch(error.code) {
-          case error.PERMISSION_DENIED:
-              errorMessage = "Location permission denied. Please enable it in your browser settings.";
-              break;
-          case error.POSITION_UNAVAILABLE:
-              errorMessage = "Location information is unavailable.";
-              break;
-          case error.TIMEOUT:
-              errorMessage = "The request to get your location timed out. Please try again.";
-              break;
-          default:
-              errorMessage = "An unknown error occurred.";
-              break;
+  // -- NEW: STATUS CHECK LOGIC --
+  useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        // Fetch root endpoint of your chatbot server
+        const res = await fetch("http://localhost:5001/"); 
+        setIsServerOnline(res.ok);
+      } catch (error) {
+        // FIXED: We log the error so the variable is "used", removing red lines
+        console.error("Server check failed:", error); 
+        setIsServerOnline(false);
       }
+    };
 
+    checkStatus(); // Check immediately
+    const interval = setInterval(checkStatus, 5000); // Check every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // -- LOCATION HANDLER --
+  const handleLocateService = () => {
+    if (!navigator.geolocation) {
       toast({
-        title: "Location Error",
-        description: errorMessage,
+        title: "Error",
+        description: "Geolocation is not supported by your browser.",
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       });
-    },
-    // -- UPDATED OPTIONS --
-    {
-      enableHighAccuracy: false, // Set to false for faster, rough location (WiFi/IP)
-      timeout: 30000,            // Wait 30 seconds before timing out
-      maximumAge: 60000          // Accept a cached location if it is less than 1 minute old
+      return;
     }
-  );
-};
+
+    setIsLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const query = "car service stations near me";
+        const mapUrl = `https://www.google.com/maps/search/${query}/@${latitude},${longitude},13z`;
+        
+        setIsLocating(false);
+        window.open(mapUrl, "_blank");
+      },
+      (error) => {
+        setIsLocating(false);
+        let errorMessage = "Unable to retrieve your location.";
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                errorMessage = "Location permission denied.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                errorMessage = "Location information is unavailable.";
+                break;
+            case error.TIMEOUT:
+                errorMessage = "The request timed out.";
+                break;
+            default:
+                errorMessage = "An unknown error occurred.";
+                break;
+        }
+
+        toast({
+          title: "Location Error",
+          description: errorMessage,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 60000
+      }
+    );
+  };
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -354,7 +376,8 @@ const handleLocateService = () => {
         <Container maxW="container.xl" className="hero-content">
           <Box className="hero-top-content">
             <Stack spacing={6} textAlign="center" alignItems="center">
-              {/* BADGE */}
+              
+              {/* DYNAMIC SERVER STATUS BADGE */}
               <Box
                 className="hero-animate"
                 display="inline-flex"
@@ -362,31 +385,50 @@ const handleLocateService = () => {
                 justifyContent="center"
                 px={4}
                 py={2}
-                bg="rgba(0, 20, 0, 0.6)"
+                // Dynamic Background
+                bg={isServerOnline ? "rgba(0, 20, 0, 0.6)" : "rgba(40, 0, 0, 0.6)"}
                 border="1px solid"
-                borderColor="green.500"
+                // Dynamic Border
+                borderColor={isServerOnline ? "green.500" : "red.500"}
                 borderRadius="sm"
-                boxShadow="0 0 20px rgba(72, 187, 120, 0.3), inset 0 0 10px rgba(72, 187, 120, 0.1)"
+                // Dynamic Glow
+                boxShadow={
+                  isServerOnline
+                    ? "0 0 20px rgba(72, 187, 120, 0.3), inset 0 0 10px rgba(72, 187, 120, 0.1)"
+                    : "0 0 20px rgba(245, 101, 101, 0.3), inset 0 0 10px rgba(245, 101, 101, 0.1)"
+                }
                 backdropFilter="blur(5px)"
+                transition="all 0.3s ease"
               >
                 <Box
                   w="8px"
                   h="8px"
-                  bg="green.400"
+                  // Dynamic Dot Color
+                  bg={isServerOnline ? "green.400" : "red.400"}
                   borderRadius="full"
                   mr={3}
-                  animation={`${blink} 1.5s infinite ease-in-out`}
+                  // Dynamic Animation
+                  animation={
+                    isServerOnline
+                      ? `${blink} 1.5s infinite ease-in-out`
+                      : `${blinkRed} 1.5s infinite ease-in-out`
+                  }
                 />
                 <Text
                   fontSize={{ base: "xs", md: "sm" }}
                   letterSpacing="0.2em"
                   fontWeight="bold"
-                  color="green.400"
+                  // Dynamic Text Color
+                  color={isServerOnline ? "green.400" : "red.400"}
                   textTransform="uppercase"
                   fontFamily="'Courier New', Courier, monospace"
-                  textShadow="0 0 8px rgba(72, 187, 120, 0.8)"
+                  textShadow={
+                    isServerOnline
+                      ? "0 0 8px rgba(72, 187, 120, 0.8)"
+                      : "0 0 8px rgba(245, 101, 101, 0.8)"
+                  }
                 >
-                  Server Online
+                  {isServerOnline ? "Server Online" : "Server Offline"}
                 </Text>
               </Box>
 
@@ -434,7 +476,6 @@ const handleLocateService = () => {
                 spacing={8}
                 pt={6}
               >
-                {/* --- UPDATED LOCATE SERVICE BUTTON --- */}
                 <Button
                   size="lg"
                   h="70px"
@@ -451,7 +492,6 @@ const handleLocateService = () => {
                 >
                   Locate Service
                 </Button>
-                {/* -------------------------------------- */}
 
                 <Button
                   size="lg"

@@ -200,7 +200,7 @@ const ChatWidget = () => {
                 
                 <VStack align="start" spacing={0}>
                   <Text fontWeight="bold" color="white" fontSize="md" letterSpacing="wide">
-                    CarloBot
+                    Carlo Bot
                   </Text>
                   <Text fontSize="xs" color={isOnline ? "green.300" : "red.300"} fontWeight="medium">
                     {isOnline ? "Online" : "Offline"}
