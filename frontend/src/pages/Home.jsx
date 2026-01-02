@@ -9,6 +9,9 @@ import {
   SimpleGrid,
   Icon,
   useToast, // Import Toast for error handling
+  VStack, // <--- ADDED
+  HStack, // <--- ADDED
+  Flex,   // <--- ADDED
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import {
@@ -17,7 +20,12 @@ import {
   FaCogs,
   FaDatabase,
   FaRobot,
-  FaMapMarkerAlt, // Added icon for loading state
+  FaMapMarkerAlt,
+  FaUserPlus,       // Registration
+  FaMapMarkedAlt,   // Geo Location
+  FaSyncAlt,        // Parts Sync
+  FaFileInvoiceDollar, // Pricing
+  FaChevronDown, // Added icon for loading state
 } from "react-icons/fa";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -726,6 +734,188 @@ const Home = () => {
               </SimpleGrid>
             </Stack>
           </Box>
+
+          {/* --- START: HOW IT WORKS (FLOWCHART TIMELINE) --- */}
+          <Box py={20} position="relative" zIndex="10">
+            <Container maxW="container.md">
+              <Heading
+                className="gsap-slide-up"
+                textAlign="center"
+                size="2xl"
+                mb={16}
+                color="white"
+                letterSpacing="tight"
+              >
+                Operational Workflow
+              </Heading>
+
+              <VStack spacing={0} w="100%">
+                
+                {/* STEP 1: REGISTRATION */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="linear-gradient(135deg, #0987A0 0%, #00B5D8 100%)"
+                        color="white"
+                        boxShadow="0 0 20px rgba(0, 181, 216, 0.4)"
+                        zIndex="2"
+                      >
+                        <Icon as={FaUserPlus} w={6} h={6} />
+                      </Box>
+                      {/* Vertical Connector Line */}
+                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                    </Flex>
+                    <Box pb={10}>
+                      <Heading size="md" color="cyan.300" mb={2}>
+                        01. Ecosystem Onboarding
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        The journey begins with the creation of digital identities. 
+                        Service stations register their facilities, cataloging their specific 
+                        capabilities and inventory systems, while vehicle owners create 
+                        profiles that lock in their car's make, model, and mileage data 
+                        for personalized service matching.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                {/* STEP 2: GEOLOCATION */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="gray.800"
+                        border="1px solid"
+                        borderColor="cyan.500"
+                        color="cyan.400"
+                        zIndex="2"
+                      >
+                        <Icon as={FaMapMarkedAlt} w={6} h={6} />
+                      </Box>
+                      {/* Vertical Connector Line */}
+                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                    </Flex>
+                    <Box pb={10}>
+                      <Heading size="md" color="white" mb={2}>
+                        02. Geospatial Availability
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        Upon initiation, our algorithm scans the immediate vicinity. 
+                        It doesn't just look for open garages; it filters for 
+                        <strong> real-time slot availability</strong>, ensuring that 
+                        when a user books a service, the bay is actually empty and 
+                        ready for their vehicle arrival.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                {/* STEP 3: PARTS SYNC */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="gray.800"
+                        border="1px solid"
+                        borderColor="cyan.500"
+                        color="cyan.400"
+                        zIndex="2"
+                      >
+                        <Icon as={FaSyncAlt} w={6} h={6} />
+                      </Box>
+                      {/* Vertical Connector Line */}
+                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                    </Flex>
+                    <Box pb={10}>
+                      <Heading size="md" color="white" mb={2}>
+                        03. Inventory Synchronization
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        This is our core differentiator. The system performs a handshake 
+                        with local garage databases. We cross-reference the required repairs 
+                        against physical stock levels, ensuring that the specific brake pads, 
+                        filters, or spark plugs needed for your car are physically on the shelf.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                {/* STEP 4: CARLO BOT */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="gray.800"
+                        border="1px solid"
+                        borderColor="cyan.500"
+                        color="cyan.400"
+                        zIndex="2"
+                      >
+                        <Icon as={FaRobot} w={6} h={6} />
+                      </Box>
+                      {/* Vertical Connector Line */}
+                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                    </Flex>
+                    <Box pb={10}>
+                      <Heading size="md" color="white" mb={2}>
+                        04. AI-Driven Diagnostics
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        For complex or unknown issues, users interact with <strong>Carlo Bot</strong>. 
+                        Trained on thousands of technical manuals, Carlo analyzes symptoms 
+                        (sounds, vibrations, warning lights) to predict potential fault codes 
+                        before a mechanic even lifts the hood.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                {/* STEP 5: PRICING */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="gray.800"
+                        border="1px solid"
+                        borderColor="green.400"
+                        color="green.400"
+                        boxShadow="0 0 15px rgba(72, 187, 120, 0.3)"
+                        zIndex="2"
+                      >
+                        <Icon as={FaFileInvoiceDollar} w={6} h={6} />
+                      </Box>
+                      {/* No connector line for the last item */}
+                    </Flex>
+                    <Box pb={0}>
+                      <Heading size="md" color="green.300" mb={2}>
+                        05. Valuation & Execution
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        Finally, our ML Price Estimator calculates a transparent cost range 
+                        based on labor rates and part prices. The user confirms the booking, 
+                        secures the slot, and navigates to the station with total confidence 
+                        in the cost and turnaround time.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+              </VStack>
+            </Container>
+          </Box>
+          {/* --- END: HOW IT WORKS --- */}
 
           {/* B. VISION & GOALS SECTION */}
           <Box py={24}>
