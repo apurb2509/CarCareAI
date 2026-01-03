@@ -36,13 +36,29 @@ const initialFormState = {
   agreed: false
 };
 
-const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
-  const [step, setStep] = useState(1);
-  const [role, setRole] = useState('');
+// Accept the new props for redirect implementation
+const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRole = '' }) => {
+  const [step, setStep] = useState(initialStep);
+  const [role, setRole] = useState(initialRole);
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState(initialFormState);
   
   const toast = useToast();
+
+  // Sync state when props change (specifically for the Register Garage redirect)
+  useEffect(() => {
+    if (isOpen) {
+      setStep(initialStep);
+      setRole(initialRole);
+      // Reset form specific transient states
+      setConfirmPassword('');
+      setShowPassword(false);
+    } else {
+      // Clear data on close to ensure privacy and clean state for next open
+      setFormData(initialFormState);
+    }
+  }, [isOpen, initialStep, initialRole]);
 
   const indianStates = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", 
@@ -50,20 +66,6 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", 
     "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi", "Mumbai"
   ];
-
-  const [formData, setFormData] = useState(initialFormState);
-
-  useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => {
-        setStep(1);
-        setFormData(initialFormState);
-        setConfirmPassword('');
-        setRole('');
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen]);
 
   const passwordsMatch = confirmPassword && formData.password && confirmPassword === formData.password;
 
@@ -240,6 +242,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                   size="sm" 
                   onClick={() => setStep(1)}
                   _hover={{ bg: "whiteAlpha.200" }}
+                  aria-label="Back to account selection"
                 />
                 <Text fontSize="lg" fontWeight="700" color="gray.100">
                   {role === 'service' ? 'Service Partner Registration' : 'Individual Registration'}
@@ -340,6 +343,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                             onClick={() => setShowPassword(!showPassword)} 
                             icon={showPassword ? <FaEyeSlash /> : <FaEye />}
                             _hover={{ color: "white", bg: "whiteAlpha.200" }}
+                            aria-label={showPassword ? "Hide password" : "Show password"}
                           />
                         </InputRightElement>
                       </InputGroup>

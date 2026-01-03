@@ -107,7 +107,8 @@ const TypewriterText = () => {
   );
 };
 
-const Home = () => {
+// --- UPDATED: Home component now accepts onRegisterGarageClick prop ---
+const Home = ({ onRegisterGarageClick }) => {
   const mainRef = useRef(null);
   const wrapperRef = useRef(null);
   const carRef = useRef(null);
@@ -123,8 +124,6 @@ const Home = () => {
   React.useEffect(() => {
     const checkServerStatus = async () => {
       try {
-        // Attempt to fetch from your backend (using port 5001 as established)
-        // We use a simple fetch to the root or any lightweight endpoint
         const response = await fetch("http://127.0.0.1:5001/");
         if (response.ok) {
           setIsServerOnline(true);
@@ -137,12 +136,8 @@ const Home = () => {
       }
     };
 
-    // Check immediately on load
     checkServerStatus();
-
-    // Poll every 5 seconds to keep status updated
     const intervalId = setInterval(checkServerStatus, 5000);
-
     return () => clearInterval(intervalId);
   }, []);
 
@@ -164,31 +159,23 @@ const Home = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-
-        // Success! Redirect to Google Maps
         const query = "car service stations near me";
-        // Using the official Google Maps search URL format
         const mapUrl = `https://www.google.com/maps/search/${query}/@${latitude},${longitude},13z`;
-
         setIsLocating(false);
         window.open(mapUrl, "_blank");
       },
       (error) => {
         setIsLocating(false);
         let errorMessage = "Unable to retrieve your location.";
-
-        // Detailed error handling
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage =
-              "Location permission denied. Please enable it in your browser settings.";
+            errorMessage = "Location permission denied. Please enable it in your browser settings.";
             break;
           case error.POSITION_UNAVAILABLE:
             errorMessage = "Location information is unavailable.";
             break;
           case error.TIMEOUT:
-            errorMessage =
-              "The request to get your location timed out. Please try again.";
+            errorMessage = "The request to get your location timed out. Please try again.";
             break;
           default:
             errorMessage = "An unknown error occurred.";
@@ -203,11 +190,10 @@ const Home = () => {
           isClosable: true,
         });
       },
-      // -- UPDATED OPTIONS --
       {
-        enableHighAccuracy: false, // Set to false for faster, rough location (WiFi/IP)
-        timeout: 30000, // Wait 30 seconds before timing out
-        maximumAge: 60000, // Accept a cached location if it is less than 1 minute old
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 60000,
       }
     );
   };
@@ -271,7 +257,6 @@ const Home = () => {
         );
       });
 
-      // Blur-out effects on exit
       gsap.to(".mission-content", {
         scrollTrigger: {
           trigger: ".mission-content",
@@ -315,7 +300,6 @@ const Home = () => {
         }
         setPathData(`M${points.join(" L")}`);
 
-        // CAR ANIMATION
         const progressObj = { val: 0 };
         let previousVal = 0;
 
@@ -332,20 +316,14 @@ const Home = () => {
             const p = progressObj.val;
             const y = getRoadY(p, height);
             const x = getRoadX(p, centerX, amplitude);
-
             const nextP = p + 0.005;
             const nextY = getRoadY(nextP, height);
             const nextX = getRoadX(nextP, centerX, amplitude);
-
             const deltaX = nextX - x;
             const deltaY = nextY - y;
             let angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
-
-            if (p < previousVal) {
-              angle += 180;
-            }
+            if (p < previousVal) angle += 180;
             previousVal = p;
-
             if (carRef.current) {
               gsap.set(carRef.current, {
                 x: x,
@@ -407,15 +385,10 @@ const Home = () => {
                 justifyContent="center"
                 px={4}
                 py={2}
-                // Dynamic Background: Green tint if online, Red tint if offline
-                bg={
-                  isServerOnline ? "rgba(0, 20, 0, 0.6)" : "rgba(20, 0, 0, 0.6)"
-                }
+                bg={isServerOnline ? "rgba(0, 20, 0, 0.6)" : "rgba(20, 0, 0, 0.6)"}
                 border="1px solid"
-                // Dynamic Border: Green if online, Red if offline
                 borderColor={isServerOnline ? "green.500" : "red.500"}
                 borderRadius="sm"
-                // Dynamic Glow
                 boxShadow={
                   isServerOnline
                     ? "0 0 20px rgba(72, 187, 120, 0.3), inset 0 0 10px rgba(72, 187, 120, 0.1)"
@@ -430,18 +403,16 @@ const Home = () => {
                   bg={isServerOnline ? "green.400" : "red.400"}
                   borderRadius="full"
                   mr={3}
-                  // UPDATE THIS ANIMATION LINE:
                   animation={
                     isServerOnline
                       ? `${blink} 1.5s infinite ease-in-out`
-                      : `${blinkRed} 1.5s infinite ease-in-out` // <--- Changed from "none" to blinkRed
+                      : `${blinkRed} 1.5s infinite ease-in-out`
                   }
                 />
                 <Text
                   fontSize={{ base: "xs", md: "sm" }}
                   letterSpacing="0.2em"
                   fontWeight="bold"
-                  // Dynamic Text Color
                   color={isServerOnline ? "green.400" : "red.400"}
                   textTransform="uppercase"
                   fontFamily="'Courier New', Courier, monospace"
@@ -476,9 +447,7 @@ const Home = () => {
                 >
                   CARCARE AI
                 </Text>
-
                 <br />
-
                 <TypewriterText />
               </Heading>
 
@@ -499,7 +468,6 @@ const Home = () => {
                 spacing={8}
                 pt={6}
               >
-                {/* --- UPDATED LOCATE SERVICE BUTTON --- */}
                 <Button
                   size="lg"
                   h="70px"
@@ -516,9 +484,10 @@ const Home = () => {
                 >
                   Locate Service
                 </Button>
-                {/* -------------------------------------- */}
 
+                {/* --- REGISTER GARAGE BUTTON: Now calls the redirect trigger --- */}
                 <Button
+                  onClick={onRegisterGarageClick}
                   size="lg"
                   h="70px"
                   px="50px"
@@ -598,7 +567,6 @@ const Home = () => {
             />
           </svg>
 
-          {/* 3D CAR SVG MODEL */}
           <Box
             ref={carRef}
             position="absolute"
@@ -765,7 +733,6 @@ const Home = () => {
                       >
                         <Icon as={FaUserPlus} w={6} h={6} />
                       </Box>
-                      {/* Vertical Connector Line */}
                       <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
                     </Flex>
                     <Box pb={10}>
@@ -798,7 +765,6 @@ const Home = () => {
                       >
                         <Icon as={FaMapMarkedAlt} w={6} h={6} />
                       </Box>
-                      {/* Vertical Connector Line */}
                       <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
                     </Flex>
                     <Box pb={10}>
@@ -831,7 +797,6 @@ const Home = () => {
                       >
                         <Icon as={FaSyncAlt} w={6} h={6} />
                       </Box>
-                      {/* Vertical Connector Line */}
                       <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
                     </Flex>
                     <Box pb={10}>
@@ -863,7 +828,6 @@ const Home = () => {
                       >
                         <Icon as={FaRobot} w={6} h={6} />
                       </Box>
-                      {/* Vertical Connector Line */}
                       <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
                     </Flex>
                     <Box pb={10}>
@@ -896,7 +860,6 @@ const Home = () => {
                       >
                         <Icon as={FaFileInvoiceDollar} w={6} h={6} />
                       </Box>
-                      {/* No connector line for the last item */}
                     </Flex>
                     <Box pb={0}>
                       <Heading size="md" color="green.300" mb={2}>
@@ -911,7 +874,6 @@ const Home = () => {
                     </Box>
                   </HStack>
                 </Box>
-
               </VStack>
             </Container>
           </Box>
@@ -1007,7 +969,6 @@ const Home = () => {
               spacing={10}
               className="features-grid"
             >
-              {/* CARD 1: Predictive AI */}
               <Box
                 className="feature-card"
                 p={8}
@@ -1027,10 +988,8 @@ const Home = () => {
                   const y = e.clientY - rect.top;
                   const centerX = rect.width / 2;
                   const centerY = rect.height / 2;
-
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
-
                   card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
                 }}
                 onMouseLeave={(e) => {
@@ -1048,7 +1007,6 @@ const Home = () => {
                 </Text>
               </Box>
 
-              {/* CARD 2: Live Inventory */}
               <Box
                 className="feature-card"
                 p={8}
@@ -1068,10 +1026,8 @@ const Home = () => {
                   const y = e.clientY - rect.top;
                   const centerX = rect.width / 2;
                   const centerY = rect.height / 2;
-
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
-
                   card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
                 }}
                 onMouseLeave={(e) => {
@@ -1089,7 +1045,6 @@ const Home = () => {
                 </Text>
               </Box>
 
-              {/* CARD 3: 3D Diagnostics */}
               <Box
                 className="feature-card"
                 p={8}
@@ -1109,10 +1064,8 @@ const Home = () => {
                   const y = e.clientY - rect.top;
                   const centerX = rect.width / 2;
                   const centerY = rect.height / 2;
-
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
-
                   card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
                 }}
                 onMouseLeave={(e) => {

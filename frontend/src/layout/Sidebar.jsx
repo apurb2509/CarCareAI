@@ -14,8 +14,8 @@ import {
   Button,
   Stack,
   Divider,
-  Avatar, // Added Avatar
-  HStack, // Added HStack for profile layout
+  Avatar,
+  HStack,
 } from '@chakra-ui/react';
 import { FaBars, FaHome, FaSearch, FaWrench, FaUserCircle, FaCog, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
 
@@ -35,10 +35,14 @@ const Sidebar = () => {
 
   const btnRef = useRef();
 
-  // --- NEW: USER STATE ---
+  // --- USER STATE ---
   const [user, setUser] = useState(null);
 
-  // --- NEW: LOGIN HANDLER ---
+  // --- REDIRECT / STEP MANAGEMENT STATE ---
+  const [initialAuthStep, setInitialAuthStep] = useState(1);
+  const [initialRole, setInitialRole] = useState('');
+
+  // --- LOGIN HANDLERS ---
   const handleLoginSuccess = (userData) => {
     setUser(userData); // { name: 'John', role: 'user' }
   };
@@ -217,6 +221,8 @@ const Sidebar = () => {
                 // --- LOGGED OUT STATE ---
                 <Button 
                   onClick={() => {
+                    setInitialAuthStep(1); // Reset to default selection
+                    setInitialRole('');    // Reset role
                     onClose();    // Closes sidebar
                     onAuthOpen(); // Opens Auth Modal
                   }}
@@ -240,16 +246,17 @@ const Sidebar = () => {
                 </Button>
               )}
             </Box>
-
           </DrawerBody>
         </DrawerContent>
       </Drawer>
 
-      {/* 4. RENDER THE AUTH MODAL WITH SUCCESS HANDLER */}
+      {/* 3. THE AUTH MODAL */}
       <AuthModal 
         isOpen={isAuthOpen} 
         onClose={onAuthClose} 
-        onLoginSuccess={handleLoginSuccess} 
+        onLoginSuccess={handleLoginSuccess}
+        initialStep={initialAuthStep} 
+        initialRole={initialRole}     
       />
     </>
   );
