@@ -17,8 +17,20 @@ import {
 } from '@chakra-ui/react';
 import { FaBars, FaHome, FaSearch, FaWrench, FaUserCircle, FaCog, FaSignInAlt } from 'react-icons/fa';
 
+// 1. IMPORT THE NEW AUTHMODAL COMPONENT
+import AuthModal from '../components/AuthModal';
+
 const Sidebar = () => {
+  // Primary disclosure for the Sidebar drawer
   const { isOpen, onOpen, onClose } = useDisclosure();
+  
+  // 2. SECONDARY DISCLOSURE FOR THE AUTH MODAL
+  const { 
+    isOpen: isAuthOpen, 
+    onOpen: onAuthOpen, 
+    onClose: onAuthClose 
+  } = useDisclosure();
+
   const btnRef = useRef();
 
   const navItems = [
@@ -154,6 +166,11 @@ const Sidebar = () => {
             {/* FOOTER AREA - FIXED */}
             <Box px={10} mt="auto" mb={8}>
               <Button 
+                // 3. UPDATED CLICK HANDLER
+                onClick={() => {
+                  onClose();    // Closes sidebar
+                  onAuthOpen(); // Opens Auth Modal
+                }}
                 variant="outline" 
                 colorScheme="whiteAlpha"
                 color="white"
@@ -177,6 +194,9 @@ const Sidebar = () => {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
+
+      {/* 4. RENDER THE AUTH MODAL */}
+      <AuthModal isOpen={isAuthOpen} onClose={onAuthClose} />
     </>
   );
 };
