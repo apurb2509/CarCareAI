@@ -67,7 +67,7 @@ const ChatWidget = () => {
     setIsTyping(true);
 
     try {
-      const response = await fetch('http://localhost:5001/api/chat', { 
+      const response = await fetch('http://localhost:5002/api/chat', { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -127,7 +127,7 @@ const ChatWidget = () => {
     const checkStatus = async () => {
       try {
         // Simple fetch to root endpoint to check connectivity
-        const res = await fetch("http://localhost:5001/");
+        const res = await fetch("http://localhost:5002/");
         setIsOnline(res.ok);
       } catch (error) {
         console.error("Server check failed:", error); 

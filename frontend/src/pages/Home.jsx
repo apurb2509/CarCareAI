@@ -124,7 +124,7 @@ const Home = ({ onRegisterGarageClick }) => {
   React.useEffect(() => {
     const checkServerStatus = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5001/");
+        const response = await fetch("http://127.0.0.1:5002/");
         if (response.ok) {
           setIsServerOnline(true);
         } else {
