@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Box,
   VStack,
@@ -14,11 +14,13 @@ import {
   Button,
   Stack,
   Divider,
+  Avatar, // Added Avatar
+  HStack, // Added HStack for profile layout
 } from '@chakra-ui/react';
-import { FaBars, FaHome, FaSearch, FaWrench, FaUserCircle, FaCog, FaSignInAlt } from 'react-icons/fa';
+import { FaBars, FaHome, FaSearch, FaWrench, FaUserCircle, FaCog, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
 
-// 1. IMPORT THE NEW AUTHMODAL COMPONENT
-import AuthModal from '../components/AuthModal';
+// 1. IMPORT THE AUTH MODAL
+import AuthModal from '../components/AuthModal'; // Ensure path is correct based on your folder structure
 
 const Sidebar = () => {
   // Primary disclosure for the Sidebar drawer
@@ -32,6 +34,18 @@ const Sidebar = () => {
   } = useDisclosure();
 
   const btnRef = useRef();
+
+  // --- NEW: USER STATE ---
+  const [user, setUser] = useState(null);
+
+  // --- NEW: LOGIN HANDLER ---
+  const handleLoginSuccess = (userData) => {
+    setUser(userData); // { name: 'John', role: 'user' }
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
 
   const navItems = [
     { icon: FaHome, label: "Home" },
@@ -158,45 +172,85 @@ const Sidebar = () => {
                     {item.label}
                   </Button>
                   {/* Ultra-subtle divider */}
-                  <Divider borderColor="whiteAlpha.50" />
+                  <Divider borderColor="whiteAlpha.5" />
                 </Box>
               ))}
             </VStack>
 
-            {/* FOOTER AREA - FIXED */}
+            {/* FOOTER AREA (DYNAMIC: SIGN IN vs PROFILE) */}
             <Box px={10} mt="auto" mb={8}>
-              <Button 
-                // 3. UPDATED CLICK HANDLER
-                onClick={() => {
-                  onClose();    // Closes sidebar
-                  onAuthOpen(); // Opens Auth Modal
-                }}
-                variant="outline" 
-                colorScheme="whiteAlpha"
-                color="white"
-                borderColor="whiteAlpha.300"
-                width="full" 
-                h="50px"
-                fontSize="sm"
-                fontWeight="500"
-                leftIcon={<FaSignInAlt />}
-                _hover={{ 
-                  bg: "white", 
-                  color: "black", 
-                  borderColor: "white" 
-                }}
-                transition={smoothTransition}
-              >
-                Sign In / Sign Up
-              </Button>
+              {user ? (
+                // --- LOGGED IN STATE ---
+                <HStack 
+                  spacing={4} 
+                  p={3} 
+                  bg="whiteAlpha.100" 
+                  borderRadius="xl" 
+                  border="1px solid rgba(255,255,255,0.05)"
+                >
+                  <Avatar 
+                    size="sm" 
+                    name={user.name} 
+                    bgGradient="linear(to-r, cyan.400, blue.500)" 
+                    border="2px solid"
+                    borderColor="cyan.200"
+                  />
+                  <VStack align="start" spacing={0} flex={1}>
+                    <Text color="white" fontWeight="bold" fontSize="sm" isTruncated maxW="120px">
+                      {user.name}
+                    </Text>
+                    <Text color="cyan.400" fontSize="10px" textTransform="uppercase" fontWeight="700">
+                      {user.role === 'service' ? 'Partner' : 'Member'}
+                    </Text>
+                  </VStack>
+                  <IconButton
+                    icon={<FaSignOutAlt />}
+                    size="sm"
+                    variant="ghost"
+                    color="red.400"
+                    _hover={{ bg: "whiteAlpha.200", color: "red.300" }}
+                    onClick={handleLogout}
+                    aria-label="Logout"
+                  />
+                </HStack>
+              ) : (
+                // --- LOGGED OUT STATE ---
+                <Button 
+                  onClick={() => {
+                    onClose();    // Closes sidebar
+                    onAuthOpen(); // Opens Auth Modal
+                  }}
+                  variant="outline" 
+                  colorScheme="whiteAlpha"
+                  color="white"
+                  borderColor="whiteAlpha.300"
+                  width="full" 
+                  h="50px"
+                  fontSize="sm"
+                  fontWeight="500"
+                  leftIcon={<FaSignInAlt />}
+                  _hover={{ 
+                    bg: "white", 
+                    color: "black", 
+                    borderColor: "white" 
+                  }}
+                  transition={smoothTransition}
+                >
+                  Sign In / Sign Up
+                </Button>
+              )}
             </Box>
 
           </DrawerBody>
         </DrawerContent>
       </Drawer>
 
-      {/* 4. RENDER THE AUTH MODAL */}
-      <AuthModal isOpen={isAuthOpen} onClose={onAuthClose} />
+      {/* 4. RENDER THE AUTH MODAL WITH SUCCESS HANDLER */}
+      <AuthModal 
+        isOpen={isAuthOpen} 
+        onClose={onAuthClose} 
+        onLoginSuccess={handleLoginSuccess} 
+      />
     </>
   );
 };
