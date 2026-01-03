@@ -105,18 +105,66 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
     passwordsMatch &&
     formData.agreed;
 
-  const handleSubmit = () => {
-    onLoginSuccess({ name: formData.name, role: role });
-    toast({ 
-      title: "Welcome Onboard!", 
-      description: `Your account as a ${role === 'service' ? 'Service Partner' : 'Vehicle Owner'} has been created successfully.`, 
-      status: "success",
-      duration: 3000,
+  const handleSubmit = async () => {
+  try {
+    // 1. Prepare the data to match your User Model
+    const registrationData = {
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      locality: formData.locality,
+      pincode: formData.pincode,
+      state: formData.state,
+      password: formData.password,
+      role: role // 'user' or 'service'
+    };
+
+    // 2. Send POST request to the Backend
+    const response = await fetch('http://localhost:5002/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(registrationData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // 3. Handle Success
+      onLoginSuccess({ name: data.name, role: data.role });
+      toast({ 
+        title: "Welcome Onboard!", 
+        description: "Account created successfully.", 
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top"
+      });
+      onClose();
+    } else {
+      // 4. Handle Errors (e.g., user already exists)
+      toast({
+        title: "Registration Failed",
+        description: data.message || "Something went wrong",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top"
+      });
+    }
+  } catch (error) {
+    console.error("Connection Error:", error);
+    toast({
+      title: "Server Error",
+      description: "Could not connect to the server. Is it running?",
+      status: "error",
+      duration: 4000,
       isClosable: true,
       position: "top"
     });
-    onClose();
-  };
+  }
+};
 
   const cardStyle = {
     bg: "linear-gradient(145deg, #0f172a 0%, #1e293b 100%)",
@@ -173,9 +221,10 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
         <ModalBody 
           p={0}
           sx={{
-            '&::-webkit-scrollbar': { display: 'none' },
-            '&': { '-ms-overflow-style': 'none', 'scrollbar-width': 'none' },
-          }}
+  '&::-webkit-scrollbar': { display: 'none' },
+  // CHANGE THESE TWO LINES:
+  '&': { msOverflowStyle: 'none', scrollbarWidth: 'none' }, 
+}}
         >
           {step === 1 ? (
             <VStack spacing={8} p={{ base: 8, md: 12 }} align="center" justify="center" minH="400px">
