@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
   Button,
@@ -13,7 +12,6 @@ import {
   Input,
   Checkbox,
   FormControl,
-  FormLabel,
   InputGroup,
   InputRightElement,
   Icon,
@@ -21,9 +19,22 @@ import {
   useToast,
   Select,
   Box,
-  Divider,
+  SimpleGrid,
+  Progress,
+  GridItem,
 } from '@chakra-ui/react';
 import { FaUser, FaTools, FaEye, FaEyeSlash, FaCheckCircle, FaTimesCircle, FaArrowLeft } from 'react-icons/fa';
+
+const initialFormState = {
+  name: '',
+  phone: '',
+  email: '',
+  locality: '',
+  pincode: '',
+  state: '',
+  password: '',
+  agreed: false
+};
 
 const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState(1);
@@ -40,18 +51,20 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi", "Mumbai"
   ];
 
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    locality: '',
-    pincode: '',
-    state: '',
-    password: '',
-    agreed: false
-  });
+  const [formData, setFormData] = useState(initialFormState);
 
-  // FIX: Derived state (No useEffect needed, solves the error)
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        setStep(1);
+        setFormData(initialFormState);
+        setConfirmPassword('');
+        setRole('');
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   const passwordsMatch = confirmPassword && formData.password && confirmPassword === formData.password;
 
   const handleInputChange = (e) => {
@@ -62,14 +75,27 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     }));
   };
 
+  const getPasswordStrength = (pass) => {
+    let score = 0;
+    if (pass.length > 5) score++;
+    if (/[A-Z]/.test(pass)) score++;
+    if (/[a-z]/.test(pass)) score++;
+    if (/[0-9]/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass)) score++;
+    return score;
+  };
+
+  const strengthScore = getPasswordStrength(formData.password);
+  const strengthColor = strengthScore < 3 ? "red" : strengthScore < 5 ? "orange" : "green";
+  const strengthLabel = strengthScore < 3 ? "Weak" : strengthScore < 5 ? "Medium" : "Strong";
+  
   const validatePassword = (pass) => {
-    // Uppercase, Lowercase, Number/Special Char
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d|.*[!@#$%^&*])/.test(pass);
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d|.*[!@#$%^&*]).{6,}$/.test(pass);
   };
 
   const isFormValid = 
     formData.name.trim() !== '' &&
-    formData.phone.length >= 10 &&
+    formData.phone.trim().length >= 10 &&
     formData.locality.trim() !== '' &&
     formData.pincode.trim() !== '' &&
     formData.state !== '' &&
@@ -78,12 +104,10 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     formData.agreed;
 
   const handleSubmit = () => {
-    // Pass the user name back to parent to show Profile Icon
     onLoginSuccess({ name: formData.name, role: role });
-    
     toast({ 
-      title: "Welcome aboard!", 
-      description: `You are now signed in as ${formData.name}`, 
+      title: "Welcome Onboard!", 
+      description: `Your account as a ${role === 'service' ? 'Service Partner' : 'Vehicle Owner'} has been created successfully.`, 
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -92,23 +116,32 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     onClose();
   };
 
-  // Card Style (Compact & Cyan Theme)
   const cardStyle = {
-    bg: "rgba(10, 15, 30, 0.95)", // Deep Navy
+    bg: "linear-gradient(145deg, #0f172a 0%, #1e293b 100%)",
     backdropFilter: "blur(20px)",
-    border: "1px solid rgba(0, 245, 255, 0.2)",
-    boxShadow: "0 0 40px rgba(0,0,0,0.8), 0 0 10px rgba(0,255,255,0.1)",
+    border: "1px solid",
+    borderColor: "rgba(100, 200, 255, 0.15)",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(59, 130, 246, 0.15)",
     color: "white",
   };
 
-  // Input Style
   const inputStyle = {
-    bg: "rgba(255,255,255,0.03)",
-    border: "1px solid rgba(255,255,255,0.05)",
-    _focus: { borderColor: "cyan.400", bg: "rgba(0,255,255,0.05)", boxShadow: "0 0 8px rgba(0,255,255,0.2)" },
-    _hover: { bg: "rgba(255,255,255,0.06)" },
+    bg: "rgba(30, 41, 59, 0.5)",
+    border: "1px solid",
+    borderColor: "rgba(148, 163, 184, 0.2)",
+    _focus: { 
+      borderColor: "rgb(59, 130, 246)", 
+      bg: "rgba(30, 41, 59, 0.7)", 
+      boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.1)" 
+    },
+    _hover: { 
+      borderColor: "rgba(148, 163, 184, 0.3)",
+      bg: "rgba(30, 41, 59, 0.6)" 
+    },
     fontSize: "sm",
-    borderRadius: "md"
+    borderRadius: "lg",
+    color: "white",
+    h: "44px"
   };
 
   return (
@@ -116,147 +149,288 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
       isOpen={isOpen} 
       onClose={onClose} 
       isCentered 
-      size="sm" // Compact size
-      scrollBehavior="inside" // Prevents overflow on small screens
+      size={step === 1 ? "2xl" : "xl"}
+      scrollBehavior="inside"
     >
-      <ModalOverlay bg="rgba(0, 0, 0, 0.85)" backdropFilter="blur(5px)" />
+      <ModalOverlay bg="rgba(0, 0, 0, 0.9)" backdropFilter="blur(8px)" />
       
-      <ModalContent {...cardStyle} borderRadius="2xl" my="auto">
-        <ModalCloseButton zIndex={10} />
+      <ModalContent 
+        {...cardStyle} 
+        borderRadius="3xl" 
+        my="auto"
+        maxH="95vh"
+        overflow="hidden"
+      >
+        <ModalCloseButton 
+          zIndex={10} 
+          color="gray.400" 
+          _hover={{ bg: "whiteAlpha.200", color: "white" }}
+          size="lg"
+        />
         
-        <ModalBody p={0}>
+        <ModalBody 
+          p={0}
+          sx={{
+            '&::-webkit-scrollbar': { display: 'none' },
+            '&': { '-ms-overflow-style': 'none', 'scrollbar-width': 'none' },
+          }}
+        >
           {step === 1 ? (
-            // STEP 1: ROLE SELECTION
-            <VStack spacing={6} p={8} align="center" justify="center" minH="400px">
+            <VStack spacing={8} p={{ base: 8, md: 12 }} align="center" justify="center" minH="400px">
               <VStack spacing={2}>
-                <Text fontSize="2xl" fontWeight="800" letterSpacing="tight">
-                  Welcome to <Text as="span" color="cyan.400">CarCare</Text>
+                <Text 
+                  fontSize={{ base: "3xl", md: "4xl" }} 
+                  fontWeight="800" 
+                  letterSpacing="tight"
+                  bgGradient="linear(to-r, cyan.300, blue.500)"
+                  bgClip="text"
+                >
+                  Welcome to CarCare.AI
                 </Text>
-                <Text fontSize="sm" color="gray.400">Choose your account type</Text>
+                <Text fontSize="md" color="gray.400" fontWeight="500">
+                  Select your account type to get started
+                </Text>
               </VStack>
 
-              <VStack w="full" spacing={4}>
+              <VStack spacing={4} w="full" maxW="600px">
                 <RoleCard 
                   icon={FaUser} 
-                  title="Vehicle Owner" 
-                  desc="I want to book services"
+                  title="Individual Account" 
+                  desc="For vehicle owners seeking maintenance services"
                   onClick={() => { setRole('user'); setStep(2); }} 
                 />
                 <RoleCard 
                   icon={FaTools} 
                   title="Service Partner" 
-                  desc="I own a garage/station"
+                  desc="For garages and service stations"
                   onClick={() => { setRole('service'); setStep(2); }} 
                 />
               </VStack>
+
+              <HStack spacing={1} pt={4}>
+                <Text fontSize="sm" color="gray.500" fontWeight="500">
+                  Already have an account?
+                </Text>
+                <Button 
+                  variant="link" 
+                  color="blue.400" 
+                  fontSize="sm" 
+                  fontWeight="600"
+                  _hover={{ color: "blue.300" }}
+                >
+                  Sign In
+                </Button>
+              </HStack>
             </VStack>
           ) : (
-            // STEP 2: REGISTRATION FORM
             <Box>
-              {/* Header */}
-              <HStack p={6} pb={2} justify="space-between" align="center">
+              <HStack 
+                px={6} 
+                py={4} 
+                justify="space-between" 
+                align="center" 
+                borderBottom="1px solid" 
+                borderColor="whiteAlpha.200"
+                bg="rgba(30, 41, 59, 0.3)"
+              >
                 <IconButton 
                   icon={<FaArrowLeft />} 
                   variant="ghost" 
-                  color="cyan.400" 
+                  color="blue.400" 
                   size="sm" 
                   onClick={() => setStep(1)}
-                  _hover={{ bg: "whiteAlpha.100" }}
+                  _hover={{ bg: "whiteAlpha.200" }}
                 />
-                <Text fontSize="lg" fontWeight="bold">Create Account</Text>
-                <Box w={8} /> {/* Spacer for centering */}
+                <Text fontSize="lg" fontWeight="700" color="gray.100">
+                  {role === 'service' ? 'Service Partner Registration' : 'Individual Registration'}
+                </Text>
+                <Box w={8} /> 
               </HStack>
               
-              <Divider borderColor="whiteAlpha.100" />
-
-              {/* Form Fields */}
               <VStack spacing={4} p={6} align="stretch">
-                
-                <FormControl isRequired>
-                  <Input name="name" placeholder="Full Name" {...inputStyle} onChange={handleInputChange} />
-                </FormControl>
+                <SimpleGrid columns={2} spacing={3} w="full">
+                  
+                  <GridItem colSpan={2}>
+                    <FormControl isRequired>
+                      <Input 
+                        name="name" 
+                        value={formData.name}
+                        placeholder={role === 'service' ? "Garage / Station Name" : "Full Name"} 
+                        {...inputStyle} 
+                        onChange={handleInputChange} 
+                      />
+                    </FormControl>
+                  </GridItem>
 
-                <HStack>
                   <FormControl isRequired>
-                    <Input name="phone" type="number" placeholder="WhatsApp No." {...inputStyle} onChange={handleInputChange} />
+                    <Input 
+                      name="phone" 
+                      value={formData.phone}
+                      type="number" 
+                      placeholder="WhatsApp Number" 
+                      {...inputStyle} 
+                      onChange={handleInputChange} 
+                    />
                   </FormControl>
+
                   <FormControl>
-                     <Input name="email" type="email" placeholder="Email (Opt)" {...inputStyle} onChange={handleInputChange} />
+                     <Input 
+                       name="email" 
+                       value={formData.email}
+                       type="email" 
+                       placeholder="Email (Optional)" 
+                       {...inputStyle} 
+                       onChange={handleInputChange} 
+                     />
                   </FormControl>
-                </HStack>
 
-                <HStack>
                   <FormControl isRequired>
-                    <Input name="locality" placeholder="Locality" {...inputStyle} onChange={handleInputChange} />
-                  </FormControl>
-                  <FormControl isRequired w="40%">
-                    <Input name="pincode" placeholder="Pin" type="number" {...inputStyle} onChange={handleInputChange} />
-                  </FormControl>
-                </HStack>
-
-                <FormControl isRequired>
-                  <Select 
-                    name="state" 
-                    placeholder="Select State" 
-                    {...inputStyle}
-                    onChange={handleInputChange}
-                    sx={{ '> option': { background: '#0a1929', color: 'white' } }}
-                  >
-                    {indianStates.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </Select>
-                </FormControl>
-
-                <FormControl isRequired>
-                  <InputGroup>
                     <Input 
-                      name="password"
-                      placeholder="Password (Abc@123)"
-                      type={showPassword ? "text" : "password"} 
-                      {...inputStyle}
-                      onChange={handleInputChange}
+                      name="locality" 
+                      value={formData.locality}
+                      placeholder="Area / Locality" 
+                      {...inputStyle} 
+                      onChange={handleInputChange} 
                     />
-                    <InputRightElement width="3rem">
-                      <IconButton h="1.5rem" size="sm" variant="link" color="gray.400" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? <FaEyeSlash /> : <FaEye />} />
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
+                  </FormControl>
 
-                <FormControl isRequired>
-                  <InputGroup>
+                  <FormControl isRequired>
                     <Input 
-                      placeholder="Confirm Password"
-                      type="password"
-                      {...inputStyle}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      name="pincode" 
+                      value={formData.pincode}
+                      placeholder="Pincode" 
+                      type="number" 
+                      {...inputStyle} 
+                      onChange={handleInputChange} 
                     />
-                    <InputRightElement>
-                      {confirmPassword && (
-                        <Icon as={passwordsMatch ? FaCheckCircle : FaTimesCircle} color={passwordsMatch ? "green.400" : "red.400"} />
+                  </FormControl>
+
+                  <GridItem colSpan={2}>
+                    <FormControl isRequired>
+                      <Select 
+                        name="state" 
+                        value={formData.state}
+                        placeholder="Select State" 
+                        {...inputStyle}
+                        onChange={handleInputChange}
+                        sx={{ '> option': { background: '#1e293b', color: 'white' } }}
+                      >
+                        {indianStates.map((s) => <option key={s} value={s}>{s}</option>)}
+                      </Select>
+                    </FormControl>
+                  </GridItem>
+
+                  <GridItem colSpan={2}>
+                    <FormControl isRequired>
+                      <InputGroup>
+                        <Input 
+                          name="password"
+                          value={formData.password}
+                          placeholder="Create Password"
+                          type={showPassword ? "text" : "password"} 
+                          {...inputStyle}
+                          onChange={handleInputChange}
+                        />
+                        <InputRightElement width="3rem" h="44px">
+                          <IconButton 
+                            h="1.75rem" 
+                            size="sm" 
+                            variant="ghost" 
+                            color="gray.400" 
+                            onClick={() => setShowPassword(!showPassword)} 
+                            icon={showPassword ? <FaEyeSlash /> : <FaEye />}
+                            _hover={{ color: "white", bg: "whiteAlpha.200" }}
+                          />
+                        </InputRightElement>
+                      </InputGroup>
+                      {formData.password && (
+                        <Box mt={2}>
+                          <Progress 
+                            value={(strengthScore / 5) * 100} 
+                            size="xs" 
+                            colorScheme={strengthColor} 
+                            borderRadius="full" 
+                            bg="whiteAlpha.200"
+                          />
+                          <HStack justify="space-between" mt={1}>
+                            <Text fontSize="10px" color={`${strengthColor}.400`} fontWeight="600">
+                              {strengthLabel}
+                            </Text>
+                            {strengthScore < 5 && (
+                              <Text fontSize="9px" color="gray.500">
+                                Mix upper, lower, numbers & symbols
+                              </Text>
+                            )}
+                          </HStack>
+                        </Box>
                       )}
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
+                    </FormControl>
+                  </GridItem>
+
+                  <GridItem colSpan={2}>
+                    <FormControl isRequired>
+                      <InputGroup>
+                        <Input 
+                          placeholder="Confirm Password"
+                          type="password"
+                          value={confirmPassword}
+                          {...inputStyle}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                        <InputRightElement h="44px">
+                          {confirmPassword && (
+                            <Icon 
+                              as={passwordsMatch ? FaCheckCircle : FaTimesCircle} 
+                              color={passwordsMatch ? "green.400" : "red.400"} 
+                              boxSize={4}
+                            />
+                          )}
+                        </InputRightElement>
+                      </InputGroup>
+                    </FormControl>
+                  </GridItem>
+
+                </SimpleGrid>
 
                 <Checkbox 
                   name="agreed" 
-                  colorScheme="cyan" 
+                  isChecked={formData.agreed}
+                  colorScheme="blue" 
                   size="sm" 
                   onChange={handleInputChange}
-                  pt={2}
+                  sx={{
+                    '.chakra-checkbox__control': {
+                      borderColor: 'rgba(148, 163, 184, 0.3)',
+                      bg: 'rgba(30, 41, 59, 0.5)'
+                    }
+                  }}
                 >
-                  <Text fontSize="xs" color="gray.400">I agree to Terms & Conditions</Text>
+                  <Text fontSize="xs" color="gray.400">
+                    I agree to the Terms & Conditions and Privacy Policy
+                  </Text>
                 </Checkbox>
 
                 <Button 
                   w="full" 
-                  h="45px"
-                  mt={2}
-                  bg={isFormValid ? "linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%)" : "whiteAlpha.100"}
-                  color={isFormValid ? "white" : "whiteAlpha.400"}
+                  h="48px"
+                  bg={isFormValid 
+                    ? "linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)" 
+                    : "rgba(71, 85, 105, 0.5)"
+                  }
+                  color={isFormValid ? "white" : "rgba(148, 163, 184, 0.5)"}
                   cursor={isFormValid ? "pointer" : "not-allowed"}
-                  _hover={isFormValid ? { transform: "translateY(-1px)", boxShadow: "0 0 15px rgba(0,210,255,0.4)" } : {}}
-                  transition="all 0.3s"
+                  _hover={isFormValid ? { 
+                    transform: "translateY(-2px)", 
+                    boxShadow: "0 10px 40px -10px rgba(59, 130, 246, 0.6)",
+                    bg: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%)"
+                  } : {}}
+                  transition="all 0.3s ease"
                   onClick={isFormValid ? handleSubmit : undefined}
+                  isDisabled={!isFormValid}
+                  fontSize="md"
+                  fontWeight="700"
+                  borderRadius="xl"
+                  mt={2}
                 >
                   Create Account
                 </Button>
@@ -270,25 +444,45 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   );
 };
 
-// Sub-component for Role Selection
 const RoleCard = ({ icon, title, desc, onClick }) => (
-  <HStack 
-    w="full" 
-    p={4} 
-    bg="whiteAlpha.50" 
-    borderRadius="xl" 
+  <HStack
+    as="button"
+    p={6} 
+    bg="rgba(30, 41, 59, 0.5)" 
+    borderRadius="2xl" 
+    border="1px solid"
+    borderColor="rgba(148, 163, 184, 0.2)"
     cursor="pointer" 
-    transition="all 0.2s"
-    border="1px solid transparent"
-    _hover={{ bg: "whiteAlpha.100", borderColor: "cyan.500", transform: "scale(1.02)" }}
+    transition="all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)"
+    _hover={{ 
+      bg: "linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%)", 
+      borderColor: "rgb(59, 130, 246)", 
+      transform: "translateY(-4px) scale(1.02)",
+      boxShadow: "0 20px 40px -15px rgba(59, 130, 246, 0.4)"
+    }}
     onClick={onClick}
+    w="full"
+    align="center"
+    spacing={5}
   >
-    <Box p={3} bg="rgba(0,255,255,0.1)" borderRadius="lg" color="cyan.400">
-      <Icon as={icon} boxSize={5} />
+    <Box 
+      p={4} 
+      bg="linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.15) 100%)" 
+      borderRadius="xl" 
+      color="blue.400"
+      border="1px solid"
+      borderColor="rgba(59, 130, 246, 0.3)"
+    >
+      <Icon as={icon} boxSize={7} />
     </Box>
-    <VStack align="start" spacing={0}>
-      <Text fontWeight="bold" fontSize="md">{title}</Text>
-      <Text fontSize="xs" color="gray.500">{desc}</Text>
+
+    <VStack align="start" spacing={0.5} flex={1}>
+      <Text fontWeight="700" fontSize="xl" color="white" letterSpacing="tight">
+        {title}
+      </Text>
+      <Text fontSize="sm" color="gray.400" fontWeight="500">
+        {desc}
+      </Text>
     </VStack>
   </HStack>
 );

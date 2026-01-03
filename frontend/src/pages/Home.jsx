@@ -746,7 +746,7 @@ const Home = () => {
                 color="white"
                 letterSpacing="tight"
               >
-                Operational Workflow
+                How CarCare AI Works?
               </Heading>
 
               <VStack spacing={0} w="100%">
