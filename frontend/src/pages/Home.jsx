@@ -9,6 +9,9 @@ import {
   SimpleGrid,
   Icon,
   useToast, // Import Toast for error handling
+  VStack, // <--- ADDED
+  HStack, // <--- ADDED
+  Flex,   // <--- ADDED
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import {
@@ -17,7 +20,12 @@ import {
   FaCogs,
   FaDatabase,
   FaRobot,
-  FaMapMarkerAlt, // Added icon for loading state
+  FaMapMarkerAlt,
+  FaUserPlus,       // Registration
+  FaMapMarkedAlt,   // Geo Location
+  FaSyncAlt,        // Parts Sync
+  FaFileInvoiceDollar, // Pricing
+  FaChevronDown, // Added icon for loading state
 } from "react-icons/fa";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -31,6 +39,12 @@ const blink = keyframes`
   0% { opacity: 1; box-shadow: 0 0 10px #48BB78; }
   50% { opacity: 0.4; box-shadow: 0 0 2px #48BB78; }
   100% { opacity: 1; box-shadow: 0 0 10px #48BB78; }
+`;
+
+const blinkRed = keyframes`
+  0% { opacity: 1; box-shadow: 0 0 10px #F56565; }
+  50% { opacity: 0.4; box-shadow: 0 0 2px #F56565; }
+  100% { opacity: 1; box-shadow: 0 0 10px #F56565; }
 `;
 
 // ============================================================================
@@ -62,7 +76,7 @@ const TypewriterText = () => {
       if (index < fullText.length) {
         setDisplayedText(fullText.slice(0, index + 1));
         index++;
-        const randomDelay = Math.random() * 100 + 50; 
+        const randomDelay = Math.random() * 100 + 50;
         timeoutId = setTimeout(type, randomDelay);
       }
     };
@@ -77,17 +91,17 @@ const TypewriterText = () => {
         as="span"
         bgGradient="linear(to-b, white, gray.600)"
         bgClip="text"
-        color="transparent" 
+        color="transparent"
       >
         {displayedText}
       </Text>
       <Box
         as="span"
         ml={2}
-        w="4px" 
-        h="0.9em" 
+        w="4px"
+        h="0.9em"
         bg="gray.500"
-        animation={`${blink} 0.9s step-end infinite`} 
+        animation={`${blink} 0.9s step-end infinite`}
       />
     </Box>
   );
@@ -98,74 +112,105 @@ const Home = () => {
   const wrapperRef = useRef(null);
   const carRef = useRef(null);
   const [pathData, setPathData] = useState("");
-  
+
   // -- NEW STATE FOR LOCATION --
   const [isLocating, setIsLocating] = useState(false);
   const toast = useToast();
 
-// -- LOCATION HANDLER (UPDATED) --
-const handleLocateService = () => {
-  if (!navigator.geolocation) {
-    toast({
-      title: "Error",
-      description: "Geolocation is not supported by your browser.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-    return;
-  }
+  // --- NEW: SERVER STATUS CHECK ---
+  const [isServerOnline, setIsServerOnline] = useState(false);
 
-  setIsLocating(true);
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      
-      // Success! Redirect to Google Maps
-      const query = "car service stations near me";
-      // Using the official Google Maps search URL format
-      const mapUrl = `https://www.google.com/maps/search/${query}/@${latitude},${longitude},13z`;
-      
-      setIsLocating(false);
-      window.open(mapUrl, "_blank");
-    },
-    (error) => {
-      setIsLocating(false);
-      let errorMessage = "Unable to retrieve your location.";
-      
-      // Detailed error handling
-      switch(error.code) {
-          case error.PERMISSION_DENIED:
-              errorMessage = "Location permission denied. Please enable it in your browser settings.";
-              break;
-          case error.POSITION_UNAVAILABLE:
-              errorMessage = "Location information is unavailable.";
-              break;
-          case error.TIMEOUT:
-              errorMessage = "The request to get your location timed out. Please try again.";
-              break;
-          default:
-              errorMessage = "An unknown error occurred.";
-              break;
+  React.useEffect(() => {
+    const checkServerStatus = async () => {
+      try {
+        // Attempt to fetch from your backend (using port 5001 as established)
+        // We use a simple fetch to the root or any lightweight endpoint
+        const response = await fetch("http://127.0.0.1:5001/");
+        if (response.ok) {
+          setIsServerOnline(true);
+        } else {
+          setIsServerOnline(false);
+        }
+      } catch (error) {
+        console.error("Server check failed:", error);
+        setIsServerOnline(false);
       }
+    };
 
+    // Check immediately on load
+    checkServerStatus();
+
+    // Poll every 5 seconds to keep status updated
+    const intervalId = setInterval(checkServerStatus, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // -- LOCATION HANDLER (UPDATED) --
+  const handleLocateService = () => {
+    if (!navigator.geolocation) {
       toast({
-        title: "Location Error",
-        description: errorMessage,
+        title: "Error",
+        description: "Geolocation is not supported by your browser.",
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       });
-    },
-    // -- UPDATED OPTIONS --
-    {
-      enableHighAccuracy: false, // Set to false for faster, rough location (WiFi/IP)
-      timeout: 30000,            // Wait 30 seconds before timing out
-      maximumAge: 60000          // Accept a cached location if it is less than 1 minute old
+      return;
     }
-  );
-};
+
+    setIsLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        // Success! Redirect to Google Maps
+        const query = "car service stations near me";
+        // Using the official Google Maps search URL format
+        const mapUrl = `https://www.google.com/maps/search/${query}/@${latitude},${longitude},13z`;
+
+        setIsLocating(false);
+        window.open(mapUrl, "_blank");
+      },
+      (error) => {
+        setIsLocating(false);
+        let errorMessage = "Unable to retrieve your location.";
+
+        // Detailed error handling
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage =
+              "Location permission denied. Please enable it in your browser settings.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage =
+              "The request to get your location timed out. Please try again.";
+            break;
+          default:
+            errorMessage = "An unknown error occurred.";
+            break;
+        }
+
+        toast({
+          title: "Location Error",
+          description: errorMessage,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+      // -- UPDATED OPTIONS --
+      {
+        enableHighAccuracy: false, // Set to false for faster, rough location (WiFi/IP)
+        timeout: 30000, // Wait 30 seconds before timing out
+        maximumAge: 60000, // Accept a cached location if it is less than 1 minute old
+      }
+    );
+  };
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -261,11 +306,11 @@ const handleLocateService = () => {
         const amplitude = width > 768 ? width * 0.18 : width * 0.3;
 
         const points = [];
-        const steps = 500; 
+        const steps = 500;
         for (let i = 0; i <= steps; i++) {
           const p = i / steps;
           const px = getRoadX(p, centerX, amplitude);
-          const py = getRoadY(p, height); 
+          const py = getRoadY(p, height);
           points.push(`${px},${py}`);
         }
         setPathData(`M${points.join(" L")}`);
@@ -281,7 +326,7 @@ const handleLocateService = () => {
             trigger: wrapperRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.5, 
+            scrub: 1.5,
           },
           onUpdate: () => {
             const p = progressObj.val;
@@ -354,7 +399,7 @@ const handleLocateService = () => {
         <Container maxW="container.xl" className="hero-content">
           <Box className="hero-top-content">
             <Stack spacing={6} textAlign="center" alignItems="center">
-              {/* BADGE */}
+              {/* BADGE (DYNAMIC) */}
               <Box
                 className="hero-animate"
                 display="inline-flex"
@@ -362,31 +407,51 @@ const handleLocateService = () => {
                 justifyContent="center"
                 px={4}
                 py={2}
-                bg="rgba(0, 20, 0, 0.6)"
+                // Dynamic Background: Green tint if online, Red tint if offline
+                bg={
+                  isServerOnline ? "rgba(0, 20, 0, 0.6)" : "rgba(20, 0, 0, 0.6)"
+                }
                 border="1px solid"
-                borderColor="green.500"
+                // Dynamic Border: Green if online, Red if offline
+                borderColor={isServerOnline ? "green.500" : "red.500"}
                 borderRadius="sm"
-                boxShadow="0 0 20px rgba(72, 187, 120, 0.3), inset 0 0 10px rgba(72, 187, 120, 0.1)"
+                // Dynamic Glow
+                boxShadow={
+                  isServerOnline
+                    ? "0 0 20px rgba(72, 187, 120, 0.3), inset 0 0 10px rgba(72, 187, 120, 0.1)"
+                    : "0 0 20px rgba(245, 101, 101, 0.3), inset 0 0 10px rgba(245, 101, 101, 0.1)"
+                }
                 backdropFilter="blur(5px)"
+                transition="all 0.3s ease"
               >
                 <Box
                   w="8px"
                   h="8px"
-                  bg="green.400"
+                  bg={isServerOnline ? "green.400" : "red.400"}
                   borderRadius="full"
                   mr={3}
-                  animation={`${blink} 1.5s infinite ease-in-out`}
+                  // UPDATE THIS ANIMATION LINE:
+                  animation={
+                    isServerOnline
+                      ? `${blink} 1.5s infinite ease-in-out`
+                      : `${blinkRed} 1.5s infinite ease-in-out` // <--- Changed from "none" to blinkRed
+                  }
                 />
                 <Text
                   fontSize={{ base: "xs", md: "sm" }}
                   letterSpacing="0.2em"
                   fontWeight="bold"
-                  color="green.400"
+                  // Dynamic Text Color
+                  color={isServerOnline ? "green.400" : "red.400"}
                   textTransform="uppercase"
                   fontFamily="'Courier New', Courier, monospace"
-                  textShadow="0 0 8px rgba(72, 187, 120, 0.8)"
+                  textShadow={
+                    isServerOnline
+                      ? "0 0 8px rgba(72, 187, 120, 0.8)"
+                      : "0 0 8px rgba(245, 101, 101, 0.8)"
+                  }
                 >
-                  Server Online
+                  {isServerOnline ? "Server Online" : "Server Offline"}
                 </Text>
               </Box>
 
@@ -669,6 +734,188 @@ const handleLocateService = () => {
               </SimpleGrid>
             </Stack>
           </Box>
+
+          {/* --- START: HOW IT WORKS (FLOWCHART TIMELINE) --- */}
+          <Box py={20} position="relative" zIndex="10">
+            <Container maxW="container.md">
+              <Heading
+                className="gsap-slide-up"
+                textAlign="center"
+                size="2xl"
+                mb={16}
+                color="white"
+                letterSpacing="tight"
+              >
+                Operational Workflow
+              </Heading>
+
+              <VStack spacing={0} w="100%">
+                
+                {/* STEP 1: REGISTRATION */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="linear-gradient(135deg, #0987A0 0%, #00B5D8 100%)"
+                        color="white"
+                        boxShadow="0 0 20px rgba(0, 181, 216, 0.4)"
+                        zIndex="2"
+                      >
+                        <Icon as={FaUserPlus} w={6} h={6} />
+                      </Box>
+                      {/* Vertical Connector Line */}
+                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                    </Flex>
+                    <Box pb={10}>
+                      <Heading size="md" color="cyan.300" mb={2}>
+                        01. Ecosystem Onboarding
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        The journey begins with the creation of digital identities. 
+                        Service stations register their facilities, cataloging their specific 
+                        capabilities and inventory systems, while vehicle owners create 
+                        profiles that lock in their car's make, model, and mileage data 
+                        for personalized service matching.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                {/* STEP 2: GEOLOCATION */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="gray.800"
+                        border="1px solid"
+                        borderColor="cyan.500"
+                        color="cyan.400"
+                        zIndex="2"
+                      >
+                        <Icon as={FaMapMarkedAlt} w={6} h={6} />
+                      </Box>
+                      {/* Vertical Connector Line */}
+                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                    </Flex>
+                    <Box pb={10}>
+                      <Heading size="md" color="white" mb={2}>
+                        02. Geospatial Availability
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        Upon initiation, our algorithm scans the immediate vicinity. 
+                        It doesn't just look for open garages; it filters for 
+                        <strong> real-time slot availability</strong>, ensuring that 
+                        when a user books a service, the bay is actually empty and 
+                        ready for their vehicle arrival.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                {/* STEP 3: PARTS SYNC */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="gray.800"
+                        border="1px solid"
+                        borderColor="cyan.500"
+                        color="cyan.400"
+                        zIndex="2"
+                      >
+                        <Icon as={FaSyncAlt} w={6} h={6} />
+                      </Box>
+                      {/* Vertical Connector Line */}
+                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                    </Flex>
+                    <Box pb={10}>
+                      <Heading size="md" color="white" mb={2}>
+                        03. Inventory Synchronization
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        This is our core differentiator. The system performs a handshake 
+                        with local garage databases. We cross-reference the required repairs 
+                        against physical stock levels, ensuring that the specific brake pads, 
+                        filters, or spark plugs needed for your car are physically on the shelf.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                {/* STEP 4: CARLO BOT */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="gray.800"
+                        border="1px solid"
+                        borderColor="cyan.500"
+                        color="cyan.400"
+                        zIndex="2"
+                      >
+                        <Icon as={FaRobot} w={6} h={6} />
+                      </Box>
+                      {/* Vertical Connector Line */}
+                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                    </Flex>
+                    <Box pb={10}>
+                      <Heading size="md" color="white" mb={2}>
+                        04. AI-Driven Diagnostics
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        For complex or unknown issues, users interact with <strong>Carlo Bot</strong>. 
+                        Trained on thousands of technical manuals, Carlo analyzes symptoms 
+                        (sounds, vibrations, warning lights) to predict potential fault codes 
+                        before a mechanic even lifts the hood.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                {/* STEP 5: PRICING */}
+                <Box className="gsap-slide-up" w="100%">
+                  <HStack align="start" spacing={6}>
+                    <Flex direction="column" align="center">
+                      <Box
+                        p={4}
+                        borderRadius="full"
+                        bg="gray.800"
+                        border="1px solid"
+                        borderColor="green.400"
+                        color="green.400"
+                        boxShadow="0 0 15px rgba(72, 187, 120, 0.3)"
+                        zIndex="2"
+                      >
+                        <Icon as={FaFileInvoiceDollar} w={6} h={6} />
+                      </Box>
+                      {/* No connector line for the last item */}
+                    </Flex>
+                    <Box pb={0}>
+                      <Heading size="md" color="green.300" mb={2}>
+                        05. Valuation & Execution
+                      </Heading>
+                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                        Finally, our ML Price Estimator calculates a transparent cost range 
+                        based on labor rates and part prices. The user confirms the booking, 
+                        secures the slot, and navigates to the station with total confidence 
+                        in the cost and turnaround time.
+                      </Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+              </VStack>
+            </Container>
+          </Box>
+          {/* --- END: HOW IT WORKS --- */}
 
           {/* B. VISION & GOALS SECTION */}
           <Box py={24}>
