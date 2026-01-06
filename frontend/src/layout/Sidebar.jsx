@@ -17,7 +17,7 @@ import {
   Avatar,
   HStack,
 } from '@chakra-ui/react';
-import { FaBars, FaHome, FaSearch, FaWrench, FaUserCircle, FaCog, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+import { FaBars, FaSearch, FaWrench, FaUserCircle, FaCog, FaSignInAlt, FaSignOutAlt, FaPhone, FaCalendarCheck } from 'react-icons/fa';
 
 // 1. IMPORT THE AUTH MODAL
 import AuthModal from '../components/AuthModal'; // Ensure path is correct based on your folder structure
@@ -52,10 +52,11 @@ const Sidebar = () => {
   };
 
   const navItems = [
-    { icon: FaHome, label: "Home" },
-    { icon: FaSearch, label: "Find Services" },
-    { icon: FaWrench, label: "My Garage" },
     { icon: FaUserCircle, label: "Profile" },
+    { icon: FaWrench, label: "My Garage" },
+    { icon: FaSearch, label: "Find Services" },
+    { icon: FaCalendarCheck, label: "Book Appointment" },
+    { icon: FaPhone, label: "Help Centre" },
     { icon: FaCog, label: "Settings" },
   ];
 
