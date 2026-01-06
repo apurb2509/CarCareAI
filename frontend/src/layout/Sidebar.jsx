@@ -86,12 +86,13 @@ const Sidebar = () => {
 
       {/* 2. THE DRAWER */}
       <Drawer
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        finalFocusRef={btnRef}
-        blockScrollOnMount={false} 
-      >
+  isOpen={isOpen}
+  placement="left"
+  onClose={onClose}
+  finalFocusRef={btnRef}
+  blockScrollOnMount={false}
+  motionPreset="slideInLeft"
+>
         {/* Soft Dark Overlay */}
         <DrawerOverlay 
           backdropFilter="blur(8px)" 
@@ -99,14 +100,19 @@ const Sidebar = () => {
           transition={smoothTransition}
         />
 
-        <DrawerContent 
-          // Glassmorphism Background
-          bg="rgba(15, 15, 15, 0.85)" 
-          backdropFilter="blur(24px)"
-          boxShadow="0 0 40px rgba(0,0,0,0.5)"
-          borderRight="1px solid rgba(255,255,255,0.05)"
-          maxW={{ base: "100vw", md: "320px" }} 
-        >
+        <DrawerContent
+  bg="rgba(15, 15, 15, 0.85)"
+  backdropFilter="blur(24px)"
+  boxShadow="0 0 40px rgba(0,0,0,0.5)"
+  borderRight="1px solid rgba(255,255,255,0.05)"
+  maxW={{ base: "100vw", md: "320px" }}
+  motionProps={{
+    transition: {
+      duration: 0.45,
+      ease: [0.4, 0.0, 0.6, 1],
+    },
+  }}
+>
           <DrawerCloseButton 
             color="whiteAlpha.600" 
             size="lg" 
