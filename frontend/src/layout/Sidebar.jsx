@@ -108,7 +108,7 @@ const Sidebar = () => {
   maxW={{ base: "100vw", md: "320px" }}
   motionProps={{
     transition: {
-      duration: 0.45,
+      duration: 0.6,
       ease: [0.4, 0.0, 0.6, 1],
     },
   }}
