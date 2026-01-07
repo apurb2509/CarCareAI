@@ -31,6 +31,11 @@ router.post('/register', async (req, res) => {
       res.status(201).json({
         _id: user._id,
         name: user.name,
+        email: user.email,
+        phone: user.phone,
+        locality: user.locality,
+        pincode: user.pincode,
+        state: user.state,
         role: user.role,
         message: 'Registration successful'
       });

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import {
   Box,
   VStack,
@@ -18,41 +18,35 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import { FaBars, FaSearch, FaWrench, FaUserCircle, FaCog, FaSignInAlt, FaSignOutAlt, FaPhone, FaCalendarCheck } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
-// 1. IMPORT THE AUTH MODAL
-import AuthModal from '../components/AuthModal'; // Ensure path is correct based on your folder structure
-
-const Sidebar = () => {
+const Sidebar = ({ onAuthOpen, onLogout }) => {
   // Primary disclosure for the Sidebar drawer
   const { isOpen, onOpen, onClose } = useDisclosure();
   
-  // 2. SECONDARY DISCLOSURE FOR THE AUTH MODAL
-  const { 
-    isOpen: isAuthOpen, 
-    onOpen: onAuthOpen, 
-    onClose: onAuthClose 
-  } = useDisclosure();
-
   const btnRef = useRef();
+  const navigate = useNavigate(); 
+  const { user } = useUser(); 
 
-  // --- USER STATE ---
-  const [user, setUser] = useState(null);
-
-  // --- REDIRECT / STEP MANAGEMENT STATE ---
-  const [initialAuthStep, setInitialAuthStep] = useState(1);
-  const [initialRole, setInitialRole] = useState('');
-
-  // --- LOGIN HANDLERS ---
-  const handleLoginSuccess = (userData) => {
-    setUser(userData); // { name: 'John', role: 'user' }
-  };
-
-  const handleLogout = () => {
-    setUser(null);
+  // LOGIC: specific redirect based on role
+  const handleProfileClick = () => {
+    if (user) {
+      if (user.role === 'service') {
+        navigate('/profile/service');
+      } else {
+        navigate('/profile/user');
+      }
+      onClose(); // Close sidebar after navigation
+    } else {
+      // If not logged in, close sidebar and open auth modal
+      onClose();
+      onAuthOpen(); 
+    }
   };
 
   const navItems = [
-    { icon: FaUserCircle, label: "Profile" },
+    { icon: FaUserCircle, label: "Profile", onClick: handleProfileClick },
     { icon: FaWrench, label: "My Garage" },
     { icon: FaSearch, label: "Find Services" },
     { icon: FaCalendarCheck, label: "Book Appointment" },
@@ -60,12 +54,11 @@ const Sidebar = () => {
     { icon: FaCog, label: "Settings" },
   ];
 
-  // Smooth custom transition curve
   const smoothTransition = "all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)";
 
   return (
     <>
-      {/* 1. HAMBURGER TRIGGER (Minimalist) */}
+      {/* HAMBURGER TRIGGER */}
       <IconButton
         ref={btnRef}
         icon={<FaBars />}
@@ -85,16 +78,15 @@ const Sidebar = () => {
         transition={smoothTransition}
       />
 
-      {/* 2. THE DRAWER */}
+      {/* DRAWER */}
       <Drawer
-  isOpen={isOpen}
-  placement="left"
-  onClose={onClose}
-  finalFocusRef={btnRef}
-  blockScrollOnMount={false}
-  motionPreset="slideInLeft"
->
-        {/* Soft Dark Overlay */}
+        isOpen={isOpen}
+        placement="left"
+        onClose={onClose}
+        finalFocusRef={btnRef}
+        blockScrollOnMount={false}
+        motionPreset="slideInLeft"
+      >
         <DrawerOverlay 
           backdropFilter="blur(8px)" 
           bg="rgba(0,0,0,0.4)" 
@@ -102,18 +94,15 @@ const Sidebar = () => {
         />
 
         <DrawerContent
-  bg="rgba(15, 15, 15, 0.85)"
-  backdropFilter="blur(24px)"
-  boxShadow="0 0 40px rgba(0,0,0,0.5)"
-  borderRight="1px solid rgba(255,255,255,0.05)"
-  maxW={{ base: "100vw", md: "320px" }}
-  motionProps={{
-    transition: {
-      duration: 0.6,
-      ease: [0.4, 0.0, 0.6, 1],
-    },
-  }}
->
+          bg="rgba(15, 15, 15, 0.85)"
+          backdropFilter="blur(24px)"
+          boxShadow="0 0 40px rgba(0,0,0,0.5)"
+          borderRight="1px solid rgba(255,255,255,0.05)"
+          maxW={{ base: "100vw", md: "320px" }}
+          motionProps={{
+            transition: { duration: 0.6, ease: [0.4, 0.0, 0.6, 1] },
+          }}
+        >
           <DrawerCloseButton 
             color="whiteAlpha.600" 
             size="lg" 
@@ -127,19 +116,11 @@ const Sidebar = () => {
             px={0} 
             display="flex" 
             flexDirection="column"
-            css={{
-              '&::-webkit-scrollbar': { display: 'none' }, 
-            }}
+            css={{ '&::-webkit-scrollbar': { display: 'none' } }}
           >
-            
-            {/* BRAND HEADER (Minimal) */}
+            {/* HEADER */}
             <Stack spacing={2} mb={12} px={10}>
-              <Text 
-                fontSize="2xl" 
-                fontWeight="700" 
-                color="white"
-                letterSpacing="-0.5px"
-              >
+              <Text fontSize="2xl" fontWeight="700" color="white" letterSpacing="-0.5px">
                 CarCareAI
               </Text>
               <Text color="whiteAlpha.400" fontSize="11px" fontWeight="600" letterSpacing="1px" textTransform="uppercase">
@@ -162,13 +143,7 @@ const Sidebar = () => {
                     rounded="none"
                     pl={10}
                     leftIcon={
-                      <Icon 
-                        as={item.icon} 
-                        color="whiteAlpha.500" 
-                        boxSize={4} 
-                        mr={4} 
-                        transition={smoothTransition}
-                      />
+                      <Icon as={item.icon} color="whiteAlpha.500" boxSize={4} mr={4} transition={smoothTransition} />
                     }
                     _hover={{ 
                       bg: "whiteAlpha.100", 
@@ -178,20 +153,19 @@ const Sidebar = () => {
                     }}
                     _active={{ bg: "whiteAlpha.200" }}
                     transition={smoothTransition}
-                    onClick={onClose}
+                    onClick={item.onClick || onClose} 
                   >
                     {item.label}
                   </Button>
-                  {/* Ultra-subtle divider */}
                   <Divider borderColor="whiteAlpha.5" />
                 </Box>
               ))}
             </VStack>
 
-            {/* FOOTER AREA (DYNAMIC: SIGN IN vs PROFILE) */}
+            {/* FOOTER AREA */}
             <Box px={10} mt="auto" mb={8}>
               {user ? (
-                // --- LOGGED IN STATE ---
+                // LOGGED IN
                 <HStack 
                   spacing={4} 
                   p={3} 
@@ -220,18 +194,16 @@ const Sidebar = () => {
                     variant="ghost"
                     color="red.400"
                     _hover={{ bg: "whiteAlpha.200", color: "red.300" }}
-                    onClick={handleLogout}
+                    onClick={onLogout}
                     aria-label="Logout"
                   />
                 </HStack>
               ) : (
-                // --- LOGGED OUT STATE ---
+                // LOGGED OUT
                 <Button 
                   onClick={() => {
-                    setInitialAuthStep(1); // Reset to default selection
-                    setInitialRole('');    // Reset role
-                    onClose();    // Closes sidebar
-                    onAuthOpen(); // Opens Auth Modal
+                    onClose();
+                    onAuthOpen(); 
                   }}
                   variant="outline" 
                   colorScheme="whiteAlpha"
@@ -242,11 +214,7 @@ const Sidebar = () => {
                   fontSize="sm"
                   fontWeight="500"
                   leftIcon={<FaSignInAlt />}
-                  _hover={{ 
-                    bg: "white", 
-                    color: "black", 
-                    borderColor: "white" 
-                  }}
+                  _hover={{ bg: "white", color: "black", borderColor: "white" }}
                   transition={smoothTransition}
                 >
                   Sign In / Sign Up
@@ -256,15 +224,6 @@ const Sidebar = () => {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-
-      {/* 3. THE AUTH MODAL */}
-      <AuthModal 
-        isOpen={isAuthOpen} 
-        onClose={onAuthClose} 
-        onLoginSuccess={handleLoginSuccess}
-        initialStep={initialAuthStep} 
-        initialRole={initialRole}     
-      />
     </>
   );
 };

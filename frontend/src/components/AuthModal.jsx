@@ -132,9 +132,10 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
 
     if (response.ok) {
       // 3. Handle Success
-      onLoginSuccess({ name: data.name, role: data.role });
+      // Pass the entire 'data' object which now includes email, phone, state, etc.
+      onLoginSuccess(data); 
       toast({ 
-        title: "Welcome Onboard!", 
+        title: "Welcome Onboard!",
         description: "Account created successfully.", 
         status: "success",
         duration: 3000,

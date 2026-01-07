@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
 import {
   Box,
   Heading,
@@ -8,7 +8,7 @@ import {
   Stack,
   SimpleGrid,
   Icon,
-  useToast, // Import Toast for error handling
+  useToast,
   VStack, // <--- ADDED
   HStack, // <--- ADDED
   Flex,   // <--- ADDED
@@ -68,7 +68,7 @@ const TypewriterText = () => {
   const fullText = "SMART AUTOMOTIVE CARE";
   const [displayedText, setDisplayedText] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     let index = 0;
     let timeoutId;
 
@@ -121,7 +121,7 @@ const Home = ({ onRegisterGarageClick }) => {
   // --- NEW: SERVER STATUS CHECK ---
   const [isServerOnline, setIsServerOnline] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const checkServerStatus = async () => {
       try {
         const response = await fetch("http://127.0.0.1:5002/");

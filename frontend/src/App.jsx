@@ -5,52 +5,59 @@ import ThreeBackground from "./components/ThreeBackground";
 import Home from "./pages/Home";
 import ChatWidget from "./components/ChatWidget";
 import AuthModal from "./components/AuthModal";
+import { Routes, Route } from 'react-router-dom';
+import UserProfile from './pages/UserProfile';
+import ServicePartnerProfile from './pages/ServicePartnerProfile';
+import { useUser } from './context/UserContext'; 
 
 function App() {
-  // Centralized Auth Modal Disclosure
   const { isOpen: isAuthOpen, onOpen: onAuthOpen, onClose: onAuthClose } = useDisclosure();
   const [authProps, setAuthProps] = useState({ step: 1, role: '' });
-  const [user, setUser] = useState(null);
+  
+  const { user, login, logout } = useUser();
 
-  // Logic to jump straight to Service Partner registration
+  // 1. Function to open modal specifically for Garage Registration (From Home Page)
   const triggerGarageReg = () => {
     setAuthProps({ step: 2, role: 'service' });
     onAuthOpen();
   };
 
-  // Logic for standard Login/Signup button
+  // 2. Function to open modal for standard Sign In (From Sidebar)
   const triggerStandardAuth = () => {
     setAuthProps({ step: 1, role: '' });
     onAuthOpen();
   };
 
-  const handleLoginSuccess = (userData) => setUser(userData);
-  const handleLogout = () => setUser(null);
+  const handleLoginSuccess = (userData) => login(userData);
 
   return (
     <Box minH="100vh" w="100vw" bg="black" position="relative">
       
-      {/* 1. Background (Fixed) */}
+      {/* Background */}
       <Box position="fixed" top="0" left="0" w="100%" h="100%" zIndex="0">
         <ThreeBackground />
       </Box>
 
-      {/* 2. Unified Sidebar */}
+      {/* Sidebar */}
       <Sidebar 
-        user={user} 
-        onLogout={handleLogout} 
+        onLogout={logout} 
         onAuthOpen={triggerStandardAuth} 
       />
 
-      {/* 3. Main Content */}
+      {/* Routes & Pages */}
       <Box position="relative" zIndex="10" w="100%">
-        <Home onRegisterGarageClick={triggerGarageReg} />
+        <Routes>
+          {/* Pass the Garage Trigger to Home */}
+          <Route path="/" element={<Home onRegisterGarageClick={triggerGarageReg} />} />
+          <Route path="/profile/user" element={<UserProfile />} />
+          <Route path="/profile/service" element={<ServicePartnerProfile />} />
+        </Routes>
       </Box>
 
-      {/* 4. Chatbot Widget */}
+      {/* Widgets */}
       <ChatWidget />
 
-      {/* 5. Auth Modal */}
+      {/* Global Auth Modal */}
       <AuthModal 
         isOpen={isAuthOpen} 
         onClose={onAuthClose} 
