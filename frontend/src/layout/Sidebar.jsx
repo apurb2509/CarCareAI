@@ -207,14 +207,14 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   }}
                   variant="outline" 
                   colorScheme="whiteAlpha"
-                  color="white"
-                  borderColor="whiteAlpha.300"
+                  color="cyan"
+                  borderColor="whiteAlpha.500"
                   width="full" 
                   h="50px"
                   fontSize="sm"
                   fontWeight="500"
                   leftIcon={<FaSignInAlt />}
-                  _hover={{ bg: "white", color: "black", borderColor: "white" }}
+                  _hover={{ bg: "cyan.400", color: "black", borderColor: "white" }}
                   transition={smoothTransition}
                 >
                   Sign In / Sign Up
