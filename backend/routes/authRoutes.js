@@ -1,50 +1,38 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../database/User'); // Import the model you just created
+const User = require('../database/User'); 
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
-router.post('/register', async (req, res) => {
+// backend/routes/authRoutes.js
+router.post('/login', async (req, res) => {
   try {
-    const { name, phone, email, locality, pincode, state, password, role } = req.body;
+    const { identifier, password } = req.body; 
 
-    // 1. Check if user already exists (by phone)
-    const userExists = await User.findOne({ phone });
-    if (userExists) {
-      return res.status(400).json({ message: 'User with this phone number already exists' });
-    }
-
-    // 2. Create the user in the database
-    const user = await User.create({
-      name,
-      phone,
-      email,
-      locality,
-      pincode,
-      state,
-      password, // Note: In the next step we will add security (hashing)
-      role
+    // Find user by email OR phone
+    const user = await User.findOne({
+      $or: [
+        { email: identifier }, 
+        { phone: identifier }
+      ]
     });
 
-    if (user) {
-      res.status(201).json({
+    // Check password (ensure it matches exactly what's in the cluster)
+    if (user && user.password === password) {
+      res.status(200).json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
         locality: user.locality,
-        pincode: user.pincode,
         state: user.state,
-        role: user.role,
-        message: 'Registration successful'
+        role: user.role
       });
     } else {
-      res.status(400).json({ message: 'Invalid user data' });
+      res.status(401).json({ message: 'Invalid WhatsApp number/Email or Password' });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error during registration' });
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

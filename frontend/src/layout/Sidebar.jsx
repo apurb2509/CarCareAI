@@ -22,14 +22,11 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
 const Sidebar = ({ onAuthOpen, onLogout }) => {
-  // Primary disclosure for the Sidebar drawer
   const { isOpen, onOpen, onClose } = useDisclosure();
-  
   const btnRef = useRef();
   const navigate = useNavigate(); 
   const { user } = useUser(); 
 
-  // LOGIC: specific redirect based on role
   const handleProfileClick = () => {
     if (user) {
       if (user.role === 'service') {
@@ -37,9 +34,8 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
       } else {
         navigate('/profile/user');
       }
-      onClose(); // Close sidebar after navigation
+      onClose();
     } else {
-      // If not logged in, close sidebar and open auth modal
       onClose();
       onAuthOpen(); 
     }
@@ -58,7 +54,6 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
 
   return (
     <>
-      {/* HAMBURGER TRIGGER */}
       <IconButton
         ref={btnRef}
         icon={<FaBars />}
@@ -78,14 +73,12 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
         transition={smoothTransition}
       />
 
-      {/* DRAWER */}
       <Drawer
         isOpen={isOpen}
         placement="left"
         onClose={onClose}
         finalFocusRef={btnRef}
         blockScrollOnMount={false}
-        motionPreset="slideInLeft"
       >
         <DrawerOverlay 
           backdropFilter="blur(8px)" 
@@ -100,7 +93,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
           borderRight="1px solid rgba(255,255,255,0.05)"
           maxW={{ base: "100vw", md: "320px" }}
           motionProps={{
-            transition: { duration: 0.6, ease: [0.4, 0.0, 0.6, 1] },
+            transition: { duration: 0.4, ease: [0.25, 0.8, 0.25, 1] },
           }}
         >
           <DrawerCloseButton 
@@ -118,7 +111,6 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
             flexDirection="column"
             css={{ '&::-webkit-scrollbar': { display: 'none' } }}
           >
-            {/* HEADER */}
             <Stack spacing={2} mb={12} px={10}>
               <Text fontSize="2xl" fontWeight="700" color="white" letterSpacing="-0.5px">
                 CarCareAI
@@ -128,7 +120,6 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
               </Text>
             </Stack>
 
-            {/* NAV ITEMS */}
             <VStack spacing={0} align="stretch" flex="1">
               {navItems.map((item, index) => (
                 <Box key={index}>
@@ -162,10 +153,8 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
               ))}
             </VStack>
 
-            {/* FOOTER AREA */}
             <Box px={10} mt="auto" mb={8}>
               {user ? (
-                // LOGGED IN
                 <HStack 
                   spacing={4} 
                   p={3} 
@@ -194,31 +183,57 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                     variant="ghost"
                     color="red.400"
                     _hover={{ bg: "whiteAlpha.200", color: "red.300" }}
-                    onClick={onLogout}
+                    onClick={() => {
+                      onLogout();
+                      onClose();
+                    }}
                     aria-label="Logout"
                   />
                 </HStack>
               ) : (
-                // LOGGED OUT
-                <Button 
-                  onClick={() => {
-                    onClose();
-                    onAuthOpen(); 
-                  }}
-                  variant="outline" 
-                  colorScheme="whiteAlpha"
-                  color="cyan"
-                  borderColor="whiteAlpha.500"
-                  width="full" 
-                  h="50px"
-                  fontSize="sm"
-                  fontWeight="500"
-                  leftIcon={<FaSignInAlt />}
-                  _hover={{ bg: "cyan.400", color: "black", borderColor: "white" }}
-                  transition={smoothTransition}
-                >
-                  Register here
-                </Button>
+                <VStack spacing={3} w="full">
+                  <Button 
+                    onClick={() => {
+                      onClose();
+                      onAuthOpen(); 
+                    }}
+                    variant="outline" 
+                    colorScheme="whiteAlpha"
+                    color="cyan"
+                    borderColor="whiteAlpha.500"
+                    width="full" 
+                    h="50px"
+                    fontSize="sm"
+                    fontWeight="500"
+                    leftIcon={<FaSignInAlt />}
+                    _hover={{ bg: "cyan.400", color: "black", borderColor: "white" }}
+                    transition={smoothTransition}
+                  >
+                    Register here
+                  </Button>
+
+                  {/* COPIED FROM AUTHMODAL */}
+                  // Inside Sidebar.jsx footer area
+<HStack spacing={1} pt={2} justify="center" w="full">
+  <Text fontSize="xs" color="gray.500" fontWeight="500">
+    Already have an account?
+  </Text>
+  <Button 
+    variant="link" 
+    color="blue.400" 
+    fontSize="xs" 
+    fontWeight="600"
+    _hover={{ color: "blue.300" }}
+    onClick={() => {
+      onClose(); // Closes Sidebar
+      onAuthOpen(); // Opens AuthModal
+      // Set the modal to Login mode (ensure your modal handles this prop)
+    }}
+  >
+    Sign In
+  </Button>
+</HStack>
+                </VStack>
               )}
             </Box>
           </DrawerBody>
