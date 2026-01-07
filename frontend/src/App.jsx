@@ -35,7 +35,7 @@ function App() {
   const handleLoginSuccess = (userData) => login(userData);
 
   return (
-    <Box minH="100vh" w="100vw" bg="black" position="relative">
+    <Box minH="100vh" w="100%" overflowX="hidden" bg="black" position="relative">
       
       {/* Background */}
       <Box position="fixed" top="0" left="0" w="100%" h="100%" zIndex="0">
