@@ -495,8 +495,8 @@ const Home = ({ onRegisterGarageClick }) => {
                   variant="outline"
                   color="white"
                   rounded="full"
-                  borderColor="whiteAlpha.400"
-                  _hover={{ bg: "whiteAlpha.100" }}
+                  borderColor="whiteAlpha.700"
+                  _hover={{ bg: "whiteAlpha.300" }}
                   rightIcon={<FaArrowRight />}
                 >
                   Register Garage
