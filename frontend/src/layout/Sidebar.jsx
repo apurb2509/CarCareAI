@@ -37,7 +37,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
       onClose();
     } else {
       onClose();
-      onAuthOpen(); 
+      onAuthOpen(false); // Default to Register mode
     }
   };
 
@@ -195,7 +195,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   <Button 
                     onClick={() => {
                       onClose();
-                      onAuthOpen(); 
+                      onAuthOpen(false); // Pass FALSE for Register Mode
                     }}
                     variant="outline" 
                     colorScheme="whiteAlpha"
@@ -212,27 +212,24 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                     Register here
                   </Button>
 
-                  {/* COPIED FROM AUTHMODAL */}
-                  // Inside Sidebar.jsx footer area
-<HStack spacing={1} pt={2} justify="center" w="full">
-  <Text fontSize="xs" color="gray.500" fontWeight="500">
-    Already have an account?
-  </Text>
-  <Button 
-    variant="link" 
-    color="blue.400" 
-    fontSize="xs" 
-    fontWeight="600"
-    _hover={{ color: "blue.300" }}
-    onClick={() => {
-      onClose(); // Closes Sidebar
-      onAuthOpen(); // Opens AuthModal
-      // Set the modal to Login mode (ensure your modal handles this prop)
-    }}
-  >
-    Sign In
-  </Button>
-</HStack>
+                  <HStack spacing={1} pt={2} justify="center" w="full">
+                    <Text fontSize="xs" color="gray.500" fontWeight="500">
+                      Already have an account?
+                    </Text>
+                    <Button 
+                      variant="link" 
+                      color="blue.400" 
+                      fontSize="xs" 
+                      fontWeight="600"
+                      _hover={{ color: "blue.300" }}
+                      onClick={() => {
+                        onClose(); 
+                        onAuthOpen(true); // Pass TRUE for Login Mode
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                  </HStack>
                 </VStack>
               )}
             </Box>

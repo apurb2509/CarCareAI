@@ -37,10 +37,11 @@ const initialFormState = {
   agreed: false
 };
 
-const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRole = '' }) => {
+const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRole = '', initialLogin = false }) => {
+  
   const [step, setStep] = useState(initialStep);
   const [role, setRole] = useState(initialRole);
-  const [isLogin, setIsLogin] = useState(false); // Toggle for Sign In interface
+  const [isLogin, setIsLogin] = useState(initialLogin); // Initialize state
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formData, setFormData] = useState(initialFormState);
@@ -55,15 +56,17 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
     if (isOpen) {
       setStep(initialStep);
       setRole(initialRole);
+      setIsLogin(initialLogin); // <--- SET THIS TO TRUE IF PROP IS TRUE
+      
       setConfirmPassword('');
       setShowPassword(false);
       setLoginId('');
       setLoginPassword('');
     } else {
       setFormData(initialFormState);
-      setIsLogin(false); // Reset to Register view on close
+      setIsLogin(false);
     }
-  }, [isOpen, initialStep, initialRole]);
+  }, [isOpen, initialStep, initialRole, initialLogin]); // Add initialLogin to dependency array
 
   const indianStates = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 

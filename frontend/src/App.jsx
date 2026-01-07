@@ -12,19 +12,23 @@ import { useUser } from './context/UserContext';
 
 function App() {
   const { isOpen: isAuthOpen, onOpen: onAuthOpen, onClose: onAuthClose } = useDisclosure();
-  const [authProps, setAuthProps] = useState({ step: 1, role: '' });
+  
+  // 1. ADD 'isLogin' to state (default false)
+  const [authProps, setAuthProps] = useState({ step: 1, role: '', isLogin: false });
   
   const { user, login, logout } = useUser();
 
   // 1. Function to open modal specifically for Garage Registration (From Home Page)
   const triggerGarageReg = () => {
-    setAuthProps({ step: 2, role: 'service' });
+    // Explicitly set isLogin to false for registration
+    setAuthProps({ step: 2, role: 'service', isLogin: false });
     onAuthOpen();
   };
 
-  // 2. Function to open modal for standard Sign In (From Sidebar)
-  const triggerStandardAuth = () => {
-    setAuthProps({ step: 1, role: '' });
+  // 2. Function to open modal for standard Auth (From Sidebar)
+  // Accepts 'loginMode' boolean. If true, opens Sign In. If false, opens Register.
+  const triggerStandardAuth = (loginMode = false) => {
+    setAuthProps({ step: 1, role: '', isLogin: loginMode });
     onAuthOpen();
   };
 
@@ -41,7 +45,7 @@ function App() {
       {/* Sidebar */}
       <Sidebar 
         onLogout={logout} 
-        onAuthOpen={triggerStandardAuth} 
+        onAuthOpen={triggerStandardAuth} // This function now handles the argument
       />
 
       {/* Routes & Pages */}
@@ -64,6 +68,7 @@ function App() {
         onLoginSuccess={handleLoginSuccess}
         initialStep={authProps.step}
         initialRole={authProps.role}
+        initialLogin={authProps.isLogin} // 3. Pass the login state to the modal
       />
     </Box>
   );

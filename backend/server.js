@@ -1,8 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
+
+// 1. Database & Route Imports
+// Matches your folder structure: backend/database/db.js and backend/routes/authRoutes.js
 const connectDB = require('./database/db'); 
 const authRoutes = require('./routes/authRoutes');
-require('dotenv').config();
 
 // AI & Chatbot Imports
 const { Pinecone } = require('@pinecone-database/pinecone');
@@ -15,39 +18,30 @@ const { RunnableSequence } = require('@langchain/core/runnables');
 
 const app = express();
 
-// 1. Initialize Database Connection
+// 2. Initialize Database Connection
 connectDB();
 
-// 2. Middleware
-app.use(cors()); 
+// 3. Middleware
+// Enable CORS for frontend requests
+app.use(cors({
+  origin: "http://localhost:5173", // Ensure this matches your Frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
-
-// --- AI CONFIGURATION ---
-const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME;
-
-const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY,
-});
-
-const aiModel = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY,
-  model: "llama-3.1-8b-instant", 
-  temperature: 0.3,
-});
-
-const embeddings = new HuggingFaceInferenceEmbeddings({
-  apiKey: process.env.HUGGINGFACEHUB_API_TOKEN,
-  model: "sentence-transformers/all-MiniLM-L6-v2",
-});
 
 // --- ROUTES ---
 
-// Auth Routes
+// Auth Routes (Login/Register)
 app.use('/api/auth', authRoutes);
 
 // Main Health Check
+// FIX: Returns JSON to prevent "Unexpected token <" error in frontend
 app.get('/', (req, res) => {
-  res.send('🚗 CarCareAI Universal Server is Online.');
+  res.status(200).json({ 
+    status: "Online", 
+    message: "🚗 CarCareAI Universal Server is Online." 
+  });
 });
 
 // Universal Chat Route (RAG System)
@@ -56,16 +50,40 @@ app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
     if (!message) return res.status(400).json({ response: "Please send a message." });
 
+    // Check if API keys exist to prevent crashes
+    if (!process.env.PINECONE_API_KEY || !process.env.GROQ_API_KEY) {
+      return res.status(503).json({ response: "AI Service Unavailable: Missing API Keys." });
+    }
+
     console.log(`🔎 Searching Knowledge Base for: "${message}"`);
 
-    const index = pinecone.Index(PINECONE_INDEX_NAME);
+    // Initialize AI Services (Scoped to request for safety)
+    const pinecone = new Pinecone({
+      apiKey: process.env.PINECONE_API_KEY,
+    });
+    const index = pinecone.Index(process.env.PINECONE_INDEX_NAME);
+
+    const embeddings = new HuggingFaceInferenceEmbeddings({
+      apiKey: process.env.HUGGINGFACEHUB_API_TOKEN,
+      model: "sentence-transformers/all-MiniLM-L6-v2",
+    });
+
     const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
       pineconeIndex: index,
     });
 
+    // Similarity Search
     const results = await vectorStore.similaritySearch(message, 3);
     const context = results.map((r) => r.pageContent).join("\n\n---\n\n");
 
+    // Initialize Chat Model
+    const aiModel = new ChatGroq({
+      apiKey: process.env.GROQ_API_KEY,
+      model: "llama-3.1-8b-instant", 
+      temperature: 0.3,
+    });
+
+    // Prompt Template
     const promptTemplate = PromptTemplate.fromTemplate(`
       You are Carlo, an intelligent automotive AI assistant for 'CarCare AI'.
       Your ONLY purpose is to assist users with cars, vehicle maintenance, repairs, parts, and troubleshooting.
@@ -106,7 +124,7 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-// 4. Start Server on port 5002
+// 4. Start Server
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {
   console.log(`🚀 Universal Server running on http://localhost:${PORT}`);
