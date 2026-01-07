@@ -105,13 +105,14 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
           />
           
           <DrawerBody 
-            py={16} 
+            py={8} // CHANGED: Reduced from 16 to 8 to reduce huge top/bottom gaps
             px={0} 
             display="flex" 
             flexDirection="column"
             css={{ '&::-webkit-scrollbar': { display: 'none' } }}
           >
-            <Stack spacing={2} mb={12} px={10}>
+            {/* Header Section */}
+            <Stack spacing={2} mb={8} px={10}> {/* CHANGED: Reduced mb from 12 to 8 */}
               <Text fontSize="2xl" fontWeight="700" color="white" letterSpacing="-0.5px">
                 CarCareAI
               </Text>
@@ -120,6 +121,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
               </Text>
             </Stack>
 
+            {/* Navigation Items */}
             <VStack spacing={0} align="stretch" flex="1">
               {navItems.map((item, index) => (
                 <Box key={index}>
@@ -153,7 +155,8 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
               ))}
             </VStack>
 
-            <Box px={10} mt="auto" mb={8}>
+            {/* Bottom Section (User Profile or Register/Login) */}
+            <Box px={10} mt="auto" mb={6}> {/* CHANGED: Reduced mb from 8 to 6 */}
               {user ? (
                 <HStack 
                   spacing={4} 
@@ -191,7 +194,8 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   />
                 </HStack>
               ) : (
-                <VStack spacing={3} w="full">
+                // CHANGED: Reduced spacing from 3 to 1.5 to bring button and text closer
+                <VStack spacing={1.5} w="full">
                   <Button 
                     onClick={() => {
                       onClose();
@@ -212,7 +216,8 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                     Register here
                   </Button>
 
-                  <HStack spacing={1} pt={2} justify="center" w="full">
+                  {/* CHANGED: Removed pt={2} to remove the gap between button and text */}
+                  <HStack spacing={1} justify="center" w="full">
                     <Text fontSize="xs" color="gray.500" fontWeight="500">
                       Already have an account?
                     </Text>
