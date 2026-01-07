@@ -217,7 +217,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   _hover={{ bg: "cyan.400", color: "black", borderColor: "white" }}
                   transition={smoothTransition}
                 >
-                  Sign In / Sign Up
+                  Register here
                 </Button>
               )}
             </Box>
