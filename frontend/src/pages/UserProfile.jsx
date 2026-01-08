@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import {
   Box, VStack, HStack, Text, Avatar, Button, Input, FormControl, FormLabel,
   SimpleGrid, Divider, Badge, Card, CardHeader, CardBody, Select,
-  IconButton
+  IconButton, Icon
 } from "@chakra-ui/react";
-import { FaEdit, FaSave, FaCamera } from "react-icons/fa";
-import { useUser } from "../context/UserContext"; // Import context
+import { FaEdit, FaSave, FaCamera, FaLock } from "react-icons/fa";
+import { useUser } from "../context/UserContext";
 
-const UserProfile = () => {
-  const { user } = useUser(); // Get real data
+// Accept onAuthOpen prop to trigger the modal
+const UserProfile = ({ onAuthOpen }) => {
+  const { user } = useUser(); 
   const [isEditing, setIsEditing] = useState(false);
   
-  // Local state for editable fields (pre-filled with context data)
   const [profileData, setProfileData] = useState({
     name: user?.name || "User Name",
     email: user?.email || "user@example.com",
@@ -24,7 +24,6 @@ const UserProfile = () => {
     pincode: user?.pincode || ""
   });
 
-  // Mock Service History Data
   const serviceHistory = [
     { id: 1, station: "Speedy Fix Garage", date: "2025-12-20", service: "Oil Change", cost: "₹1,200", status: "Completed" },
     { id: 2, station: "Bangalore Auto Works", date: "2025-11-15", service: "Brake Pad Replacement", cost: "₹3,500", status: "Completed" },
@@ -32,17 +31,89 @@ const UserProfile = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    // Here you would send a PATCH request to your backend to save changes
   };
 
+  // --- RESTRICTED ACCESS VIEW ---
+  if (!user) {
+    return (
+      // Added backdropFilter to blur the 3D background behind this box
+      <Box 
+        h="100vh" 
+        display="flex" 
+        alignItems="center" 
+        justifyContent="center" 
+        px={4}
+        backdropFilter="blur(12px)" 
+        bg="rgba(0, 0, 0, 0.4)"
+      >
+        <Box 
+          p={10} 
+          maxW="md" 
+          w="full"
+          textAlign="center"
+          bg="linear-gradient(145deg, #0f172a 0%, #1e293b 100%)"
+          backdropFilter="blur(20px)"
+          border="1px solid"
+          borderColor="rgba(100, 200, 255, 0.15)"
+          borderRadius="3xl"
+          boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.8)"
+        >
+          <VStack spacing={6}>
+            <Box 
+              p={5} 
+              bg="rgba(59, 130, 246, 0.1)" 
+              borderRadius="full" 
+              border="1px solid"
+              borderColor="cyan.500"
+              color="cyan.400"
+            >
+              <Icon as={FaLock} boxSize={8} />
+            </Box>
+            
+            <VStack spacing={2}>
+              <Text fontSize="2xl" fontWeight="800" color="white" letterSpacing="tight">
+                Access Restricted
+              </Text>
+              
+              {/* INTERACTIVE TEXT LINKS */}
+              <Text color="gray.400" fontSize="md">
+                Please{' '}
+                <Button 
+                  variant="link" 
+                  color="cyan.400" 
+                  fontWeight="bold" 
+                  verticalAlign="baseline"
+                  onClick={() => onAuthOpen(false)} // Open Register
+                >
+                  Register
+                </Button>
+                {' '}or{' '}
+                <Button 
+                  variant="link" 
+                  color="cyan.400" 
+                  fontWeight="bold"
+                  verticalAlign="baseline"
+                  onClick={() => onAuthOpen(true)} // Open Login
+                >
+                  Login
+                </Button>
+                {' '}to view and manage your profile details.
+              </Text>
+            </VStack>
+          </VStack>
+        </Box>
+      </Box>
+    );
+  }
+
+  // --- NORMAL PROFILE CONTENT ---
   return (
     <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="white">
-      {/* 1. HEADER SECTION */}
       <Card bg="rgba(255,255,255,0.05)" border="1px solid rgba(255,255,255,0.1)" backdropFilter="blur(10px)">
         <CardBody>
           <HStack spacing={8} align="flex-start" flexDirection={{ base: "column", md: "row" }}>
             <Box position="relative">
-              <Avatar size="2xl" name={profileData.name} src="https://bit.ly/broken-link" border="4px solid cyan" />
+              <Avatar size="2xl" name={profileData.name} border="4px solid cyan" />
               <IconButton 
                 icon={<FaCamera />} 
                 isRound 
@@ -75,8 +146,6 @@ const UserProfile = () => {
       </Card>
 
       <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={8} mt={8}>
-        
-        {/* 2. PERSONAL DETAILS (Left Column - 2/3 width) */}
         <Box gridColumn={{ lg: "span 2" }}>
           <Card bg="rgba(255,255,255,0.03)" borderColor="whiteAlpha.200">
             <CardHeader>
@@ -150,7 +219,6 @@ const UserProfile = () => {
           </Card>
         </Box>
 
-        {/* 3. SERVICE HISTORY (Right Column - 1/3 width) */}
         <Box>
           <Card bg="rgba(255,255,255,0.03)" borderColor="whiteAlpha.200" h="full">
             <CardHeader>
@@ -174,7 +242,6 @@ const UserProfile = () => {
             </CardBody>
           </Card>
         </Box>
-
       </SimpleGrid>
     </Box>
   );

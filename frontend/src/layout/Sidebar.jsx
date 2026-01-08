@@ -29,16 +29,17 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
 
   const handleProfileClick = () => {
     if (user) {
+      // Logged In: Route based on role
       if (user.role === 'service') {
         navigate('/profile/service');
       } else {
         navigate('/profile/user');
       }
-      onClose();
     } else {
-      onClose();
-      onAuthOpen(false); // Default to Register mode
+      // Not Logged In: Navigate to User Profile anyway to show the "Restricted" card
+      navigate('/profile/user');
     }
+    onClose();
   };
 
   const navItems = [
@@ -105,14 +106,13 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
           />
           
           <DrawerBody 
-            py={8} // CHANGED: Reduced from 16 to 8 to reduce huge top/bottom gaps
+            py={8} 
             px={0} 
             display="flex" 
             flexDirection="column"
             css={{ '&::-webkit-scrollbar': { display: 'none' } }}
           >
-            {/* Header Section */}
-            <Stack spacing={2} mb={8} px={10}> {/* CHANGED: Reduced mb from 12 to 8 */}
+            <Stack spacing={2} mb={8} px={10}>
               <Text fontSize="2xl" fontWeight="700" color="white" letterSpacing="-0.5px">
                 CarCareAI
               </Text>
@@ -121,7 +121,6 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
               </Text>
             </Stack>
 
-            {/* Navigation Items */}
             <VStack spacing={0} align="stretch" flex="1">
               {navItems.map((item, index) => (
                 <Box key={index}>
@@ -155,8 +154,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
               ))}
             </VStack>
 
-            {/* Bottom Section (User Profile or Register/Login) */}
-            <Box px={10} mt="auto" mb={6}> {/* CHANGED: Reduced mb from 8 to 6 */}
+            <Box px={10} mt="auto" mb={6}>
               {user ? (
                 <HStack 
                   spacing={4} 
@@ -194,12 +192,11 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   />
                 </HStack>
               ) : (
-                // CHANGED: Reduced spacing from 3 to 1.5 to bring button and text closer
                 <VStack spacing={1.5} w="full">
                   <Button 
                     onClick={() => {
                       onClose();
-                      onAuthOpen(false); // Pass FALSE for Register Mode
+                      onAuthOpen(false); 
                     }}
                     variant="outline" 
                     colorScheme="whiteAlpha"
@@ -216,7 +213,6 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                     Register here
                   </Button>
 
-                  {/* CHANGED: Removed pt={2} to remove the gap between button and text */}
                   <HStack spacing={1} justify="center" w="full">
                     <Text fontSize="xs" color="gray.500" fontWeight="500">
                       Already have an account?
@@ -229,7 +225,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                       _hover={{ color: "blue.300" }}
                       onClick={() => {
                         onClose(); 
-                        onAuthOpen(true); // Pass TRUE for Login Mode
+                        onAuthOpen(true);
                       }}
                     >
                       Sign In

@@ -25,7 +25,7 @@ function App() {
     onAuthOpen();
   };
 
-  // 2. Function to open modal for standard Auth (From Sidebar)
+  // 2. Function to open modal for standard Auth (From Sidebar or Profile Card)
   // Accepts 'loginMode' boolean. If true, opens Sign In. If false, opens Register.
   const triggerStandardAuth = (loginMode = false) => {
     setAuthProps({ step: 1, role: '', isLogin: loginMode });
@@ -53,8 +53,16 @@ function App() {
         <Routes>
           {/* Pass the Garage Trigger to Home */}
           <Route path="/" element={<Home onRegisterGarageClick={triggerGarageReg} />} />
-          <Route path="/profile/user" element={<UserProfile />} />
-          <Route path="/profile/service" element={<ServicePartnerProfile />} />
+          
+          {/* UPDATED: Pass triggerStandardAuth as onAuthOpen to profile pages */}
+          <Route 
+            path="/profile/user" 
+            element={<UserProfile onAuthOpen={triggerStandardAuth} />} 
+          />
+          <Route 
+            path="/profile/service" 
+            element={<ServicePartnerProfile onAuthOpen={triggerStandardAuth} />} 
+          />
         </Routes>
       </Box>
 

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import {
   Box, VStack, HStack, Text, Avatar, Button, Input, FormControl, FormLabel,
-  SimpleGrid, Checkbox, Card, CardHeader, CardBody, Badge, Stat, StatLabel, StatNumber, StatHelpText
+  SimpleGrid, Checkbox, Card, CardHeader, CardBody, Badge, Stat, StatLabel, StatNumber, StatHelpText, Icon
 } from "@chakra-ui/react";
-import { FaEdit, FaSave, FaTools } from "react-icons/fa";
+import { FaEdit, FaSave, FaTools, FaLock } from "react-icons/fa";
 import { useUser } from "../context/UserContext";
 
-const ServicePartnerProfile = () => {
+// Accept onAuthOpen prop
+const ServicePartnerProfile = ({ onAuthOpen }) => {
   const { user } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [sameAsOwner, setSameAsOwner] = useState(false);
@@ -17,7 +18,7 @@ const ServicePartnerProfile = () => {
     email: user?.email || "",
     phone: user?.phone || "",
     address: user?.locality || "",
-    city: user?.state || "", // Assuming state field for city logic for now
+    city: user?.state || "", 
     registeredSince: "2024",
     totalVisits: 142
   });
@@ -29,6 +30,79 @@ const ServicePartnerProfile = () => {
     }
   };
 
+  // --- RESTRICTED ACCESS VIEW ---
+  if (!user) {
+    return (
+      <Box 
+        h="100vh" 
+        display="flex" 
+        alignItems="center" 
+        justifyContent="center" 
+        px={4}
+        backdropFilter="blur(12px)" // Blurs the background stars
+        bg="rgba(0, 0, 0, 0.4)"
+      >
+        <Box 
+          p={10} 
+          maxW="md" 
+          w="full"
+          textAlign="center"
+          bg="linear-gradient(145deg, #0f172a 0%, #1e293b 100%)"
+          backdropFilter="blur(20px)"
+          border="1px solid"
+          borderColor="rgba(100, 200, 255, 0.15)"
+          borderRadius="3xl"
+          boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.8)"
+        >
+          <VStack spacing={6}>
+            <Box 
+              p={5} 
+              bg="rgba(59, 130, 246, 0.1)" 
+              borderRadius="full" 
+              border="1px solid"
+              borderColor="cyan.500"
+              color="cyan.400"
+            >
+              <Icon as={FaLock} boxSize={8} />
+            </Box>
+            
+            <VStack spacing={2}>
+              <Text fontSize="2xl" fontWeight="800" color="white" letterSpacing="tight">
+                Access Restricted
+              </Text>
+              
+              {/* INTERACTIVE TEXT LINKS */}
+              <Text color="gray.400" fontSize="md">
+                Please{' '}
+                <Button 
+                  variant="link" 
+                  color="cyan.400" 
+                  fontWeight="bold" 
+                  verticalAlign="baseline"
+                  onClick={() => onAuthOpen(false)} // Trigger Register
+                >
+                  Register
+                </Button>
+                {' '}or{' '}
+                <Button 
+                  variant="link" 
+                  color="cyan.400" 
+                  fontWeight="bold"
+                  verticalAlign="baseline"
+                  onClick={() => onAuthOpen(true)} // Trigger Login
+                >
+                  Login
+                </Button>
+                {' '}to view and manage your dashboard.
+              </Text>
+            </VStack>
+          </VStack>
+        </Box>
+      </Box>
+    );
+  }
+
+  // --- NORMAL DASHBOARD CONTENT ---
   return (
     <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="white">
       {/* 1. DASHBOARD HEADER */}
@@ -54,33 +128,9 @@ const ServicePartnerProfile = () => {
 
       {/* 2. STATS ROW */}
       <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mt={8}>
-        <Card bg="whiteAlpha.100">
-          <CardBody>
-            <Stat>
-              <StatLabel>Total Visits</StatLabel>
-              <StatNumber color="cyan.400">{profileData.totalVisits}</StatNumber>
-              <StatHelpText>All time clients</StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-        <Card bg="whiteAlpha.100">
-          <CardBody>
-            <Stat>
-              <StatLabel>Rating</StatLabel>
-              <StatNumber color="yellow.400">4.8 / 5.0</StatNumber>
-              <StatHelpText>Based on 56 reviews</StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
-        <Card bg="whiteAlpha.100">
-          <CardBody>
-            <Stat>
-              <StatLabel>Inventory Status</StatLabel>
-              <StatNumber color="green.400">Healthy</StatNumber>
-              <StatHelpText>Last sync: 2 hours ago</StatHelpText>
-            </Stat>
-          </CardBody>
-        </Card>
+        <Card bg="whiteAlpha.100"><CardBody><Stat><StatLabel>Total Visits</StatLabel><StatNumber color="cyan.400">{profileData.totalVisits}</StatNumber><StatHelpText>All time clients</StatHelpText></Stat></CardBody></Card>
+        <Card bg="whiteAlpha.100"><CardBody><Stat><StatLabel>Rating</StatLabel><StatNumber color="yellow.400">4.8 / 5.0</StatNumber><StatHelpText>Based on 56 reviews</StatHelpText></Stat></CardBody></Card>
+        <Card bg="whiteAlpha.100"><CardBody><Stat><StatLabel>Inventory Status</StatLabel><StatNumber color="green.400">Healthy</StatNumber><StatHelpText>Last sync: 2 hours ago</StatHelpText></Stat></CardBody></Card>
       </SimpleGrid>
 
       {/* 3. DETAILS FORM */}
@@ -94,7 +144,6 @@ const ServicePartnerProfile = () => {
               <FormLabel color="cyan.300">Owner Name</FormLabel>
               <Input value={profileData.ownerName} isReadOnly bg="whiteAlpha.100" border="none" />
             </FormControl>
-            
             <VStack align="start" spacing={0}>
               <FormControl>
                 <FormLabel color="cyan.300">Service Station Name</FormLabel>
@@ -106,30 +155,18 @@ const ServicePartnerProfile = () => {
                 />
               </FormControl>
               {isEditing && (
-                <Checkbox 
-                  size="sm" 
-                  colorScheme="cyan" 
-                  mt={2} 
-                  isChecked={sameAsOwner} 
-                  onChange={handleCheckbox}
-                >
+                <Checkbox size="sm" colorScheme="cyan" mt={2} isChecked={sameAsOwner} onChange={handleCheckbox}>
                   <Text fontSize="xs" color="gray.400">Use Owner Name as Station Name</Text>
                 </Checkbox>
               )}
             </VStack>
-
             <FormControl>
               <FormLabel color="cyan.300">Contact Number</FormLabel>
               <Input value={profileData.phone} isReadOnly bg="whiteAlpha.100" border="none" />
             </FormControl>
-
             <FormControl>
               <FormLabel color="cyan.300">Station Address</FormLabel>
-              <Input 
-                value={`${profileData.address}, ${profileData.city}`} 
-                isReadOnly={!isEditing} 
-                bg="whiteAlpha.100" border="none" 
-              />
+              <Input value={`${profileData.address}, ${profileData.city}`} isReadOnly={!isEditing} bg="whiteAlpha.100" border="none" />
             </FormControl>
           </SimpleGrid>
         </CardBody>
