@@ -42,11 +42,20 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
     onClose();
   };
 
+  // Find the navItems mapping in your Sidebar.jsx and update the onClick logic:
+
   const navItems = [
     { icon: FaUserCircle, label: "Profile", onClick: handleProfileClick },
     { icon: FaWrench, label: "My Garage" },
     { icon: FaSearch, label: "Find Services" },
-    { icon: FaCalendarCheck, label: "Book Appointment" },
+    { 
+      icon: FaCalendarCheck, 
+      label: "Book Appointment", 
+      onClick: () => {
+        window.open('/book-appointment', '_blank'); // Opens in new tab
+        onClose();
+      }
+    },
     { icon: FaPhone, label: "Help Centre" },
     { icon: FaCog, label: "Settings" },
   ];
