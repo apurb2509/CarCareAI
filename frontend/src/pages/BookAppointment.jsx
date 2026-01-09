@@ -98,14 +98,16 @@ const BookAppointment = () => {
     setBookingNumber(bookingNum);
     setBookingDateTime(date);
     
-    // 2. Prepare Data for QR Code
-    // In a real app, this might be a URL like: https://carcareai.com/verify/${bookingNum}
-    const qrData = `BOOKING RECEIPT
-ID: ${bookingNum}
-Customer: ${formData.ownerName}
-Car: ${formData.carModel}
-Time: ${date.toLocaleString()}
-Issue: ${faultCategory === "other" ? otherElaboration : faultCategory}`;
+    // 2. Prepare URL for QR Code (Redirect Functionality)
+    const baseUrl = "https://carcareai.com/verify"; 
+    const queryParams = new URLSearchParams({
+      id: bookingNum,
+      customer: formData.ownerName,
+      vehicle: formData.carModel,
+      date: date.toLocaleDateString(),
+    }).toString();
+
+    const qrData = `${baseUrl}?${queryParams}`;
     
     // 3. Generate QR Data URL
     try {
@@ -113,7 +115,7 @@ Issue: ${faultCategory === "other" ? otherElaboration : faultCategory}`;
         width: 200,
         margin: 1,
         color: {
-          dark: "#0BC5EA", // Cyan color for the QR code
+          dark: "#000000", // Black for high contrast
           light: "#FFFFFF",
         },
       });
