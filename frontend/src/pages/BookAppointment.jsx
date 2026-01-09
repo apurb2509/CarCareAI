@@ -19,31 +19,36 @@ import {
   Textarea,
   Center,
   HStack,
-  Spinner, // Added HStack and Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import {
   FaCloudUploadAlt,
-  FaCar,
-  FaMapMarkerAlt,
-  FaWrench,
   FaDownload,
   FaCheckCircle,
 } from "react-icons/fa";
 import { useDropzone } from "react-dropzone";
 import { State, City } from "country-state-city";
 import html2pdf from "html2pdf.js";
+import QRCode from "qrcode";
 
 const BookAppointment = () => {
   const toast = useToast();
   const pdfRef = useRef();
+  
+  // State Management
   const [carImage, setCarImage] = useState(null);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [faultCategory, setFaultCategory] = useState("");
   const [otherElaboration, setOtherElaboration] = useState("");
+  
+  // Booking Logic State
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [bookingNumber, setBookingNumber] = useState("");
+  const [bookingDateTime, setBookingDateTime] = useState(null);
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
 
-  // Form State for PDF tracking
+  // Form Data State
   const [formData, setFormData] = useState({
     ownerName: "",
     pincode: "",
@@ -82,20 +87,58 @@ const BookAppointment = () => {
     [toast]
   );
 
+  // --- Logic: Generate Booking ID & QR Code ---
+  const generateBookingDetails = async () => {
+    // 1. Generate booking number (format: BK-YYYYMMDD-XXXX)
+    const date = new Date();
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
+    const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const bookingNum = `BK-${dateStr}-${randomStr}`;
+    
+    setBookingNumber(bookingNum);
+    setBookingDateTime(date);
+    
+    // 2. Prepare Data for QR Code
+    // In a real app, this might be a URL like: https://carcareai.com/verify/${bookingNum}
+    const qrData = `BOOKING RECEIPT
+ID: ${bookingNum}
+Customer: ${formData.ownerName}
+Car: ${formData.carModel}
+Time: ${date.toLocaleString()}
+Issue: ${faultCategory === "other" ? otherElaboration : faultCategory}`;
+    
+    // 3. Generate QR Data URL
+    try {
+      const qrUrl = await QRCode.toDataURL(qrData, {
+        width: 200,
+        margin: 1,
+        color: {
+          dark: "#0BC5EA", // Cyan color for the QR code
+          light: "#FFFFFF",
+        },
+      });
+      setQrCodeUrl(qrUrl);
+    } catch (err) {
+      console.error("QR Code generation error:", err);
+      toast({ title: "Error generating QR", status: "error" });
+    }
+  };
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "image/*": [] },
     multiple: false,
   });
 
+  // --- Logic: Download PDF ---
   const handleDownloadPDF = () => {
     setIsGenerating(true);
     const element = pdfRef.current;
     const opt = {
-      margin: 10,
-      filename: `Booking_Receipt_${formData.ownerName || "Customer"}.pdf`,
+      margin: 0,
+      filename: `Booking_Receipt_${bookingNumber}.pdf`,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
+      html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, // Added scrollY: 0
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     };
 
@@ -109,7 +152,7 @@ const BookAppointment = () => {
       });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Basic validation check
     if (!formData.ownerName || !formData.carModel) {
       toast({
@@ -119,7 +162,11 @@ const BookAppointment = () => {
       });
       return;
     }
+    
+    // Generate details before showing success
+    await generateBookingDetails();
     setIsSubmitted(true);
+    
     toast({
       title: "Booking Confirmed",
       description: "You can now download your receipt.",
@@ -132,126 +179,385 @@ const BookAppointment = () => {
 
   return (
     <Box minH="100vh" bg="#0a0a0a" py={10}>
-      {/* --- HIDDEN PDF TEMPLATE (A4 STYLE) --- */}
-      <div style={{ display: "none" }}>
+      
+      {/* --- HIDDEN PDF TEMPLATE (Strict A4 Layout) --- */}
+      {/* We keep this in the DOM but hidden from view using absolute positioning/z-index or a wrapper. 
+          For html2pdf to work best, we usually leave it rendered but off-screen. */}
+      <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
         <div
           ref={pdfRef}
           style={{
-            padding: "20mm",
-            color: "#000",
-            fontFamily: "Arial",
+            // SAFETY FIX: 296mm prevents the sub-pixel overflow causing the blank page
             width: "210mm",
+            height: "296mm", 
+            padding: "12mm",
+            backgroundColor: "white",
+            color: "#1a1a1a",
+            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+            boxSizing: "border-box",
+            display: "flex",
+            flexDirection: "column",
+            border: "1px solid #ddd", // Professional border
+            position: "relative" // Helps contain absolute elements if needed
           }}
         >
-          <div
-            style={{
-              borderBottom: "3px solid #0BC5EA",
-              paddingBottom: "10px",
-              marginBottom: "20px",
-            }}
-          >
-            <h1 style={{ color: "#0BC5EA", margin: 0, fontSize: "28px" }}>
-              CarCareAI
-            </h1>
-            <p style={{ fontSize: "14px", fontWeight: "bold" }}>
-              OFFICIAL SERVICE BOOKING RECEIPT
-            </p>
-            <p style={{ fontSize: "11px" }}>
-              Generated on: {new Date().toLocaleDateString()} at{" "}
-              {new Date().toLocaleTimeString()}
-            </p>
+          {/* PDF Header */}
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-between", 
+            alignItems: "flex-start",
+            marginBottom: "15px",
+            paddingBottom: "12px",
+            borderBottom: "2px solid #0BC5EA"
+          }}>
+            <div>
+              <h1 style={{ 
+                color: "#0BC5EA", 
+                margin: "0 0 5px 0", 
+                fontSize: "26px",
+                fontWeight: "700"
+              }}>
+                CarCare AI
+              </h1>
+              <p style={{ 
+                fontSize: "10px", 
+                color: "#666", 
+                margin: 0 
+              }}>
+                Your All-in-One Vehicle Service & Maintenance Hub
+              </p>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{
+                background: "#0BC5EA",
+                color: "white",
+                padding: "5px 12px",
+                borderRadius: "4px",
+                fontSize: "11px",
+                fontWeight: "600",
+                marginBottom: "5px"
+              }}>
+                SERVICE BOOKING
+              </div>
+              <p style={{ fontSize: "9px", color: "#666", margin: 0 }}>
+                {bookingDateTime?.toLocaleDateString("en-IN", { 
+                  day: "2-digit", 
+                  month: "short", 
+                  year: "numeric" 
+                })}
+              </p>
+            </div>
           </div>
 
-          <div style={{ marginBottom: "20px" }}>
-            <h3
-              style={{ borderBottom: "1px solid #eee", paddingBottom: "5px" }}
-            >
-              Customer Details
-            </h3>
-            <p>
-              <strong>Name:</strong> {formData.ownerName}
-            </p>
-            <p>
-              <strong>Address:</strong>{" "}
-              {`${formData.block}, ${formData.locality}, ${formData.city}, ${formData.state} - ${formData.pincode}`}
-            </p>
+          {/* Booking Number & QR Section */}
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "15px",
+            padding: "12px",
+            background: "#f8f9fa",
+            borderRadius: "6px",
+            border: "1px solid #e0e0e0"
+          }}>
+            <div style={{ flex: 1 }}>
+              <p style={{ 
+                fontSize: "9px", 
+                color: "#666", 
+                margin: "0 0 4px 0",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Booking Reference
+              </p>
+              <p style={{ 
+                fontSize: "16px", 
+                fontWeight: "700", 
+                color: "#0BC5EA",
+                margin: 0,
+                fontFamily: "monospace"
+              }}>
+                {bookingNumber}
+              </p>
+              <p style={{ 
+                fontSize: "9px", 
+                color: "#666", 
+                margin: "8px 0 0 0" 
+              }}>
+                Booked: {bookingDateTime?.toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true
+                })}
+              </p>
+            </div>
+            {qrCodeUrl && (
+              <div style={{ 
+                padding: "8px",
+                background: "white",
+                borderRadius: "4px",
+                border: "1px solid #e0e0e0"
+              }}>
+                <img 
+                  src={qrCodeUrl} 
+                  alt="Booking QR" 
+                  style={{ 
+                    width: "70px", 
+                    height: "70px",
+                    display: "block"
+                  }} 
+                />
+                <p style={{
+                  fontSize: "7px",
+                  textAlign: "center",
+                  margin: "4px 0 0 0",
+                  color: "#999"
+                }}>
+                  Scan to verify
+                </p>
+              </div>
+            )}
           </div>
 
-          <div style={{ marginBottom: "20px" }}>
-            <h3
-              style={{ borderBottom: "1px solid #eee", paddingBottom: "5px" }}
-            >
-              Vehicle Details
-            </h3>
-            <table style={{ width: "100%", fontSize: "12px" }}>
-              <tr>
-                <td>
-                  <strong>Model:</strong> {formData.carModel}
-                </td>
-                <td>
-                  <strong>Purchase Date:</strong> {formData.purchaseDate}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Transmission:</strong> {formData.transmission}
-                </td>
-                <td>
-                  <strong>Fuel Type:</strong> {formData.fuel}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Condition:</strong> {formData.condition}
-                </td>
-                <td>
-                  <strong>Tuned:</strong> {formData.tuned}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Total Distance:</strong> {formData.distance} km
-                </td>
-                <td>
-                  <strong>Services Done:</strong> {formData.services}
-                </td>
-              </tr>
-            </table>
+          {/* Two Column Layout */}
+          <div style={{ 
+            display: "flex", 
+            gap: "15px",
+            marginBottom: "15px",
+            flex: 1
+          }}>
+            {/* Left Column: Details */}
+            <div style={{ flex: 1 }}>
+              {/* Customer Details */}
+              <div style={{ marginBottom: "15px" }}>
+                <h3 style={{ 
+                  fontSize: "11px", 
+                  fontWeight: "700",
+                  color: "#333",
+                  margin: "0 0 8px 0",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px"
+                }}>
+                  Customer Information
+                </h3>
+                <div style={{
+                  background: "white",
+                  border: "1px solid #e0e0e0",
+                  borderRadius: "4px",
+                  padding: "10px"
+                }}>
+                  <table style={{ width: "100%", fontSize: "9px", lineHeight: "1.6" }}>
+                    <tbody>
+                      <tr>
+                        <td style={{ color: "#666", paddingBottom: "5px" }}>Name:</td>
+                        <td style={{ fontWeight: "600", paddingBottom: "5px" }}>{formData.ownerName}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: "#666", verticalAlign: "top", paddingTop: "5px" }}>Address:</td>
+                        <td style={{ paddingTop: "5px" }}>
+                          {formData.block}, {formData.locality}<br/>
+                          {formData.city}, {formData.state}<br/>
+                          PIN: {formData.pincode}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Vehicle Details */}
+              <div>
+                <h3 style={{ 
+                  fontSize: "11px", 
+                  fontWeight: "700",
+                  color: "#333",
+                  margin: "0 0 8px 0",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px"
+                }}>
+                  Vehicle Details
+                </h3>
+                <div style={{
+                  background: "white",
+                  border: "1px solid #e0e0e0",
+                  borderRadius: "4px",
+                  padding: "10px"
+                }}>
+                  <table style={{ width: "100%", fontSize: "9px", lineHeight: "1.8" }}>
+                    <tbody>
+                      <tr>
+                        <td style={{ color: "#666", width: "45%" }}>Model:</td>
+                        <td style={{ fontWeight: "600" }}>{formData.carModel}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: "#666" }}>Purchase Date:</td>
+                        <td>{formData.purchaseDate}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: "#666" }}>Transmission:</td>
+                        <td style={{ textTransform: "capitalize" }}>{formData.transmission}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: "#666" }}>Fuel Type:</td>
+                        <td style={{ textTransform: "capitalize" }}>{formData.fuel}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: "#666" }}>Condition:</td>
+                        <td style={{ textTransform: "capitalize" }}>{formData.condition}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: "#666" }}>Distance:</td>
+                        <td>{formData.distance} km</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: "#666" }}>Services Done:</td>
+                        <td>{formData.services}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: "#666" }}>Tuned:</td>
+                        <td style={{ textTransform: "uppercase" }}>{formData.tuned}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Request & Instructions */}
+            <div style={{ flex: 1 }}>
+              {/* Reported Issue */}
+              <div style={{ marginBottom: "15px" }}>
+                <h3 style={{ 
+                  fontSize: "11px", 
+                  fontWeight: "700",
+                  color: "#333",
+                  margin: "0 0 8px 0",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px"
+                }}>
+                  Service Request
+                </h3>
+                <div style={{
+                  background: "#fff9e6",
+                  border: "1px solid #ffd700",
+                  borderRadius: "4px",
+                  padding: "12px",
+                  borderLeft: "4px solid #0BC5EA"
+                }}>
+                  <p style={{ 
+                    fontSize: "9px", 
+                    color: "#666", 
+                    margin: "0 0 5px 0",
+                    fontWeight: "600"
+                  }}>
+                    Primary Concern:
+                  </p>
+                  <p style={{ 
+                    fontSize: "10px", 
+                    margin: 0,
+                    lineHeight: "1.6",
+                    color: "#333"
+                  }}>
+                    {faultCategory === "other" ? otherElaboration : faultCategory}
+                  </p>
+                </div>
+              </div>
+
+              {/* Service Instructions */}
+              <div style={{
+                background: "#e6f7fb",
+                border: "1px solid #0BC5EA",
+                borderRadius: "4px",
+                padding: "12px",
+                marginBottom: "15px"
+              }}>
+                <h4 style={{
+                  fontSize: "10px",
+                  fontWeight: "700",
+                  color: "#0BC5EA",
+                  margin: "0 0 8px 0"
+                }}>
+                  IMPORTANT INSTRUCTIONS
+                </h4>
+                <ul style={{
+                  fontSize: "8px",
+                  margin: 0,
+                  paddingLeft: "15px",
+                  lineHeight: "1.8",
+                  color: "#333"
+                }}>
+                  <li>Please arrive 10 minutes before your scheduled time.</li>
+                  <li>Bring this receipt and vehicle documents.</li>
+                  <li>Service duration may vary based on diagnosis.</li>
+                  <li>Contact us for any changes or cancellations.</li>
+                </ul>
+              </div>
+
+              {/* Contact Info */}
+              <div style={{
+                background: "white",
+                border: "1px solid #e0e0e0",
+                borderRadius: "4px",
+                padding: "10px"
+              }}>
+                <h4 style={{
+                  fontSize: "10px",
+                  fontWeight: "700",
+                  color: "#333",
+                  margin: "0 0 6px 0"
+                }}>
+                  Contact Information
+                </h4>
+                <p style={{ fontSize: "8px", margin: "0 0 3px 0", color: "#666" }}>
+                  📞 +91 987-654-3210
+                </p>
+                <p style={{ fontSize: "8px", margin: "0 0 3px 0", color: "#666" }}>
+                  ✉️ support@carcareai.com
+                </p>
+                <p style={{ fontSize: "8px", margin: 0, color: "#666" }}>
+                  🌐 www.carcareai.com
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div
-            style={{
-              padding: "15px",
-              background: "#f9f9f9",
-              borderRadius: "5px",
-            }}
-          >
-            <p>
-              <strong>Reported Issue:</strong>{" "}
-              {faultCategory === "other" ? otherElaboration : faultCategory}
-            </p>
-          </div>
-
-          <div
-            style={{
-              marginTop: "100px",
-              textAlign: "center",
-              fontSize: "10px",
-              color: "#888",
-            }}
-          >
-            This is an industry-ready digital booking confirmation. Please
-            present this PDF at the service station.
+          {/* PDF Footer */}
+          <div style={{ 
+            marginTop: "auto",
+            paddingTop: "10px",
+            borderTop: "1px solid #eaeaea",
+            fontSize: "8px",
+            color: "#666"
+          }}>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center"
+            }}>
+              <p style={{ 
+                fontSize: "8px", 
+                color: "#999", 
+                margin: 0 
+              }}>
+                © 2026 CarCareAI. All rights reserved.
+              </p>
+              <p style={{ 
+                fontSize: "8px", 
+                color: "#0BC5EA", 
+                margin: 0,
+                fontWeight: "600"
+              }}>
+                DIGITALLY VERIFIED BOOKING
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* --- MAIN INTERFACE (A4 UI) --- */}
+      {/* --- MAIN INTERFACE (Form) --- */}
       <Center>
         <VStack
           spacing={6}
-          w={{ base: "95%", md: "210mm" }}
-          minH="297mm"
+          w={{ base: "95%", md: "800px" }}
           bg="rgba(20, 20, 20, 0.98)"
           p={{ base: 6, md: 16 }}
           borderRadius="xl"
