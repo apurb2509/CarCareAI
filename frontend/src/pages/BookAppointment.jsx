@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useRef } from "react";
+import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import {
   Box,
   VStack,
@@ -37,6 +37,7 @@ const BookAppointment = () => {
   
   // State Management
   const [carImage, setCarImage] = useState(null);
+  const [carPreview, setCarPreview] = useState(null); // Added for PDF display
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [faultCategory, setFaultCategory] = useState("");
   const [otherElaboration, setOtherElaboration] = useState("");
@@ -79,13 +80,28 @@ const BookAppointment = () => {
       : [];
   }, [selectedStateCode]);
 
+  // Updated onDrop to create a preview URL for the PDF
   const onDrop = useCallback(
     (acceptedFiles) => {
-      setCarImage(acceptedFiles[0]);
+      const file = acceptedFiles[0];
+      setCarImage(file);
+      if (file) {
+        const objectUrl = URL.createObjectURL(file);
+        setCarPreview(objectUrl);
+      }
       toast({ title: "Image Uploaded", status: "success", duration: 2000 });
     },
     [toast]
   );
+
+  // Clean up the object URL to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      if (carPreview) {
+        URL.revokeObjectURL(carPreview);
+      }
+    };
+  }, [carPreview]);
 
   // --- Logic: Generate Booking ID & QR Code ---
   const generateBookingDetails = async () => {
@@ -140,7 +156,7 @@ const BookAppointment = () => {
       margin: 0,
       filename: `Booking_Receipt_${bookingNumber}.pdf`,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, // Added scrollY: 0
+      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     };
 
@@ -367,7 +383,7 @@ const BookAppointment = () => {
               </div>
 
               {/* Vehicle Details */}
-              <div>
+              <div style={{ marginBottom: "15px" }}>
                 <h3 style={{ 
                   fontSize: "11px", 
                   fontWeight: "700",
@@ -422,6 +438,42 @@ const BookAppointment = () => {
                   </table>
                 </div>
               </div>
+
+              {/* --- IMAGE DISPLAY IN PDF --- */}
+              {carPreview && (
+                <div style={{ marginBottom: "15px" }}>
+                   <h3 style={{ 
+                    fontSize: "11px", 
+                    fontWeight: "700", 
+                    color: "#333", 
+                    margin: "0 0 5px 0", 
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                      Vehicle Photo
+                   </h3>
+                   <div style={{ 
+                      border: "1px solid #e0e0e0", 
+                      padding: "4px", 
+                      borderRadius: "4px", 
+                      background: "white",
+                      display: "flex",
+                      justifyContent: "center"
+                   }}>
+                      <img 
+                        src={carPreview} 
+                        style={{ 
+                          width: "100%", 
+                          maxHeight: "40mm", // Restricted height to keep single page
+                          objectFit: "cover", 
+                          display: "block",
+                          borderRadius: "2px"
+                        }} 
+                        alt="Vehicle" 
+                      />
+                   </div>
+                </div>
+              )}
             </div>
 
             {/* Right Column: Request & Instructions */}
