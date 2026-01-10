@@ -482,7 +482,7 @@ const Home = ({ onRegisterGarageClick }) => {
                   isLoading={isLocating}
                   loadingText="Locating..."
                 >
-                  Locate Service
+                  Nearby Services
                 </Button>
 
                 {/* --- REGISTER GARAGE BUTTON: Now calls the redirect trigger --- */}
