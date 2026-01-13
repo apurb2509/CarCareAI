@@ -8,8 +8,9 @@ import AuthModal from "./components/AuthModal";
 import { Routes, Route } from 'react-router-dom';
 import UserProfile from './pages/UserProfile';
 import ServicePartnerProfile from './pages/ServicePartnerProfile';
-import { useUser } from './context/UserContext';
+import { useUser } from './context/UserContext'; 
 import BookAppointment from './pages/BookAppointment'; 
+import FindServices from './pages/FindServices'; // 1. IMPORT THIS
 
 function App() {
   const { isOpen: isAuthOpen, onOpen: onAuthOpen, onClose: onAuthClose } = useDisclosure();
@@ -52,11 +53,15 @@ function App() {
       {/* Routes & Pages */}
       <Box position="relative" zIndex="10" w="100%">
         <Routes>
-  <Route path="/" element={<Home onRegisterGarageClick={triggerGarageReg} />} />
-  <Route path="/book-appointment" element={<BookAppointment />} /> {/* Add this line */}
-  <Route path="/profile/user" element={<UserProfile onAuthOpen={triggerStandardAuth} />} />
-  <Route path="/profile/service" element={<ServicePartnerProfile onAuthOpen={triggerStandardAuth} />} />
-</Routes>
+          <Route path="/" element={<Home onRegisterGarageClick={triggerGarageReg} />} />
+          <Route path="/book-appointment" element={<BookAppointment />} />
+          
+          {/* 2. REGISTER THE NEW ROUTE HERE */}
+          <Route path="/find-services" element={<FindServices />} />
+
+          <Route path="/profile/user" element={<UserProfile onAuthOpen={triggerStandardAuth} />} />
+          <Route path="/profile/service" element={<ServicePartnerProfile onAuthOpen={triggerStandardAuth} />} />
+        </Routes>
       </Box>
 
       {/* Widgets */}

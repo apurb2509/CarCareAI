@@ -6,6 +6,7 @@ require('dotenv').config();
 // Matches your folder structure: backend/database/db.js and backend/routes/authRoutes.js
 const connectDB = require('./database/db'); 
 const authRoutes = require('./routes/authRoutes');
+const appRoutes = require('./routes/appRoutes');
 
 // AI & Chatbot Imports
 const { Pinecone } = require('@pinecone-database/pinecone');
@@ -34,6 +35,9 @@ app.use(express.json());
 
 // Auth Routes (Login/Register)
 app.use('/api/auth', authRoutes);
+
+// App Routes (Services, Bookings, Search)
+app.use('/api', appRoutes);
 
 // Main Health Check
 // FIX: Returns JSON to prevent "Unexpected token <" error in frontend
