@@ -25,11 +25,42 @@ import {
   FaCloudUploadAlt,
   FaDownload,
   FaCheckCircle,
+  FaCar,
+  FaCalendarAlt,
 } from "react-icons/fa";
 import { useDropzone } from "react-dropzone";
 import { State, City } from "country-state-city";
 import html2pdf from "html2pdf.js";
 import QRCode from "qrcode";
+
+// Mapping for full fault category names
+const faultCategoryMap = {
+  ac: "Air Conditioning / Climate Control",
+  alignment: "Alignment & Balancing",
+  battery: "Battery & Charging System",
+  brakes: "Braking System",
+  clutch: "Clutch & Transmission",
+  cooling: "Cooling System / Radiator",
+  diagnostics: "Diagnostics / Warning Lights",
+  electrical: "Electrical & Wiring",
+  engine: "Engine Issues",
+  exhaust: "Exhaust System",
+  fuel: "Fuel System",
+  general: "General Inspection",
+  insurance: "Insurance / Claim Assistance",
+  oil: "Oil Change & Lubrication",
+  periodic: "Periodic Service",
+  pickup: "Pickup & Drop Request",
+  suspension: "Suspension & Steering",
+  tires: "Tires / Wheels",
+  transmission: "Transmission Issues",
+  wash: "Vehicle Cleaning / Detailing",
+  wipers: "Wipers & Windshield",
+  bodywork: "Bodywork / Dent & Paint",
+  interior: "Interior / Upholstery",
+  software: "Software / ECU Update",
+  other: "Other Issues",
+};
 
 const BookAppointment = () => {
   const toast = useToast();
@@ -37,7 +68,7 @@ const BookAppointment = () => {
   
   // State Management
   const [carImage, setCarImage] = useState(null);
-  const [carPreview, setCarPreview] = useState(null); // Added for PDF display
+  const [carPreview, setCarPreview] = useState(null);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [faultCategory, setFaultCategory] = useState("");
   const [otherElaboration, setOtherElaboration] = useState("");
@@ -46,7 +77,6 @@ const BookAppointment = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [bookingNumber, setBookingNumber] = useState("");
-  const [bookingDateTime, setBookingDateTime] = useState(null);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
 
   // Form Data State
@@ -58,6 +88,7 @@ const BookAppointment = () => {
     city: "",
     state: "",
     carModel: "",
+    vehicleNumber: "", 
     purchaseDate: "",
     transmission: "manual",
     fuel: "petrol",
@@ -65,7 +96,31 @@ const BookAppointment = () => {
     distance: "",
     condition: "",
     tuned: "no",
+    appointmentSlot: "", 
   });
+
+  // --- Logic: Generate Time Slots (Next 3 Days, 24h from now) ---
+  const availableSlots = useMemo(() => {
+    const slots = [];
+    const today = new Date();
+    for (let i = 1; i <= 4; i++) {
+      const futureDate = new Date(today);
+      futureDate.setDate(today.getDate() + i);
+      
+      const dateStr = futureDate.toLocaleDateString('en-IN', { 
+        weekday: 'short', 
+        day: 'numeric', 
+        month: 'short' 
+      });
+
+      const timeOptions = ["09:00 AM - 12:00 PM", "01:00 PM - 04:00 PM", "04:30 PM - 07:30 PM"];
+      
+      timeOptions.forEach(time => {
+        slots.push(`${dateStr} | ${time}`);
+      });
+    }
+    return slots;
+  }, []); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +135,7 @@ const BookAppointment = () => {
       : [];
   }, [selectedStateCode]);
 
-  // Updated onDrop to create a preview URL for the PDF
+  // Handle Image Drop & Preview
   const onDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
@@ -94,7 +149,7 @@ const BookAppointment = () => {
     [toast]
   );
 
-  // Clean up the object URL to avoid memory leaks
+  // Clean up memory
   useEffect(() => {
     return () => {
       if (carPreview) {
@@ -105,33 +160,29 @@ const BookAppointment = () => {
 
   // --- Logic: Generate Booking ID & QR Code ---
   const generateBookingDetails = async () => {
-    // 1. Generate booking number (format: BK-YYYYMMDD-XXXX)
     const date = new Date();
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
     const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
     const bookingNum = `BK-${dateStr}-${randomStr}`;
     
     setBookingNumber(bookingNum);
-    setBookingDateTime(date);
     
-    // 2. Prepare URL for QR Code (Redirect Functionality)
     const baseUrl = "https://carcareai.com/verify"; 
     const queryParams = new URLSearchParams({
       id: bookingNum,
       customer: formData.ownerName,
       vehicle: formData.carModel,
-      date: date.toLocaleDateString(),
+      slot: formData.appointmentSlot,
     }).toString();
 
     const qrData = `${baseUrl}?${queryParams}`;
     
-    // 3. Generate QR Data URL
     try {
       const qrUrl = await QRCode.toDataURL(qrData, {
         width: 200,
         margin: 1,
         color: {
-          dark: "#000000", // Black for high contrast
+          dark: "#000000",
           light: "#FFFFFF",
         },
       });
@@ -155,8 +206,12 @@ const BookAppointment = () => {
     const opt = {
       margin: 0,
       filename: `Booking_Receipt_${bookingNumber}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+      image: { type: "jpeg", quality: 0.98 }, 
+      html2canvas: { 
+        scale: 2, 
+        useCORS: true, 
+        scrollY: 0,
+      },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     };
 
@@ -171,17 +226,16 @@ const BookAppointment = () => {
   };
 
   const handleSubmit = async () => {
-    // Basic validation check
-    if (!formData.ownerName || !formData.carModel) {
+    if (!formData.ownerName || !formData.carModel || !formData.vehicleNumber || !formData.appointmentSlot) {
       toast({
         title: "Please fill required fields",
+        description: "Name, Model, Vehicle Number, and Slot are mandatory.",
         status: "warning",
         position: "top",
       });
       return;
     }
     
-    // Generate details before showing success
     await generateBookingDetails();
     setIsSubmitted(true);
     
@@ -195,414 +249,242 @@ const BookAppointment = () => {
     });
   };
 
+  // --- PDF STYLES ---
+  const pdfHeight = "296mm"; 
+  const pdfWidth = "210mm";
+  const headerGradient = "linear-gradient(90deg, #006192 0%, #0BC5EA 100%)";
+
+  // Shared Styles for PDF
+  const labelStyle = { fontSize: "10px", color: "#64748b", marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.5px" };
+  const valueStyle = { fontSize: "12px", fontWeight: "600", color: "#1e293b", margin: 0, lineHeight: 1.4 };
+  const sectionTitleStyle = { 
+    fontSize: "13px", 
+    color: "#006192", 
+    fontWeight: "700", 
+    textTransform: "uppercase", 
+    borderBottom: "1px solid #e2e8f0", 
+    paddingBottom: "5px", 
+    marginBottom: "12px" 
+  };
+
   return (
     <Box minH="100vh" bg="#0a0a0a" py={10}>
       
-      {/* --- HIDDEN PDF TEMPLATE (Strict A4 Layout) --- */}
-      {/* We keep this in the DOM but hidden from view using absolute positioning/z-index or a wrapper. 
-          For html2pdf to work best, we usually leave it rendered but off-screen. */}
+      {/* --- HIDDEN PDF TEMPLATE (Strict 1 Page, Aligned) --- */}
       <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
         <div
           ref={pdfRef}
           style={{
-            // SAFETY FIX: 296mm prevents the sub-pixel overflow causing the blank page
-            width: "210mm",
-            height: "296mm", 
-            padding: "12mm",
-            backgroundColor: "white",
-            color: "#1a1a1a",
-            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-            boxSizing: "border-box",
+            width: pdfWidth,
+            height: pdfHeight, 
+            backgroundColor: "#fff",
+            fontFamily: "'Segoe UI', Helvetica, Arial, sans-serif",
             display: "flex",
             flexDirection: "column",
-            border: "1px solid #ddd", // Professional border
-            position: "relative" // Helps contain absolute elements if needed
+            color: "#1a202c",
+            boxSizing: "border-box",
+            overflow: "hidden"
           }}
         >
-          {/* PDF Header */}
+          {/* 1. Header */}
           <div style={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
-            alignItems: "flex-start",
-            marginBottom: "15px",
-            paddingBottom: "12px",
-            borderBottom: "2px solid #0BC5EA"
-          }}>
-            <div>
-              <h1 style={{ 
-                color: "#0BC5EA", 
-                margin: "0 0 5px 0", 
-                fontSize: "26px",
-                fontWeight: "700"
-              }}>
-                CarCare AI
-              </h1>
-              <p style={{ 
-                fontSize: "10px", 
-                color: "#666", 
-                margin: 0 
-              }}>
-                Your All-in-One Vehicle Service & Maintenance Hub
-              </p>
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{
-                background: "#0BC5EA",
-                color: "white",
-                padding: "5px 12px",
-                borderRadius: "4px",
-                fontSize: "11px",
-                fontWeight: "600",
-                marginBottom: "5px"
-              }}>
-                SERVICE BOOKING
-              </div>
-              <p style={{ fontSize: "9px", color: "#666", margin: 0 }}>
-                {bookingDateTime?.toLocaleDateString("en-IN", { 
-                  day: "2-digit", 
-                  month: "short", 
-                  year: "numeric" 
-                })}
-              </p>
-            </div>
-          </div>
-
-          {/* Booking Number & QR Section */}
-          <div style={{
+            background: headerGradient, 
+            padding: "25px 40px", 
+            color: "white",
             display: "flex",
             justifyContent: "space-between",
-            marginBottom: "15px",
-            padding: "12px",
-            background: "#f8f9fa",
-            borderRadius: "6px",
-            border: "1px solid #e0e0e0"
+            alignItems: "center" // Ensures vertical centering of left and right blocks
           }}>
-            <div style={{ flex: 1 }}>
-              <p style={{ 
-                fontSize: "9px", 
-                color: "#666", 
-                margin: "0 0 4px 0",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px"
-              }}>
-                Booking Reference
-              </p>
-              <p style={{ 
-                fontSize: "16px", 
-                fontWeight: "700", 
-                color: "#0BC5EA",
-                margin: 0,
-                fontFamily: "monospace"
-              }}>
-                {bookingNumber}
-              </p>
-              <p style={{ 
-                fontSize: "9px", 
-                color: "#666", 
-                margin: "8px 0 0 0" 
-              }}>
-                Booked: {bookingDateTime?.toLocaleTimeString("en-IN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true
-                })}
+            {/* Left Side: Logo & Subtitle */}
+            <div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                 <Icon as={FaCar} w={7} h={7} color="white" mr={3} />
+                 <h1 style={{ margin: 0, fontSize: "28px", fontWeight: "800", letterSpacing: "0.5px", lineHeight: 1 }}>
+                   CarCareAI
+                 </h1>
+              </div>
+              <p style={{ margin: "5px 0 0 0", paddingLeft: "2px", fontSize: "10px", opacity: 0.85, letterSpacing: "1.2px", fontWeight: "500", textTransform: "uppercase" }}>
+              Advanced Automotive Service & Maintenance
               </p>
             </div>
-            {qrCodeUrl && (
-              <div style={{ 
-                padding: "8px",
-                background: "white",
-                borderRadius: "4px",
-                border: "1px solid #e0e0e0"
-              }}>
-                <img 
-                  src={qrCodeUrl} 
-                  alt="Booking QR" 
-                  style={{ 
-                    width: "70px", 
-                    height: "70px",
-                    display: "block"
-                  }} 
-                />
-                <p style={{
-                  fontSize: "7px",
-                  textAlign: "center",
-                  margin: "4px 0 0 0",
-                  color: "#999"
+            
+            {/* Right Side: Title & ID (Fixed Alignment) */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                <h2 style={{ margin: 0, fontSize: "14px", fontWeight: "700", letterSpacing: "0.5px", opacity: 0.9, marginBottom: "6px" }}>APPOINTMENT BOOKING</h2>
+                <div style={{ 
+                    background: "rgba(255,255,255,0.2)", 
+                    padding: "6px 12px", 
+                    borderRadius: "4px",
+                    display: "flex",
+                    alignItems: "center"
                 }}>
-                  Scan to verify
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Two Column Layout */}
-          <div style={{ 
-            display: "flex", 
-            gap: "15px",
-            marginBottom: "15px",
-            flex: 1
-          }}>
-            {/* Left Column: Details */}
-            <div style={{ flex: 1 }}>
-              {/* Customer Details */}
-              <div style={{ marginBottom: "15px" }}>
-                <h3 style={{ 
-                  fontSize: "11px", 
-                  fontWeight: "700",
-                  color: "#333",
-                  margin: "0 0 8px 0",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px"
-                }}>
-                  Customer Information
-                </h3>
-                <div style={{
-                  background: "white",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: "4px",
-                  padding: "10px"
-                }}>
-                  <table style={{ width: "100%", fontSize: "9px", lineHeight: "1.6" }}>
-                    <tbody>
-                      <tr>
-                        <td style={{ color: "#666", paddingBottom: "5px" }}>Name:</td>
-                        <td style={{ fontWeight: "600", paddingBottom: "5px" }}>{formData.ownerName}</td>
-                      </tr>
-                      <tr>
-                        <td style={{ color: "#666", verticalAlign: "top", paddingTop: "5px" }}>Address:</td>
-                        <td style={{ paddingTop: "5px" }}>
-                          {formData.block}, {formData.locality}<br/>
-                          {formData.city}, {formData.state}<br/>
-                          PIN: {formData.pincode}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                    <span style={{ fontSize: "11px", marginRight: "6px", fontWeight: "600", opacity: 0.9 }}>ID:</span>
+                    <span style={{ fontSize: "15px", fontWeight: "700", fontFamily: "monospace", letterSpacing: "0.5px" }}>{bookingNumber}</span>
                 </div>
-              </div>
-
-              {/* Vehicle Details */}
-              <div style={{ marginBottom: "15px" }}>
-                <h3 style={{ 
-                  fontSize: "11px", 
-                  fontWeight: "700",
-                  color: "#333",
-                  margin: "0 0 8px 0",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px"
-                }}>
-                  Vehicle Details
-                </h3>
-                <div style={{
-                  background: "white",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: "4px",
-                  padding: "10px"
-                }}>
-                  <table style={{ width: "100%", fontSize: "9px", lineHeight: "1.8" }}>
-                    <tbody>
-                      <tr>
-                        <td style={{ color: "#666", width: "45%" }}>Model:</td>
-                        <td style={{ fontWeight: "600" }}>{formData.carModel}</td>
-                      </tr>
-                      <tr>
-                        <td style={{ color: "#666" }}>Purchase Date:</td>
-                        <td>{formData.purchaseDate}</td>
-                      </tr>
-                      <tr>
-                        <td style={{ color: "#666" }}>Transmission:</td>
-                        <td style={{ textTransform: "capitalize" }}>{formData.transmission}</td>
-                      </tr>
-                      <tr>
-                        <td style={{ color: "#666" }}>Fuel Type:</td>
-                        <td style={{ textTransform: "capitalize" }}>{formData.fuel}</td>
-                      </tr>
-                      <tr>
-                        <td style={{ color: "#666" }}>Condition:</td>
-                        <td style={{ textTransform: "capitalize" }}>{formData.condition}</td>
-                      </tr>
-                      <tr>
-                        <td style={{ color: "#666" }}>Distance:</td>
-                        <td>{formData.distance} km</td>
-                      </tr>
-                      <tr>
-                        <td style={{ color: "#666" }}>Services Done:</td>
-                        <td>{formData.services}</td>
-                      </tr>
-                      <tr>
-                        <td style={{ color: "#666" }}>Tuned:</td>
-                        <td style={{ textTransform: "uppercase" }}>{formData.tuned}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* --- IMAGE DISPLAY IN PDF --- */}
-              {carPreview && (
-                <div style={{ marginBottom: "15px" }}>
-                   <h3 style={{ 
-                    fontSize: "11px", 
-                    fontWeight: "700", 
-                    color: "#333", 
-                    margin: "0 0 5px 0", 
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px"
-                  }}>
-                      Vehicle Photo
-                   </h3>
-                   <div style={{ 
-                      border: "1px solid #e0e0e0", 
-                      padding: "4px", 
-                      borderRadius: "4px", 
-                      background: "white",
-                      display: "flex",
-                      justifyContent: "center"
-                   }}>
-                      <img 
-                        src={carPreview} 
-                        style={{ 
-                          width: "100%", 
-                          maxHeight: "40mm", // Restricted height to keep single page
-                          objectFit: "cover", 
-                          display: "block",
-                          borderRadius: "2px"
-                        }} 
-                        alt="Vehicle" 
-                      />
-                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* Right Column: Request & Instructions */}
-            <div style={{ flex: 1 }}>
-              {/* Reported Issue */}
-              <div style={{ marginBottom: "15px" }}>
-                <h3 style={{ 
-                  fontSize: "11px", 
-                  fontWeight: "700",
-                  color: "#333",
-                  margin: "0 0 8px 0",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px"
-                }}>
-                  Service Request
-                </h3>
-                <div style={{
-                  background: "#fff9e6",
-                  border: "1px solid #ffd700",
-                  borderRadius: "4px",
-                  padding: "12px",
-                  borderLeft: "4px solid #0BC5EA"
-                }}>
-                  <p style={{ 
-                    fontSize: "9px", 
-                    color: "#666", 
-                    margin: "0 0 5px 0",
-                    fontWeight: "600"
-                  }}>
-                    Primary Concern:
-                  </p>
-                  <p style={{ 
-                    fontSize: "10px", 
-                    margin: 0,
-                    lineHeight: "1.6",
-                    color: "#333"
-                  }}>
-                    {faultCategory === "other" ? otherElaboration : faultCategory}
-                  </p>
-                </div>
-              </div>
-
-              {/* Service Instructions */}
-              <div style={{
-                background: "#e6f7fb",
-                border: "1px solid #0BC5EA",
-                borderRadius: "4px",
-                padding: "12px",
-                marginBottom: "15px"
-              }}>
-                <h4 style={{
-                  fontSize: "10px",
-                  fontWeight: "700",
-                  color: "#0BC5EA",
-                  margin: "0 0 8px 0"
-                }}>
-                  IMPORTANT INSTRUCTIONS
-                </h4>
-                <ul style={{
-                  fontSize: "8px",
-                  margin: 0,
-                  paddingLeft: "15px",
-                  lineHeight: "1.8",
-                  color: "#333"
-                }}>
-                  <li>Please arrive 10 minutes before your scheduled time.</li>
-                  <li>Bring this receipt and vehicle documents.</li>
-                  <li>Service duration may vary based on diagnosis.</li>
-                  <li>Contact us for any changes or cancellations.</li>
-                </ul>
-              </div>
-
-              {/* Contact Info */}
-              <div style={{
-                background: "white",
-                border: "1px solid #e0e0e0",
-                borderRadius: "4px",
-                padding: "10px"
-              }}>
-                <h4 style={{
-                  fontSize: "10px",
-                  fontWeight: "700",
-                  color: "#333",
-                  margin: "0 0 6px 0"
-                }}>
-                  Contact Information
-                </h4>
-                <p style={{ fontSize: "8px", margin: "0 0 3px 0", color: "#666" }}>
-                  📞 +91 987-654-3210
-                </p>
-                <p style={{ fontSize: "8px", margin: "0 0 3px 0", color: "#666" }}>
-                  ✉️ support@carcareai.com
-                </p>
-                <p style={{ fontSize: "8px", margin: 0, color: "#666" }}>
-                  🌐 www.carcareai.com
-                </p>
-              </div>
             </div>
           </div>
 
-          {/* PDF Footer */}
-          <div style={{ 
-            marginTop: "auto",
-            paddingTop: "10px",
-            borderTop: "1px solid #eaeaea",
-            fontSize: "8px",
-            color: "#666"
-          }}>
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center"
+          {/* 2. Main Body */}
+          <div style={{ padding: "30px 40px", flex: 1, display: "flex", flexDirection: "column" }}>
+            
+            {/* Status Bar (Fixed Alignment) */}
+            <div style={{ 
+                display: "flex", 
+                justifyContent: "space-between", 
+                alignItems: "center", // This centers items vertically
+                background: "#f1f5f9", 
+                borderLeft: "5px solid #0BC5EA",
+                padding: "15px 20px",
+                borderRadius: "0 4px 4px 0",
+                marginBottom: "30px"
             }}>
-              <p style={{ 
-                fontSize: "8px", 
-                color: "#999", 
-                margin: 0 
-              }}>
-                © 2026 CarCareAI. All rights reserved.
-              </p>
-              <p style={{ 
-                fontSize: "8px", 
-                color: "#0BC5EA", 
-                margin: 0,
-                fontWeight: "600"
-              }}>
-                DIGITALLY VERIFIED BOOKING
-              </p>
+                <div>
+                    <p style={{ fontSize: "10px", color: "#64748b", textTransform: "uppercase", fontWeight: "bold", marginBottom: "2px" }}>SELECTED SLOT</p>
+                    <p style={{ fontSize: "14px", fontWeight: "700", color: "#006192", margin: 0, lineHeight: 1 }}>{formData.appointmentSlot}</p>
+                </div>
+                
+                {/* Right side aligned vertically center with left */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                    <p style={{ fontSize: "10px", color: "#64748b", textTransform: "uppercase", fontWeight: "bold", marginBottom: "2px" }}>STATUS</p>
+                    <span style={{ 
+                        background: "#d1fae5", 
+                        color: "#047857", 
+                        padding: "4px 12px", 
+                        borderRadius: "12px", 
+                        fontSize: "11px", 
+                        fontWeight: "800", 
+                        textTransform: "uppercase",
+                        display: "inline-block",
+                        lineHeight: 1
+                    }}>
+                        Confirmed
+                    </span>
+                </div>
             </div>
+
+            {/* Section 1: Customer Information */}
+            <div style={{ marginBottom: "25px" }}>
+                <h3 style={sectionTitleStyle}>1. Customer Information</h3>
+                <div style={{ display: "flex", gap: "40px" }}>
+                    <div style={{ flex: 1 }}>
+                        <p style={labelStyle}>OWNER NAME</p>
+                        <p style={valueStyle}>{formData.ownerName}</p>
+                    </div>
+                    <div style={{ flex: 2 }}>
+                        <p style={labelStyle}>ADDRESS</p>
+                        <p style={valueStyle}>
+                            {formData.block}, {formData.locality}, {formData.city}, {formData.state} - {formData.pincode}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Section 2: Vehicle Details */}
+            <div style={{ marginBottom: "25px" }}>
+                <h3 style={sectionTitleStyle}>2. Vehicle Details</h3>
+                <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
+                    
+                    {/* Data Grid */}
+                    <div style={{ 
+                        flex: 1.5, 
+                        display: "grid", 
+                        gridTemplateColumns: "1fr 1fr", 
+                        gap: "15px 10px" 
+                    }}>
+                        <div><p style={labelStyle}>MODEL</p><p style={valueStyle}>{formData.carModel}</p></div>
+                        <div><p style={labelStyle}>REGISTRATION NO</p><p style={{...valueStyle, textTransform: "uppercase"}}>{formData.vehicleNumber}</p></div>
+                        
+                        <div><p style={labelStyle}>FUEL TYPE</p><p style={{...valueStyle, textTransform: "capitalize"}}>{formData.fuel}</p></div>
+                        <div><p style={labelStyle}>TRANSMISSION</p><p style={{...valueStyle, textTransform: "capitalize"}}>{formData.transmission}</p></div>
+                        
+                        <div><p style={labelStyle}>PURCHASE DATE</p><p style={valueStyle}>{formData.purchaseDate || "N/A"}</p></div>
+                        <div><p style={labelStyle}>ODOMETER</p><p style={valueStyle}>{formData.distance} km</p></div>
+                        
+                        <div><p style={labelStyle}>CONDITION</p><p style={{...valueStyle, textTransform: "capitalize"}}>{formData.condition}</p></div>
+                        <div><p style={labelStyle}>TUNED</p><p style={{...valueStyle, textTransform: "uppercase"}}>{formData.tuned}</p></div>
+                    </div>
+
+                    {/* Image Box */}
+                    <div style={{ 
+                        flex: 1, 
+                        height: "140px", 
+                        background: "#f8fafc", 
+                        border: "1px solid #e2e8f0", 
+                        borderRadius: "4px",
+                        overflow: "hidden",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        {carPreview ? (
+                            <img src={carPreview} alt="Car" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        ) : (
+                            <div style={{textAlign: "center", color: "#94a3b8"}}>
+                                <Icon as={FaCar} w={10} h={10} mb={1} />
+                                <p style={{fontSize: "10px"}}>No Image</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Section 3: Service Summary */}
+            <div>
+                <h3 style={sectionTitleStyle}>3. Service Summary</h3>
+                <div style={{ 
+                    display: "flex", 
+                    justifyContent: "space-between", 
+                    background: "#f8fafc", 
+                    border: "1px solid #e2e8f0", 
+                    borderRadius: "6px", 
+                    padding: "15px"
+                }}>
+                    <div style={{ flex: 1, paddingRight: "20px" }}>
+                        <p style={labelStyle}>REPORTED ISSUE</p>
+                        <p style={{ fontSize: "14px", fontWeight: "700", color: "#0BC5EA", marginBottom: "5px" }}>
+                            {faultCategoryMap[faultCategory] || "General Service"}
+                        </p>
+                        <p style={{ fontSize: "11px", color: "#475569", lineHeight: "1.5" }}>
+                            Description: {faultCategory === "other" ? otherElaboration : (faultCategoryMap[faultCategory] ? `Standard diagnostics and repair for ${faultCategoryMap[faultCategory]}.` : "General maintenance checkup.")}
+                        </p>
+                    </div>
+                    
+                    <div style={{ 
+                        width: "80px", 
+                        textAlign: "center", 
+                        display: "flex", 
+                        flexDirection: "column", 
+                        alignItems: "center" 
+                    }}>
+                        {qrCodeUrl && (
+                            <img src={qrCodeUrl} alt="QR" style={{ width: "70px", height: "70px", display: "block", marginBottom: "4px" }} />
+                        )}
+                        <p style={{ fontSize: "8px", color: "#64748b", textTransform: "uppercase" }}>Scan Entry</p>
+                    </div>
+                </div>
+            </div>
+
+          </div>
+
+          {/* 3. Footer */}
+          <div style={{ 
+            background: headerGradient, 
+            padding: "15px 40px", 
+            color: "white", 
+            fontSize: "10px",
+            display: "flex", 
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "auto"
+          }}>
+             <div>
+                 <p style={{ margin: 0, fontWeight: "600" }}>CarCareAI Services</p>
+                 <p style={{ margin: 0, opacity: 0.8 }}>www.carcareai.com</p>
+             </div>
+             <div style={{ textAlign: "right" }}>
+                 <p style={{ margin: 0, opacity: 0.8 }}>Support: +91 98765 43210</p>
+                 <p style={{ margin: 0, opacity: 0.8 }}>System Generated Receipt</p>
+             </div>
           </div>
         </div>
       </div>
@@ -748,6 +630,22 @@ const BookAppointment = () => {
                 onChange={handleInputChange}
               />
             </FormControl>
+            
+            {/* New Vehicle Number Input */}
+            <FormControl isRequired>
+              <FormLabel fontSize="xs" color="gray.500">
+                VEHICLE NUMBER
+              </FormLabel>
+              <Input
+                name="vehicleNumber"
+                placeholder="OR 04 N 2355"
+                bg="whiteAlpha.50"
+                border="none"
+                textTransform="uppercase"
+                onChange={handleInputChange}
+              />
+            </FormControl>
+
             <FormControl isRequired>
               <FormLabel fontSize="xs" color="gray.500">
                 PURCHASE DATE
@@ -766,6 +664,29 @@ const BookAppointment = () => {
               />
             </FormControl>
           </SimpleGrid>
+
+          {/* Time Slot Selection */}
+          <Box w="full" pt={2}>
+             <FormControl isRequired>
+              <FormLabel fontSize="xs" color="cyan.400" fontWeight="bold">
+                <Icon as={FaCalendarAlt} mr={2} />
+                SELECT APPOINTMENT SLOT (Starts 24h from now)
+              </FormLabel>
+              <Select
+                name="appointmentSlot"
+                placeholder="Choose a date and time..."
+                bg="gray.800"
+                border="1px solid"
+                borderColor="cyan.800"
+                _hover={{ borderColor: "cyan.400" }}
+                onChange={handleInputChange}
+              >
+                {availableSlots.map((slot, index) => (
+                  <option key={index} value={slot}>{slot}</option>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
 
           <Box
             w="full"
@@ -860,31 +781,9 @@ const BookAppointment = () => {
               value={faultCategory}
               onChange={(e) => setFaultCategory(e.target.value)}
             >
-              <option value="ac">Air Conditioning / Climate Control</option>
-              <option value="alignment">Alignment & Balancing</option>
-              <option value="battery">Battery & Charging System</option>
-              <option value="brakes">Braking System</option>
-              <option value="clutch">Clutch & Transmission</option>
-              <option value="cooling">Cooling System / Radiator</option>
-              <option value="diagnostics">Diagnostics / Warning Lights</option>
-              <option value="electrical">Electrical & Wiring</option>
-              <option value="engine">Engine Issues</option>
-              <option value="exhaust">Exhaust System</option>
-              <option value="fuel">Fuel System</option>
-              <option value="general">General Inspection</option>
-              <option value="insurance">Insurance / Claim Assistance</option>
-              <option value="oil">Oil Change & Lubrication</option>
-              <option value="periodic">Periodic Service</option>
-              <option value="pickup">Pickup & Drop Request</option>
-              <option value="suspension">Suspension & Steering</option>
-              <option value="tires">Tires / Wheels</option>
-              <option value="transmission">Transmission Issues</option>
-              <option value="wash">Vehicle Cleaning / Detailing</option>
-              <option value="wipers">Wipers & Windshield</option>
-              <option value="bodywork">Bodywork / Dent & Paint</option>
-              <option value="interior">Interior / Upholstery</option>
-              <option value="software">Software / ECU Update</option>
-              <option value="other">Other Issues</option>
+              {Object.entries(faultCategoryMap).map(([key, value]) => (
+                <option key={key} value={key}>{value}</option>
+              ))}
             </Select>
             {faultCategory === "other" && (
               <Textarea
