@@ -1,0 +1,111 @@
+/* frontend/src/styles/BookAppointment.css */
+
+/* 1. Global Reset & Smoothness */
+.book-appointment-container {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 2. Responsive A4 Wrapper */
+/* On desktop, we maintain the A4 aspect ratio. On mobile, we switch to fluid width. */
+.a4-container {
+    width: 100%;
+    max-width: 800px; /* Standard A4 width equivalent for screens */
+    margin: 0 auto;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 3. Dropdown Styling */
+/* Ensures the 'country-state-city' dropdowns look consistent with Chakra UI */
+select {
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+select option {
+    background-color: #1e293b !important; /* Deep navy for readability */
+    color: white !important;
+    padding: 10px;
+}
+
+/* 4. Date Picker Compatibility */
+/* Standardizing the calendar icon and input behavior across browsers */
+input[type="date"] {
+    position: relative;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+    filter: invert(1); /* Makes the icon white for dark theme */
+}
+
+/* 5. Drag & Drop Area Responsiveness */
+.dropzone-area {
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* 6. Breakpoints for Mobile Devices (under 768px) */
+@media screen and (max-width: 768px) {
+    .a4-container {
+        max-width: 95%; /* Fluid width for small screens */
+        padding: 20px 15px !important;
+    }
+
+    h1 {
+        font-size: 1.8rem !important; /* Slightly smaller heading */
+    }
+
+    /* Stack simple grids that were 2 columns into 1 column */
+    .responsive-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Adjust PDF template scale for mobile view if needed */
+    .pdf-hidden-template {
+        display: none !important; /* Never show the hidden PDF template on mobile UI */
+    }
+}
+
+/* 7. Tablet Optimization (769px to 1024px) */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .a4-container {
+        max-width: 90%;
+    }
+}
+
+/* 8. Fix for html2pdf rendering */
+/* Ensures the hidden template doesn't create scrollbars or layout shifts */
+#pdf-template-wrapper {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    visibility: hidden;
+}
+
+/* 9. Button & Icon Hover Effects */
+.confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(11, 197, 234, 0.3);
+}
+
+.download-btn:active {
+    transform: scale(0.98);
+}
