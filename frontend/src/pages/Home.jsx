@@ -714,7 +714,7 @@ const Home = ({ onRegisterGarageClick }) => {
                 color="white"
                 letterSpacing="tight"
               >
-                How CarCare AI Works?
+                How CarCare AI Works
               </Heading>
 
               <VStack spacing={0} w="100%">
