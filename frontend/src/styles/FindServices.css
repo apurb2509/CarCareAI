@@ -1,0 +1,83 @@
+/* Custom Scrollbar for the entire page */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2d3748;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0BC5EA;
+}
+
+/* Container scaling */
+.find-services-container {
+  transition: padding 0.3s ease;
+}
+
+/* Glassmorphism Card Effect */
+.service-card {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Responsive Search Bar Scaling */
+@media screen and (max-width: 768px) {
+  .find-services-header {
+    padding-top: 15px !important;
+    margin-bottom: 30px !important;
+  }
+
+  .search-stack {
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  /* Force vertical stacking for search and filter on mobile */
+  .search-stack > div, 
+  .search-stack > select {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Scale typography for mobile */
+  .main-heading {
+    font-size: 2rem !important;
+  }
+}
+
+/* Tablet Optimizations */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .results-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+}
+
+/* Hover Animations for Buttons */
+.book-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.book-btn:hover {
+  box-shadow: 0 0 15px rgba(11, 197, 234, 0.4);
+}
+
+/* Animation for result entrance */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.service-card {
+  animation: fadeIn 0.4s ease-out forwards;
+}
