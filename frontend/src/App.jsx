@@ -11,6 +11,7 @@ import ServicePartnerProfile from './pages/ServicePartnerProfile';
 import { useUser } from './context/UserContext'; 
 import BookAppointment from './pages/BookAppointment'; 
 import FindServices from './pages/FindServices'; // 1. IMPORT THIS
+import HelpCentre from "./pages/HelpCentre";
 
 function App() {
   const { isOpen: isAuthOpen, onOpen: onAuthOpen, onClose: onAuthClose } = useDisclosure();
@@ -61,6 +62,7 @@ function App() {
 
           <Route path="/profile/user" element={<UserProfile onAuthOpen={triggerStandardAuth} />} />
           <Route path="/profile/service" element={<ServicePartnerProfile onAuthOpen={triggerStandardAuth} />} />
+          <Route path="/help-centre" element={<HelpCentre />} />
         </Routes>
       </Box>
 

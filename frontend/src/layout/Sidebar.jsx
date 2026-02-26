@@ -73,6 +73,8 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
     onClose();
   };
 
+  // ... inside Sidebar.jsx
+
   const getNavItems = () => {
     const baseItems = [
       { icon: FaUserCircle, label: "Profile", onClick: handleProfileClick },
@@ -97,7 +99,12 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
             onClose();
           },
         },
-        { icon: FaPhone, label: "Help Centre" },
+        // UPDATED HELP CENTRE
+        { 
+          icon: FaPhone, 
+          label: "Help Centre", 
+          onClick: () => { navigate("/help-centre"); onClose(); } 
+        },
         { icon: FaCog, label: "Settings" },
       ];
     } else {
@@ -120,7 +127,12 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
             onClose();
           },
         },
-        { icon: FaPhone, label: "Help Centre" },
+        // UPDATED HELP CENTRE
+        { 
+          icon: FaPhone, 
+          label: "Help Centre", 
+          onClick: () => { navigate("/help-centre"); onClose(); } 
+        },
         { icon: FaCog, label: "Settings" },
       ];
     }
