@@ -97,7 +97,11 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
             onClose();
           },
         },
-        { icon: FaPhone, label: "Help Centre" },
+        { 
+          icon: FaPhone, 
+          label: "Help Centre", 
+          onClick: () => { navigate('/help-centre'); onClose(); } 
+        },
         { icon: FaCog, label: "Settings" },
       ];
     } else {
@@ -119,8 +123,12 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
             navigate("/book-appointment");
             onClose();
           },
+        }, 
+        { 
+          icon: FaPhone, 
+          label: "Help Centre", 
+          onClick: () => { navigate('/help-centre'); onClose(); } 
         },
-        { icon: FaPhone, label: "Help Centre" },
         { icon: FaCog, label: "Settings" },
       ];
     }

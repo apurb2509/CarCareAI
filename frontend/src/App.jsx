@@ -11,6 +11,7 @@ import ServicePartnerProfile from './pages/ServicePartnerProfile';
 import { useUser } from './context/UserContext'; 
 import BookAppointment from './pages/BookAppointment'; 
 import FindServices from './pages/FindServices'; // 1. IMPORT THIS
+import HelpCentre from './pages/HelpCentre';
 
 function App() {
   const { isOpen: isAuthOpen, onOpen: onAuthOpen, onClose: onAuthClose } = useDisclosure();
@@ -52,17 +53,15 @@ function App() {
 
       {/* Routes & Pages */}
       <Box position="relative" zIndex="10" w="100%">
-        <Routes>
-          <Route path="/" element={<Home onRegisterGarageClick={triggerGarageReg} />} />
-          <Route path="/book-appointment" element={<BookAppointment />} />
-          
-          {/* 2. REGISTER THE NEW ROUTE HERE */}
-          <Route path="/find-services" element={<FindServices />} />
-
-          <Route path="/profile/user" element={<UserProfile onAuthOpen={triggerStandardAuth} />} />
-          <Route path="/profile/service" element={<ServicePartnerProfile onAuthOpen={triggerStandardAuth} />} />
-        </Routes>
-      </Box>
+          <Routes>
+            <Route path="/" element={<Home onRegisterGarageClick={triggerGarageReg} />} />
+            <Route path="/book-appointment" element={<BookAppointment />} />
+            <Route path="/find-services" element={<FindServices />} />
+            <Route path="/help-centre" element={<HelpCentre />} /> 
+            <Route path="/profile/user" element={<UserProfile onAuthOpen={triggerStandardAuth} />} />
+            <Route path="/profile/service" element={<ServicePartnerProfile onAuthOpen={triggerStandardAuth} />} />
+          </Routes>
+        </Box>
 
       {/* Widgets */}
       <ChatWidget />
