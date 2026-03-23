@@ -3,14 +3,18 @@ import {
   Box, VStack, HStack, Text, Avatar, Button, Input, FormControl, FormLabel,
   SimpleGrid, Checkbox, Card, CardHeader, CardBody, Badge, Stat, StatLabel, 
   StatNumber, StatHelpText, Icon, Divider, Table, Thead, Tbody, Tr, Th, Td,
-  Tabs, TabList, TabPanels, Tab, TabPanel, IconButton, useToast, Textarea
+  Tabs, TabList, TabPanels, Tab, TabPanel, IconButton, useToast, Textarea,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody // Added Modal imports
 } from "@chakra-ui/react";
 import { 
   FaEdit, FaSave, FaTools, FaLock, FaClipboardList, 
-  FaBoxOpen, FaPlus, FaTrash, FaCheck, FaTimes, FaMapMarkedAlt, FaClock 
+  FaBoxOpen, FaPlus, FaTrash, FaCheck, FaTimes, FaMapMarkedAlt, FaClock, FaCube // Added FaCube
 } from "react-icons/fa";
 import { useUser } from "../context/UserContext";
 import { useLocation } from "react-router-dom"; 
+
+// Import the 3D Canvas
+import ThreeCanvas from "../components/Garage/ThreeCanvas";
 
 const ServicePartnerProfile = ({ onAuthOpen }) => {
   const { user } = useUser();
@@ -22,8 +26,10 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
   const [activeTab, setActiveTab] = useState(0); 
   
   // --- VIEW SWITCHING STATE ---
-  // Default to 'profile'. sidebar will switch this to 'bookings' or 'inventory'
   const [activeView, setActiveView] = useState("profile");
+
+  // --- 3D PREVIEW STATE ---
+  const [previewPart, setPreviewPart] = useState(null);
 
   // --- HANDLE NAVIGATION FROM SIDEBAR ---
   useEffect(() => {
@@ -43,9 +49,26 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
     { id: 2, name: "Synthetic Oil Change", price: "₹1,499" },
   ]);
 
+  // Updated inventory to include 3D properties
   const [inventory, setInventory] = useState([
-    { id: 1, name: "Bosch Brake Pads (Front)", stock: 12, price: "₹2,200" },
-    { id: 2, name: "Shell Helix Ultra 5W-40", stock: 25, price: "₹3,500" },
+    { 
+      id: 1, 
+      name: "Ceramic Front Brake Pads", 
+      stock: 12, 
+      price: "₹2,200",
+      category: "Braking System",
+      shortDescription: "Low dust, high stopping power.",
+      modelUrl: "https://cdn.example.com/3d/brake_pad_ceramic.glb"
+    },
+    { 
+      id: 2, 
+      name: "Premium Oil Filter", 
+      stock: 25, 
+      price: "₹3,500",
+      category: "Powertrain",
+      shortDescription: "Removes engine oil contaminants.",
+      modelUrl: "https://cdn.example.com/3d/oil_filter.glb"
+    },
   ]);
 
   const [profileData, setProfileData] = useState({
@@ -93,7 +116,7 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
   const handleAddService = () => { const newId = myServices.length + 1; setMyServices(prev => [...prev, { id: newId, name: "New Service", price: "₹0" }]); };
   const handleUpdateService = (id, field, value) => { setMyServices(prev => prev.map(svc => svc.id === id ? { ...svc, [field]: value } : svc)); };
   const handleRemoveService = (id) => { setMyServices(prev => prev.filter(s => s.id !== id)); };
-  const handleAddPart = () => { const newId = inventory.length + 1; setInventory(prev => [...prev, { id: newId, name: "New Car Part", stock: 0, price: "₹0" }]); };
+  const handleAddPart = () => { const newId = inventory.length + 1; setInventory(prev => [...prev, { id: newId, name: "New Car Part", stock: 0, price: "₹0", category: "General", shortDescription: "New part description.", modelUrl: "" }]); };
   const handleUpdateInventory = (id, field, value) => { setInventory(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item)); };
   const handleRemovePart = (id) => { setInventory(prev => prev.filter(i => i.id !== id)); };
   const handleCheckbox = (e) => { setSameAsOwner(e.target.checked); if(e.target.checked) { setProfileData(prev => ({...prev, stationName: prev.ownerName + "'s Station"})); }};
@@ -273,8 +296,8 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                     <Td>
                       {b.status === "Pending" && (
                         <HStack>
-                          <IconButton icon={<FaCheck />} size="sm" colorScheme="green" onClick={() => handleBookingStatus(b.id, "Confirmed")} />
-                          <IconButton icon={<FaTimes />} size="sm" colorScheme="red" variant="outline" onClick={() => handleBookingStatus(b.id, "Rejected")} />
+                          <IconButton icon={<FaCheck />} size="sm" colorScheme="green" onClick={() => handleBookingStatus(b.id, "Confirmed")} aria-label="Confirm" />
+                          <IconButton icon={<FaTimes />} size="sm" colorScheme="red" variant="outline" onClick={() => handleBookingStatus(b.id, "Rejected")} aria-label="Reject" />
                         </HStack>
                       )}
                     </Td>
@@ -307,7 +330,7 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                             <Input size="md" fontWeight="bold" value={svc.name} onChange={(e) => handleUpdateService(svc.id, 'name', e.target.value)} placeholder="Service Name" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" _focus={{ borderColor: "cyan.400" }} />
                             <Input size="sm" color="cyan.300" value={svc.price} onChange={(e) => handleUpdateService(svc.id, 'price', e.target.value)} placeholder="Price (e.g. ₹499)" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" _focus={{ borderColor: "cyan.400" }} />
                           </VStack>
-                          <IconButton icon={<FaTrash />} size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemoveService(svc.id)} />
+                          <IconButton aria-label="Delete Service" icon={<FaTrash />} size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemoveService(svc.id)} />
                         </HStack>
                       ))}
                     </SimpleGrid>
@@ -317,14 +340,32 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                       {inventory.map((item) => (
                         <HStack key={item.id} p={4} bg="whiteAlpha.100" borderRadius="lg" justify="space-between" borderLeft="4px solid" borderColor="purple.500">
-                          <VStack align="start" spacing={2} w="full">
+                          
+                          {/* 3D Preview Button */}
+                          <Box 
+                            bg="whiteAlpha.200" 
+                            p={3} 
+                            borderRadius="lg" 
+                            cursor="pointer" 
+                            onClick={() => setPreviewPart(item)} 
+                            _hover={{ bg: "cyan.500", color: "gray.900", transform: "scale(1.05)" }}
+                            transition="all 0.2s"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            h="100%"
+                          >
+                            <Icon as={FaCube} boxSize={6} />
+                          </Box>
+
+                          <VStack align="start" spacing={2} w="full" ml={2}>
                             <Input size="md" fontWeight="bold" value={item.name} onChange={(e) => handleUpdateInventory(item.id, 'name', e.target.value)} placeholder="Part Name" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" _focus={{ borderColor: "purple.400" }} />
                             <HStack>
                               <Input size="sm" value={item.stock} onChange={(e) => handleUpdateInventory(item.id, 'stock', e.target.value)} placeholder="Qty" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" w="70px" textAlign="center" _focus={{ borderColor: "purple.400" }} />
                               <Input size="sm" value={item.price} onChange={(e) => handleUpdateInventory(item.id, 'price', e.target.value)} placeholder="Price" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" _focus={{ borderColor: "purple.400" }} />
                             </HStack>
                           </VStack>
-                          <IconButton icon={<FaTrash />} size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemovePart(item.id)} />
+                          <IconButton aria-label="Delete Part" icon={<FaTrash />} size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemovePart(item.id)} />
                         </HStack>
                       ))}
                     </SimpleGrid>
@@ -335,6 +376,22 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
           </Card>
         </Box>
       )}
+
+      {/* === 3D PREVIEW MODAL === */}
+      <Modal isOpen={!!previewPart} onClose={() => setPreviewPart(null)} size="2xl" isCentered>
+        <ModalOverlay backdropFilter="blur(10px)" bg="blackAlpha.700" />
+        <ModalContent bg="gray.900" border="1px solid" borderColor="cyan.500" borderRadius="2xl" overflow="hidden">
+          <ModalHeader color="white" borderBottom="1px solid" borderColor="whiteAlpha.200">
+            {previewPart?.name} - 3D Preview
+          </ModalHeader>
+          <ModalCloseButton color="white" mt={2} />
+          
+          <ModalBody p={0} h="500px" bg="blackAlpha.600" position="relative">
+            {previewPart && <ThreeCanvas part={previewPart} />}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
     </Box>
   );
 };

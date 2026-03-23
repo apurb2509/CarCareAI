@@ -107,7 +107,11 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
     } else {
       return [
         ...baseItems,
-        { icon: FaWrench, label: "My Garage" },
+        { 
+          icon: FaWrench, 
+          label: "Car Parts", 
+          onClick: () => { navigate('/my-garage'); onClose(); } 
+        },
         {
           icon: FaSearch,
           label: "Find Services",

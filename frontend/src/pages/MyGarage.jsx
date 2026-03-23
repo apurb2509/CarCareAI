@@ -1,0 +1,229 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Box, Container, Grid, GridItem, Heading, Text, VStack, HStack,
+  Button, useDisclosure, Spinner, Icon, Badge, useToast, Flex
+} from '@chakra-ui/react';
+import { FaCar, FaCogs, FaMapMarkerAlt, FaInfoCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
+// We will build these two components next!
+import CarSelectorModal from '../components/Garage/CarSelectorModal';
+import ThreeCanvas from '../components/Garage/ThreeCanvas';
+
+const MyGarage = () => {
+  const toast = useToast();
+  const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [availableCars, setAvailableCars] = useState([]);
+  const [selectedCar, setSelectedCar] = useState(null);
+  
+  const [compatibleParts, setCompatibleParts] = useState([]);
+  const [selectedPart, setSelectedPart] = useState(null);
+  
+  const [isLoadingCars, setIsLoadingCars] = useState(true);
+  const [isLoadingParts, setIsLoadingParts] = useState(false);
+
+  // 1. Fetch all available cars when the page loads
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await fetch('http://localhost:5002/api/inventory/cars');
+        const data = await response.json();
+        if (data.success) {
+          setAvailableCars(data.data);
+          // If no car is selected yet, automatically open the selector modal
+          if (!selectedCar) onOpen();
+        }
+      } catch (error) {
+        console.error("Failed to fetch cars", error);
+        toast({ title: "Error loading vehicles", status: "error", position: "top" });
+      } finally {
+        setIsLoadingCars(false);
+      }
+    };
+    fetchCars();
+  }, []);
+
+  // 2. Fetch parts whenever a new car is selected
+  useEffect(() => {
+    if (!selectedCar) return;
+
+    const fetchParts = async () => {
+      setIsLoadingParts(true);
+      setSelectedPart(null); // Reset the 3D canvas
+      try {
+        const response = await fetch(`http://localhost:5002/api/inventory/parts/${selectedCar._id}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          setCompatibleParts(data.data);
+        } else {
+          setCompatibleParts([]);
+          toast({ title: data.message, status: "info", position: "top" });
+        }
+      } catch (error) {
+        console.error("Failed to fetch parts", error);
+        toast({ title: "Error loading parts inventory", status: "error", position: "top" });
+      } finally {
+        setIsLoadingParts(false);
+      }
+    };
+
+    fetchParts();
+  }, [selectedCar]);
+
+  // Handle the "Find Installers" action
+  const handleFindInstallers = () => {
+    if (!selectedPart) return;
+    // Navigate to FindServices page and pass the part ID in the state/URL
+    navigate('/find-services', { state: { searchPartId: selectedPart._id, partName: selectedPart.name } });
+  };
+
+  // Group parts by Category for a clean UI menu
+  const groupedParts = compatibleParts.reduce((acc, part) => {
+    if (!acc[part.category]) acc[part.category] = [];
+    acc[part.category].push(part);
+    return acc;
+  }, {});
+
+  return (
+    <Box pt={24} pb={10} px={6} minH="100vh" bg="gray.900" color="white">
+      <Container maxW="container.xl">
+        
+        {/* HEADER SECTION */}
+        <Flex justify="space-between" align="center" mb={8} flexDir={{ base: "column", md: "row" }} gap={4}>
+          <HStack>
+            <Icon as={FaCar} w={8} h={8} color="cyan.400" />
+            <Heading size="xl" bgGradient="linear(to-r, cyan.300, blue.500)" bgClip="text">
+              Digital Garage
+            </Heading>
+          </HStack>
+          
+          <Button 
+            onClick={onOpen} 
+            colorScheme="cyan" 
+            variant="outline" 
+            size="md"
+            isLoading={isLoadingCars}
+          >
+            {selectedCar ? `${selectedCar.make} ${selectedCar.modelName}` : "Select Vehicle"}
+          </Button>
+        </Flex>
+
+        {/* MAIN CONTENT GRID */}
+        {!selectedCar ? (
+          // Empty State
+          <Flex h="50vh" justify="center" align="center" flexDir="column" border="2px dashed" borderColor="whiteAlpha.200" borderRadius="2xl">
+            <Icon as={FaCogs} w={16} h={16} color="whiteAlpha.400" mb={4} />
+            <Text fontSize="xl" color="whiteAlpha.600">Please select a vehicle to view compatible parts.</Text>
+            <Button mt={6} colorScheme="cyan" onClick={onOpen}>Choose Vehicle</Button>
+          </Flex>
+        ) : (
+          <Grid templateColumns={{ base: "1fr", lg: "350px 1fr" }} gap={8}>
+            
+            {/* LEFT COLUMN: PARTS CATALOG */}
+            <GridItem>
+              <Box bg="rgba(15, 23, 42, 0.6)" backdropFilter="blur(16px)" border="1px solid" borderColor="whiteAlpha.200" borderRadius="2xl" p={5} h="70vh" overflowY="auto" css={{ "&::-webkit-scrollbar": { display: "none" } }}>
+                <Heading size="md" mb={6} color="cyan.100">Compatible Parts</Heading>
+                
+                {isLoadingParts ? (
+                  <Flex justify="center" py={10}><Spinner color="cyan.400" /></Flex>
+                ) : compatibleParts.length === 0 ? (
+                  <Text color="gray.400">No parts found for this vehicle.</Text>
+                ) : (
+                  Object.keys(groupedParts).map((category) => (
+                    <Box key={category} mb={6}>
+                      <Text fontSize="sm" fontWeight="bold" color="cyan.400" textTransform="uppercase" letterSpacing="wider" mb={3}>
+                        {category}
+                      </Text>
+                      <VStack align="stretch" spacing={2}>
+                        {groupedParts[category].map((part) => (
+                          <Button
+                            key={part._id}
+                            variant="ghost"
+                            justifyContent="flex-start"
+                            h="auto"
+                            py={3}
+                            px={4}
+                            bg={selectedPart?._id === part._id ? "whiteAlpha.200" : "transparent"}
+                            borderLeft="3px solid"
+                            borderColor={selectedPart?._id === part._id ? "cyan.400" : "transparent"}
+                            _hover={{ bg: "whiteAlpha.100" }}
+                            onClick={() => setSelectedPart(part)}
+                          >
+                            <VStack align="start" spacing={1}>
+                              <Text fontSize="md" fontWeight="600" color="white" whiteSpace="normal" textAlign="left">{part.name}</Text>
+                              <Text fontSize="xs" color="gray.400" whiteSpace="normal" textAlign="left">{part.shortDescription}</Text>
+                            </VStack>
+                          </Button>
+                        ))}
+                      </VStack>
+                    </Box>
+                  ))
+                )}
+              </Box>
+            </GridItem>
+
+            {/* RIGHT COLUMN: 3D VIEWER & DETAILS */}
+            <GridItem>
+              <Box bg="blackAlpha.600" border="1px solid" borderColor="whiteAlpha.200" borderRadius="2xl" h="70vh" position="relative" overflow="hidden" display="flex" flexDirection="column">
+                
+                {/* 3D Canvas Area */}
+                <Box flex="1" position="relative">
+                  {selectedPart ? (
+                    // We will build this wrapper for React Three Fiber next
+                    <ThreeCanvas part={selectedPart} />
+                  ) : (
+                    <Flex h="full" justify="center" align="center" flexDir="column">
+                      <Icon as={FaInfoCircle} w={12} h={12} color="whiteAlpha.300" mb={4} />
+                      <Text color="whiteAlpha.500">Select a part from the menu to interact with its 3D model.</Text>
+                    </Flex>
+                  )}
+                </Box>
+
+                {/* Part Details Overlay (Bottom Panel) */}
+                {selectedPart && (
+                  <Box p={6} bg="rgba(15, 23, 42, 0.85)" backdropFilter="blur(10px)" borderTop="1px solid" borderColor="whiteAlpha.200">
+                    <Flex justify="space-between" align="flex-start" flexDir={{ base: "column", md: "row" }} gap={4}>
+                      <Box flex="1">
+                        <HStack mb={2}>
+                          <Heading size="lg" color="white">{selectedPart.name}</Heading>
+                          <Badge colorScheme="cyan" variant="subtle">{selectedPart.category}</Badge>
+                        </HStack>
+                        <Text color="gray.300" fontSize="md" mb={1}>{selectedPart.detailedFunction}</Text>
+                      </Box>
+                      
+                      <Button 
+                        size="lg" 
+                        colorScheme="cyan" 
+                        leftIcon={<FaMapMarkerAlt />}
+                        onClick={handleFindInstallers}
+                        flexShrink={0}
+                        boxShadow="0 4px 14px 0 rgba(11, 197, 234, 0.39)"
+                      >
+                        Find Installers
+                      </Button>
+                    </Flex>
+                  </Box>
+                )}
+              </Box>
+            </GridItem>
+
+          </Grid>
+        )}
+      </Container>
+
+      {/* Modal for picking Make/Model */}
+      <CarSelectorModal 
+        isOpen={isOpen} 
+        onClose={onClose} 
+        cars={availableCars} 
+        onSelectCar={setSelectedCar} 
+        currentCar={selectedCar}
+      />
+    </Box>
+  );
+};
+
+export default MyGarage;
