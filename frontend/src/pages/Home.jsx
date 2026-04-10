@@ -990,11 +990,11 @@ const Home = ({ onRegisterGarageClick }) => {
                   const centerY = rect.height / 2;
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
-                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform =
-                    "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+                    "perspective(1000px) rotateX(0deg) rotateY(0deg)";
                 }}
               >
                 <Icon as={FaRobot} w={10} h={10} color="purple.400" mb={6} />
@@ -1028,11 +1028,11 @@ const Home = ({ onRegisterGarageClick }) => {
                   const centerY = rect.height / 2;
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
-                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform =
-                    "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+                    "perspective(1000px) rotateX(0deg) rotateY(0deg)";
                 }}
               >
                 <Icon as={FaDatabase} w={10} h={10} color="cyan.400" mb={6} />
@@ -1066,11 +1066,11 @@ const Home = ({ onRegisterGarageClick }) => {
                   const centerY = rect.height / 2;
                   const rotateX = ((centerY - y) / centerY) * 20;
                   const rotateY = ((x - centerX) / centerX) * 20;
-                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                  card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform =
-                    "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+                    "perspective(1000px) rotateX(0deg) rotateY(0deg)";
                 }}
               >
                 <Icon as={FaCogs} w={10} h={10} color="pink.400" mb={6} />
