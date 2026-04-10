@@ -35,14 +35,16 @@ import {
   FaCalendarCheck,
   FaClipboardList,
   FaBoxOpen,
+  FaArrowLeft,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 const Sidebar = ({ onAuthOpen, onLogout }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useUser();
 
   // --- LOGOUT ALERT STATE ---
@@ -143,25 +145,44 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
 
   return (
     <>
-      {/* 1. HAMBURGER BUTTON */}
-      <IconButton
-        ref={btnRef}
-        icon={<FaBars />}
-        fontSize="24px"
-        onClick={onOpen}
-        variant="unstyled"
-        color="white"
-        aria-label="Open Menu"
+      {/* 1. HAMBURGER & BACK BUTTONS */}
+      <HStack
         position="fixed"
         top={8}
         left={8}
         zIndex={100}
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        _hover={{ transform: "scale(1.1)", opacity: 0.8 }}
-        transition={smoothTransition}
-      />
+        spacing={4}
+      >
+        <IconButton
+          ref={btnRef}
+          icon={<FaBars />}
+          fontSize="24px"
+          onClick={onOpen}
+          variant="unstyled"
+          color="white"
+          aria-label="Open Menu"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          _hover={{ transform: "scale(1.1)", opacity: 0.8 }}
+          transition={smoothTransition}
+        />
+        {location.pathname !== "/" && (
+          <IconButton
+            icon={<FaArrowLeft />}
+            fontSize="24px"
+            onClick={() => navigate(-1)}
+            variant="unstyled"
+            color="cyan.400"
+            aria-label="Go Back"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            _hover={{ transform: "scale(1.1)", color: "white" }}
+            transition={smoothTransition}
+          />
+        )}
+      </HStack>
 
       {/* 2. SIDEBAR DRAWER */}
       <Drawer
@@ -170,6 +191,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
         onClose={onClose}
         finalFocusRef={btnRef}
         blockScrollOnMount={false}
+        returnFocusOnClose={false}
       >
         <DrawerOverlay
           backdropFilter="blur(8px)"

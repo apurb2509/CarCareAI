@@ -1087,7 +1087,7 @@ const Home = ({ onRegisterGarageClick }) => {
         </Box>
       </Box>
 
-      <Footer />
+      <Footer onRegisterGarageClick={onRegisterGarageClick} />
     </Box>
   );
 };

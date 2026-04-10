@@ -12,7 +12,8 @@ import { useUser } from './context/UserContext';
 import BookAppointment from './pages/BookAppointment'; 
 import FindServices from './pages/FindServices';
 import HelpCentre from './pages/HelpCentre';
-import MyGarage from './pages/MyGarage'; // <-- NEW IMPORT FOR 3D FEATURE
+import MyGarage from './pages/MyGarage'; 
+import Pricing from './pages/Pricing'; // <-- NEW IMPORT FOR PRICING
 
 function App() {
   const { isOpen: isAuthOpen, onOpen: onAuthOpen, onClose: onAuthClose } = useDisclosure();
@@ -58,6 +59,7 @@ function App() {
             <Route path="/" element={<Home onRegisterGarageClick={triggerGarageReg} />} />
             <Route path="/book-appointment" element={<BookAppointment />} />
             <Route path="/find-services" element={<FindServices />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/help-centre" element={<HelpCentre />} /> 
             <Route path="/my-garage" element={<MyGarage />} /> {/* <-- NEW ROUTE FOR 3D FEATURE */}
             <Route path="/profile/user" element={<UserProfile onAuthOpen={triggerStandardAuth} />} />

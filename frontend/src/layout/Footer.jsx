@@ -1,8 +1,10 @@
 import React from 'react';
 import { Box, Container, Stack, Text, SimpleGrid, Icon, Input, Button, Heading } from '@chakra-ui/react';
 import { FaTwitter, FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
-const Footer = () => {
+const Footer = ({ onRegisterGarageClick }) => {
+  const navigate = useNavigate();
   return (
     <Box bg="#0B1120" borderTop="1px solid #1E293B" color="gray.400" mt={20} position="relative" zIndex="10">
       <Container maxW="container.xl" py={16}>
@@ -25,10 +27,10 @@ const Footer = () => {
           {/* Links */}
           <Stack align="flex-start">
             <Text fontWeight="bold" color="white" mb={2}>Platform</Text>
-            <Text cursor="pointer" _hover={{ color: "cyan.400" }}>Find a Garage</Text>
-            <Text cursor="pointer" _hover={{ color: "cyan.400" }}>Register Service Center</Text>
-            <Text cursor="pointer" _hover={{ color: "cyan.400" }}>Pricing</Text>
-            <Text cursor="pointer" _hover={{ color: "cyan.400" }}>Mechanic Portal</Text>
+            <Text cursor="pointer" _hover={{ color: "cyan.400" }} onClick={() => navigate('/find-services')}>Find a Garage</Text>
+            <Text cursor="pointer" _hover={{ color: "cyan.400" }} onClick={onRegisterGarageClick}>Register Service Center</Text>
+            <Text cursor="pointer" _hover={{ color: "cyan.400" }} onClick={() => navigate('/pricing')}>Pricing</Text>
+            <Text cursor="pointer" _hover={{ color: "cyan.400" }} onClick={() => navigate('/my-garage')}>Mechanic Portal</Text>
           </Stack>
 
           {/* Newsletter */}
