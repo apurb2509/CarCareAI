@@ -97,14 +97,14 @@ const MouseSpotlight = ({ worldPointer }) => {
 
 // 3. High-Performance Elegant SaaS Grid
 // Replaces frantic physics with deeply professional, soothing color gradients
-const ProfessionalSaaSGrid = ({ worldPointer, scrollMomentum }) => {
+const ProfessionalSaaSGrid = ({ worldPointer, scrollMomentum, colorMode }) => {
   const gridX = 120;
   const gridY = 60;
   const count = gridX * gridY; // 7,200 performant particles
   const meshRef = useRef();
 
-  const baseColor = useMemo(() => new THREE.Color('#101D33'), []);  // Deep Navy / Near-black
-  const hoverColor = useMemo(() => new THREE.Color('#0EA5E9'), []); // Vibrant Sky Blue
+  const baseColor = useMemo(() => new THREE.Color(colorMode === 'light' ? '#E2E8F0' : '#101D33'), [colorMode]);  
+  const hoverColor = useMemo(() => new THREE.Color(colorMode === 'light' ? '#3182CE' : '#0EA5E9'), [colorMode]); 
   const scratchColor = useMemo(() => new THREE.Color(), []);
 
   const particles = useMemo(() => {
@@ -185,18 +185,18 @@ const ProfessionalSaaSGrid = ({ worldPointer, scrollMomentum }) => {
     <instancedMesh ref={meshRef} args={[null, null, count]} rotation={[-0.15, 0, 0]}>
       <circleGeometry args={[0.015, 8]} />
       <meshBasicMaterial 
-        color="#ffffff" 
+        color={colorMode === 'light' ? "#A0AEC0" : "#ffffff"} 
         transparent 
         opacity={0.85} 
         depthWrite={false} 
-        blending={THREE.AdditiveBlending}
+        blending={colorMode === 'light' ? THREE.NormalBlending : THREE.AdditiveBlending}
       />
     </instancedMesh>
   );
 };
 
 // Global Environment Container (Manages momentum)
-const EnvironmentContainer = () => {
+const EnvironmentContainer = ({ colorMode }) => {
   const scrollMomentum = useRef(0);
   const worldPointer = usePointerWorld();
 
@@ -228,14 +228,14 @@ const EnvironmentContainer = () => {
 
   return (
     <>
-      <ProfessionalSaaSGrid scrollMomentum={scrollMomentum} worldPointer={worldPointer} />
+      <ProfessionalSaaSGrid scrollMomentum={scrollMomentum} worldPointer={worldPointer} colorMode={colorMode} />
       <MouseSpotlight worldPointer={worldPointer} />
       
       {/* Ghosting typography, fully embedded and completely non-distracting */}
       <Float speed={1.0} rotationIntensity={0.02} floatIntensity={0.05} position={[0, -1, -5]}>
         <Text
           fontSize={1.8}
-          color="#1E293B" // Deep Slate
+          color={colorMode === 'light' ? "#CBD5E1" : "#1E293B"} // Deep Slate or Light Slate
           anchorX="center"
           anchorY="middle"
           fillOpacity={0.12}
@@ -249,7 +249,8 @@ const EnvironmentContainer = () => {
 };
 
 // Application Mount
-const ThreeBackground = () => {
+const ThreeBackground = ({ colorMode }) => {
+  const bgColor = colorMode === 'light' ? '#FFFFFF' : '#030712';
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', zIndex: 0, pointerEvents: 'none' }}>
       {/* Deep, luxurious SaaS visual configuration */}
@@ -258,13 +259,10 @@ const ThreeBackground = () => {
         dpr={[1, 2]} 
         gl={{ alpha: false, antialias: true, powerPreference: 'high-performance' }}
       >
-        {/* Extremely dark navy base for zero eye-strain */}
-        <color attach="background" args={['#030712']} />
-        
-        {/* Pitch black fog limits draw distance natively and camouflages everything softly */}
-        <fog attach="fog" args={['#030712', 6, 25]} />
+        <color attach="background" args={[bgColor]} />
+        <fog attach="fog" args={[bgColor, 6, 25]} />
 
-        <EnvironmentContainer />
+        <EnvironmentContainer colorMode={colorMode} />
       </Canvas>
     </div>
   );

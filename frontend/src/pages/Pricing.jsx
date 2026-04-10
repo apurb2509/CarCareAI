@@ -45,13 +45,13 @@ const Pricing = () => {
   ];
 
   return (
-    <Box pt={24} pb={20} px={6} minH="100vh" color="white" bg="transparent">
+    <Box pt={24} pb={20} px={6} minH="100vh" color="text-primary" bg="transparent">
       <Container maxW="container.xl">
         <VStack spacing={4} textAlign="center" mb={16}>
           <Heading size="2xl" bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text" fontWeight="900">
             Transparent Pricing
           </Heading>
-          <Text color="gray.400" fontSize="lg" maxW="2xl">
+          <Text color="text-muted" fontSize="lg" maxW="2xl">
             A comprehensive guide to standard Indian automotive costs. Prices vary based on vehicle make, model, and city. You can book custom quotes from local garages.
           </Text>
         </VStack>
@@ -60,10 +60,10 @@ const Pricing = () => {
           {categories.map((cat, index) => (
             <Card 
               key={index} 
-              bg="rgba(15, 23, 42, 0.75)" 
+              bg="glass-bg" 
               backdropFilter="blur(20px)" 
               border="1px solid" 
-              borderColor="#1E293B"
+              borderColor="border-color"
               borderRadius="2xl"
               boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.05)"
               transition="all 0.3s"
@@ -71,10 +71,10 @@ const Pricing = () => {
             >
               <CardHeader pb={0}>
                 <HStack spacing={4}>
-                  <Box p={3} bg="rgba(30, 41, 59, 0.8)" borderRadius="lg" color="cyan.400">
+                  <Box p={3} bg="rgba(30, 41, 59, 0.8)" borderRadius="lg" color="accent-cyan">
                     <Icon as={cat.icon} boxSize={6} />
                   </Box>
-                  <Heading size="md" color="white">{cat.title}</Heading>
+                  <Heading size="md" color="text-primary">{cat.title}</Heading>
                 </HStack>
               </CardHeader>
 
@@ -82,17 +82,17 @@ const Pricing = () => {
                 <VStack spacing={4} align="stretch" mt={2}>
                   {cat.items.map((item, idx) => (
                     <Box key={idx}>
-                      {idx > 0 && <Divider borderColor="#1E293B" mb={4} />}
+                      {idx > 0 && <Divider borderColor="border-color" mb={4} />}
                       <HStack justify="space-between" align="start">
                         <VStack align="start" spacing={1} maxW="70%">
-                          <Text fontWeight="bold" fontSize="lg" color="white">{item.name}</Text>
-                          <Text fontSize="sm" color="gray.400">{item.desc}</Text>
+                          <Text fontWeight="bold" fontSize="lg" color="text-primary">{item.name}</Text>
+                          <Text fontSize="sm" color="text-muted">{item.desc}</Text>
                         </VStack>
                         <Badge 
                           px={3} py={1} 
                           borderRadius="md" 
                           bg="rgba(14, 165, 233, 0.15)" 
-                          color="cyan.300"
+                          color="light-cyan"
                           border="1px solid rgba(14, 165, 233, 0.3)"
                           fontSize="sm"
                         >

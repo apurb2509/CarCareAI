@@ -208,7 +208,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
     <Modal isOpen={isOpen} onClose={onClose} isCentered size={(step === 1 && !isLogin) ? "2xl" : "xl"} scrollBehavior="inside">
       <ModalOverlay bg="rgba(0, 0, 0, 0.9)" backdropFilter="blur(8px)" />
       <ModalContent {...cardStyle} borderRadius="3xl" my="auto" maxH="95vh" overflow="hidden">
-        <ModalCloseButton zIndex={10} color="gray.400" _hover={{ bg: "whiteAlpha.200", color: "white" }} size="lg"/>
+        <ModalCloseButton zIndex={10} color="text-muted" _hover={{ bg: "slate-bg", color: "text-primary" }} size="lg"/>
         <ModalBody p={0} sx={{ '&::-webkit-scrollbar': { display: 'none' }, '&': { msOverflowStyle: 'none', scrollbarWidth: 'none' }}}>
           
           {isLogin ? (
@@ -216,31 +216,31 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
             <VStack spacing={6} p={{ base: 8, md: 12 }} align="stretch">
               <VStack spacing={2} align="center" mb={4}>
                 <Text fontSize="3xl" fontWeight="800" bgGradient="linear(to-r, cyan.300, blue.500)" bgClip="text">Welcome Back</Text>
-                <Text color="gray.400" fontSize="sm">Please enter your registered credentials</Text>
+                <Text color="text-muted" fontSize="sm">Please enter your registered credentials</Text>
               </VStack>
 
               <FormControl isRequired>
-                <FormLabel fontSize="xs" color="gray.500">Email or WhatsApp Number</FormLabel>
+                <FormLabel fontSize="xs" color="text-muted">Email or WhatsApp Number</FormLabel>
                 <Input placeholder="Enter Email / Phone" {...inputStyle} value={loginId} onChange={(e) => setLoginId(e.target.value)} />
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel fontSize="xs" color="gray.500">Password</FormLabel>
+                <FormLabel fontSize="xs" color="text-muted">Password</FormLabel>
                 <InputGroup>
                   <Input type={showPassword ? "text" : "password"} placeholder="Enter your password" {...inputStyle} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
                   <InputRightElement h="44px">
-                    <IconButton variant="ghost" icon={showPassword ? <FaEyeSlash /> : <FaEye />} onClick={() => setShowPassword(!showPassword)} color="gray.400" _hover={{color: "white"}} aria-label="Toggle password"/>
+                    <IconButton variant="ghost" icon={showPassword ? <FaEyeSlash /> : <FaEye />} onClick={() => setShowPassword(!showPassword)} color="text-muted" _hover={{color: "white"}} aria-label="Toggle password"/>
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
 
-              <Button w="full" h="50px" bgGradient="linear(to-r, blue.400, blue.600)" color="white" _hover={{ transform: "translateY(-2px)", boxShadow: "0 10px 20px rgba(59, 130, 246, 0.3)" }} transition="all 0.3s" onClick={handleLogin}>
+              <Button w="full" h="50px" bgGradient="linear(to-r, blue.400, blue.600)" color="text-primary" _hover={{ transform: "translateY(-2px)", boxShadow: "0 10px 20px rgba(59, 130, 246, 0.3)" }} transition="all 0.3s" onClick={handleLogin}>
                 Confirm Sign In
               </Button>
 
               <HStack justify="center" pt={4}>
-                <Text fontSize="sm" color="gray.500">New to CarCareAI?</Text>
-                <Button variant="link" color="cyan.400" fontSize="sm" onClick={() => setIsLogin(false)}>Create Account</Button>
+                <Text fontSize="sm" color="text-muted">New to CarCareAI?</Text>
+                <Button variant="link" color="accent-cyan" fontSize="sm" onClick={() => setIsLogin(false)}>Create Account</Button>
               </HStack>
             </VStack>
 
@@ -249,21 +249,21 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
             <VStack spacing={8} p={{ base: 8, md: 12 }} align="center" justify="center" minH="400px">
               <VStack spacing={2}>
                 <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="800" letterSpacing="tight" bgGradient="linear(to-r, cyan.300, blue.500)" bgClip="text">Welcome to CarCare.AI</Text>
-                <Text fontSize="md" color="gray.400" fontWeight="500">Select your account type to get started</Text>
+                <Text fontSize="md" color="text-muted" fontWeight="500">Select your account type to get started</Text>
               </VStack>
               <VStack spacing={4} w="full" maxW="600px">
                 <RoleCard icon={FaUser} title="Individual Account" desc="For vehicle owners seeking maintenance services" onClick={() => { setRole('user'); setStep(2); }} />
                 <RoleCard icon={FaTools} title="Service Partner" desc="For garages and service stations" onClick={() => { setRole('service'); setStep(2); }} />
               </VStack>
               <HStack spacing={1} pt={4}>
-                <Text fontSize="sm" color="gray.500">Already have an account?</Text>
+                <Text fontSize="sm" color="text-muted">Already have an account?</Text>
                 <Button variant="link" color="blue.400" fontSize="sm" fontWeight="600" onClick={() => setIsLogin(true)}>Sign In</Button>
               </HStack>
             </VStack>
           ) : (
             /* --- REGISTRATION FORM --- */
             <Box>
-              <HStack px={6} py={4} justify="space-between" align="center" borderBottom="1px solid" borderColor="whiteAlpha.200" bg="rgba(30, 41, 59, 0.3)">
+              <HStack px={6} py={4} justify="space-between" align="center" borderBottom="1px solid" borderColor="border-color" bg="rgba(30, 41, 59, 0.3)">
                 <IconButton icon={<FaArrowLeft />} variant="ghost" color="blue.400" size="sm" onClick={() => setStep(1)} aria-label="Back"/>
                 <Text fontSize="lg" fontWeight="700" color="gray.100">{role === 'service' ? 'Service Partner Registration' : 'Individual Registration'}</Text>
                 <Box w={8} /> 
@@ -299,12 +299,12 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
                       <InputGroup>
                         <Input name="password" value={formData.password} placeholder="Create Password" type={showPassword ? "text" : "password"} {...inputStyle} onChange={handleInputChange} />
                         <InputRightElement width="3rem" h="44px">
-                          <IconButton h="1.75rem" size="sm" variant="ghost" color="gray.400" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? <FaEyeSlash /> : <FaEye />} aria-label="Toggle password"/>
+                          <IconButton h="1.75rem" size="sm" variant="ghost" color="text-muted" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? <FaEyeSlash /> : <FaEye />} aria-label="Toggle password"/>
                         </InputRightElement>
                       </InputGroup>
                       {formData.password && (
                         <Box mt={2}>
-                          <Progress value={(strengthScore / 5) * 100} size="xs" colorScheme={strengthColor} borderRadius="full" bg="whiteAlpha.200" />
+                          <Progress value={(strengthScore / 5) * 100} size="xs" colorScheme={strengthColor} borderRadius="full" bg="slate-bg" />
                           <HStack justify="space-between" mt={1}>
                             <Text fontSize="10px" color={`${strengthColor}.400`} fontWeight="600">{strengthLabel}</Text>
                           </HStack>
@@ -324,13 +324,13 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
                   </GridItem>
                 </SimpleGrid>
                 <Checkbox name="agreed" isChecked={formData.agreed} colorScheme="blue" size="sm" onChange={handleInputChange} sx={{ '.chakra-checkbox__control': { borderColor: 'rgba(148, 163, 184, 0.3)', bg: 'rgba(30, 41, 59, 0.5)' } }}>
-                  <Text fontSize="xs" color="gray.400">I agree to Terms & Conditions</Text>
+                  <Text fontSize="xs" color="text-muted">I agree to Terms & Conditions</Text>
                 </Checkbox>
                 <Button w="full" h="48px" bg={isFormValid ? "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)" : "rgba(71, 85, 105, 0.5)"} color={isFormValid ? "white" : "rgba(148, 163, 184, 0.5)"} isDisabled={!isFormValid} onClick={handleSubmit} fontSize="md" fontWeight="700" borderRadius="xl">
                   Create Account
                 </Button>
                 <HStack justify="center">
-                  <Text fontSize="xs" color="gray.500">Already have an account?</Text>
+                  <Text fontSize="xs" color="text-muted">Already have an account?</Text>
                   <Button variant="link" color="blue.400" fontSize="xs" onClick={() => setIsLogin(true)}>Sign In</Button>
                 </HStack>
               </VStack>
@@ -348,8 +348,8 @@ const RoleCard = ({ icon, title, desc, onClick }) => (
       <Icon as={icon} boxSize={7} />
     </Box>
     <VStack align="start" spacing={0.5} flex={1}>
-      <Text fontWeight="700" fontSize="xl" color="white" letterSpacing="tight">{title}</Text>
-      <Text fontSize="sm" color="gray.400" fontWeight="500">{desc}</Text>
+      <Text fontWeight="700" fontSize="xl" color="text-primary" letterSpacing="tight">{title}</Text>
+      <Text fontSize="sm" color="text-muted" fontWeight="500">{desc}</Text>
     </VStack>
   </HStack>
 );

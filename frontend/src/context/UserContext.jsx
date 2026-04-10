@@ -19,8 +19,15 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem("carCareUser");
   };
 
+  const updateUser = (updates) => {
+    if (!user) return;
+    const updatedUser = { ...user, ...updates };
+    setUser(updatedUser);
+    localStorage.setItem("carCareUser", JSON.stringify(updatedUser));
+  };
+
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout, updateUser }}>
       {children}
     </UserContext.Provider>
   );

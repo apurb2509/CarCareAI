@@ -144,10 +144,10 @@ const ChatWidget = () => {
           <Box
             w={{ base: "calc(100vw - 40px)", md: "380px" }}
             h={{ base: "500px", md: "600px" }}
-            bg="rgba(15, 23, 42, 0.75)"
+            bg="glass-bg"
             backdropFilter="blur(20px)"
             border="1px solid"
-            borderColor="#1E293B"
+            borderColor="border-color"
             borderRadius="2xl"
             boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.15)"
             overflow="hidden"
@@ -162,7 +162,7 @@ const ChatWidget = () => {
               align="center"
               justify="space-between"
               borderBottom="1px solid"
-              borderColor="#1E293B"
+              borderColor="border-color"
             >
               <HStack spacing={3}>
                 <Box 
@@ -171,10 +171,10 @@ const ChatWidget = () => {
                   bgGradient="linear(to-br, cyan.400, blue.500)"
                   boxShadow="0 4px 10px rgba(14, 165, 233, 0.4)"
                 >
-                  <FaRobot color="white" size="18px" />
+                  <FaRobot color="text-primary" size="18px" />
                 </Box>
                 <VStack align="start" spacing={0}>
-                  <Text fontWeight="700" color="white" fontSize="md" letterSpacing="wide">
+                  <Text fontWeight="700" color="text-primary" fontSize="md" letterSpacing="wide">
                     Carlo AI
                   </Text>
                   <HStack spacing={1.5}>
@@ -184,7 +184,7 @@ const ChatWidget = () => {
                       bg={isOnline ? "green.400" : "red.400"} 
                       boxShadow={isOnline ? "0 0 8px rgba(74, 222, 128, 0.6)" : "0 0 8px rgba(248, 113, 113, 0.6)"}
                     />
-                    <Text fontSize="xs" color="gray.400" fontWeight="medium">
+                    <Text fontSize="xs" color="text-muted" fontWeight="medium">
                       {isOnline ? "System Online" : "Offline"}
                     </Text>
                   </HStack>
@@ -194,8 +194,8 @@ const ChatWidget = () => {
                 icon={<FaTimes />}
                 size="sm"
                 variant="ghost"
-                color="gray.400"
-                _hover={{ bg: "#1E293B", color: "white" }}
+                color="text-muted"
+                _hover={{ bg: "slate-bg", color: "text-primary" }}
                 onClick={() => setIsOpen(false)}
               />
             </Flex>
@@ -222,7 +222,7 @@ const ChatWidget = () => {
                   <React.Fragment key={index}>
                     {showDateHeader && (
                       <Flex justify="center" my={2}>
-                        <Text fontSize="10px" fontWeight="600" textTransform="uppercase" letterSpacing="wider" color="gray.500" bg="#0B1120" px={3} py={1} borderRadius="full" border="1px solid" borderColor="#1E293B">
+                        <Text fontSize="10px" fontWeight="600" textTransform="uppercase" letterSpacing="wider" color="text-muted" bg="slate-bg" px={3} py={1} borderRadius="full" border="1px solid" borderColor="border-color">
                           {currentDate}
                         </Text>
                       </Flex>
@@ -230,8 +230,8 @@ const ChatWidget = () => {
                     <Flex justify={msg.sender === "user" ? "flex-end" : "flex-start"}>
                       <Box
                         maxW="85%"
-                        bg={msg.sender === "user" ? "linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%)" : "#1E293B"}
-                        color="white"
+                        bg={msg.sender === "user" ? "linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%)" : "slate-bg"}
+                        color={msg.sender === "user" ? "white" : "text-primary"}
                         px={4}
                         py={3}
                         borderRadius={
@@ -241,7 +241,7 @@ const ChatWidget = () => {
                         }
                         boxShadow={msg.sender === "user" ? "0 4px 15px rgba(14, 165, 233, 0.3)" : "0 4px 15px rgba(0, 0, 0, 0.2)"}
                         border={msg.sender === "bot" ? "1px solid" : "none"}
-                        borderColor="#334155"
+                        borderColor="border-color"
                       >
                         <Text fontSize="sm" lineHeight="1.6">{msg.text}</Text>
                         <Text
@@ -260,11 +260,11 @@ const ChatWidget = () => {
               })}
               {isTyping && (
                 <Flex justify="flex-start">
-                  <Box bg="#1E293B" px={4} py={3} borderRadius="20px 20px 20px 4px" border="1px solid" borderColor="#334155">
+                  <Box bg="slate-bg" px={4} py={3} borderRadius="20px 20px 20px 4px" border="1px solid" borderColor="border-color">
                     <HStack spacing={1.5} h="20px" align="center">
-                      <Box w="6px" h="6px" bg="gray.400" borderRadius="full" opacity="0.4" animation="pulse 1.5s infinite ease-in-out" />
-                      <Box w="6px" h="6px" bg="gray.400" borderRadius="full" opacity="0.4" animation="pulse 1.5s infinite ease-in-out 0.2s" />
-                      <Box w="6px" h="6px" bg="gray.400" borderRadius="full" opacity="0.4" animation="pulse 1.5s infinite ease-in-out 0.4s" />
+                      <Box w="6px" h="6px" bg="text-muted" borderRadius="full" opacity="0.4" animation="pulse 1.5s infinite ease-in-out" />
+                      <Box w="6px" h="6px" bg="text-muted" borderRadius="full" opacity="0.4" animation="pulse 1.5s infinite ease-in-out 0.2s" />
+                      <Box w="6px" h="6px" bg="text-muted" borderRadius="full" opacity="0.4" animation="pulse 1.5s infinite ease-in-out 0.4s" />
                     </HStack>
                   </Box>
                 </Flex>
@@ -273,9 +273,9 @@ const ChatWidget = () => {
             </VStack>
 
             {/* Input Area */}
-            <Box p={4} bg="#0B1120" borderTop="1px solid" borderColor="#1E293B">
+            <Box p={4} bg="#0B1120" borderTop="1px solid" borderColor="border-color">
               <HStack 
-                bg="#0F172A" 
+                bg="slate-bg" 
                 borderRadius="full" 
                 border="1px solid" 
                 borderColor="#334155"
@@ -291,7 +291,7 @@ const ChatWidget = () => {
                   onKeyPress={(e) => e.key === "Enter" && handleSend()}
                   bg="transparent"
                   border="none"
-                  color="white"
+                  color="text-primary"
                   fontSize="sm"
                   _focus={{ boxShadow: "none" }}
                   _placeholder={{ color: "gray.500" }}
@@ -299,7 +299,7 @@ const ChatWidget = () => {
                 <IconButton
                   icon={<FaPaperPlane size="12px" />}
                   bg={input.trim() ? "cyan.500" : "gray.600"}
-                  color="white"
+                  color="text-primary"
                   borderRadius="full"
                   size="sm"
                   onClick={handleSend}
@@ -320,7 +320,7 @@ const ChatWidget = () => {
           h="64px"
           borderRadius="full"
           bgGradient="linear(to-br, cyan.400, blue.500)"
-          color="white"
+          color="text-primary"
           boxShadow="0 10px 25px -5px rgba(14, 165, 233, 0.5)"
           _hover={{ 
             transform: "translateY(-4px)", 

@@ -454,7 +454,7 @@ const Home = ({ onRegisterGarageClick }) => {
               <Text
                 className="hero-animate"
                 fontSize={{ base: "xl", md: "2xl" }}
-                color="gray.400"
+                color="text-muted"
                 maxW="4xl"
                 lineHeight="1.3"
               >
@@ -473,10 +473,10 @@ const Home = ({ onRegisterGarageClick }) => {
                   h="70px"
                   px="50px"
                   fontSize="xl"
-                  bg="white"
-                  color="black"
+                  bg="text-primary"
+                  color="solid-bg"
                   rounded="full"
-                  _hover={{ bg: "gray.200", transform: "scale(1.05)" }}
+                  _hover={{ bg: "gray.500", transform: "scale(1.05)" }}
                   rightIcon={isLocating ? <FaMapMarkerAlt /> : <FaSearch />}
                   onClick={handleLocateService}
                   isLoading={isLocating}
@@ -493,10 +493,10 @@ const Home = ({ onRegisterGarageClick }) => {
                   px="50px"
                   fontSize="xl"
                   variant="outline"
-                  color="white"
+                  color="text-primary"
                   rounded="full"
-                  borderColor="whiteAlpha.700"
-                  _hover={{ bg: "whiteAlpha.300" }}
+                  borderColor="border-color"
+                  _hover={{ bg: "slate-bg" }}
                   rightIcon={<FaArrowRight />}
                 >
                   Register Garage
@@ -661,14 +661,14 @@ const Home = ({ onRegisterGarageClick }) => {
                   className="gsap-slide-up"
                   size="3xl"
                   mb={6}
-                  color="white"
+                  color="text-primary"
                 >
                   THE MISSION
                 </Heading>
                 <Text
                   className="gsap-slide-up"
                   fontSize="2xl"
-                  color="gray.500"
+                  color="text-muted"
                   lineHeight="1.4"
                 >
                   We are removing the guesswork <br /> from vehicle maintenance.
@@ -679,7 +679,7 @@ const Home = ({ onRegisterGarageClick }) => {
                 <Text
                   className="gsap-slide-up"
                   fontSize="xl"
-                  color="gray.400"
+                  color="text-muted"
                   lineHeight="1.8"
                   textAlign={{ base: "left", lg: "right" }}
                 >
@@ -691,7 +691,7 @@ const Home = ({ onRegisterGarageClick }) => {
                 <Text
                   className="gsap-slide-up"
                   fontSize="xl"
-                  color="gray.400"
+                  color="text-muted"
                   lineHeight="1.8"
                   textAlign="left"
                 >
@@ -711,7 +711,7 @@ const Home = ({ onRegisterGarageClick }) => {
                 textAlign="center"
                 size="2xl"
                 mb={16}
-                color="white"
+                color="text-primary"
                 letterSpacing="tight"
               >
                 How CarCare AI Works
@@ -727,19 +727,19 @@ const Home = ({ onRegisterGarageClick }) => {
                         p={4}
                         borderRadius="full"
                         bg="linear-gradient(135deg, #0987A0 0%, #00B5D8 100%)"
-                        color="white"
+                        color="text-primary"
                         boxShadow="0 0 20px rgba(0, 181, 216, 0.4)"
                         zIndex="2"
                       >
                         <Icon as={FaUserPlus} w={6} h={6} />
                       </Box>
-                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                      <Box w="2px" h="100px" bg="border-color" my={2} />
                     </Flex>
                     <Box pb={10}>
-                      <Heading size="md" color="cyan.300" mb={2}>
+                      <Heading size="md" color="light-cyan" mb={2}>
                         01. Ecosystem Onboarding
                       </Heading>
-                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                      <Text color="text-muted" fontSize="lg" lineHeight="1.6">
                         The journey begins with the creation of digital identities. 
                         Service stations register their facilities, cataloging their specific 
                         capabilities and inventory systems, while vehicle owners create 
@@ -757,21 +757,21 @@ const Home = ({ onRegisterGarageClick }) => {
                       <Box
                         p={4}
                         borderRadius="full"
-                        bg="gray.800"
+                        bg="slate-bg"
                         border="1px solid"
                         borderColor="cyan.500"
-                        color="cyan.400"
+                        color="accent-cyan"
                         zIndex="2"
                       >
                         <Icon as={FaMapMarkedAlt} w={6} h={6} />
                       </Box>
-                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                      <Box w="2px" h="100px" bg="border-color" my={2} />
                     </Flex>
                     <Box pb={10}>
-                      <Heading size="md" color="white" mb={2}>
+                      <Heading size="md" color="text-primary" mb={2}>
                         02. Geospatial Availability
                       </Heading>
-                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                      <Text color="text-muted" fontSize="lg" lineHeight="1.6">
                         Upon initiation, our algorithm scans the immediate vicinity. 
                         It doesn't just look for open garages; it filters for 
                         <strong> real-time slot availability</strong>, ensuring that 
@@ -789,21 +789,21 @@ const Home = ({ onRegisterGarageClick }) => {
                       <Box
                         p={4}
                         borderRadius="full"
-                        bg="gray.800"
+                        bg="slate-bg"
                         border="1px solid"
                         borderColor="cyan.500"
-                        color="cyan.400"
+                        color="accent-cyan"
                         zIndex="2"
                       >
                         <Icon as={FaSyncAlt} w={6} h={6} />
                       </Box>
-                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                      <Box w="2px" h="100px" bg="border-color" my={2} />
                     </Flex>
                     <Box pb={10}>
-                      <Heading size="md" color="white" mb={2}>
+                      <Heading size="md" color="text-primary" mb={2}>
                         03. Inventory Synchronization
                       </Heading>
-                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                      <Text color="text-muted" fontSize="lg" lineHeight="1.6">
                         This is our core differentiator. The system performs a handshake 
                         with local garage databases. We cross-reference the required repairs 
                         against physical stock levels, ensuring that the specific brake pads, 
@@ -820,21 +820,21 @@ const Home = ({ onRegisterGarageClick }) => {
                       <Box
                         p={4}
                         borderRadius="full"
-                        bg="gray.800"
+                        bg="slate-bg"
                         border="1px solid"
                         borderColor="cyan.500"
-                        color="cyan.400"
+                        color="accent-cyan"
                         zIndex="2"
                       >
                         <Icon as={FaRobot} w={6} h={6} />
                       </Box>
-                      <Box w="2px" h="100px" bg="whiteAlpha.200" my={2} />
+                      <Box w="2px" h="100px" bg="border-color" my={2} />
                     </Flex>
                     <Box pb={10}>
-                      <Heading size="md" color="white" mb={2}>
+                      <Heading size="md" color="text-primary" mb={2}>
                         04. AI-Driven Diagnostics
                       </Heading>
-                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                      <Text color="text-muted" fontSize="lg" lineHeight="1.6">
                         For complex or unknown issues, users interact with <strong>Carlo Bot</strong>. 
                         Trained on thousands of technical manuals, Carlo analyzes symptoms 
                         (sounds, vibrations, warning lights) to predict potential fault codes 
@@ -851,7 +851,7 @@ const Home = ({ onRegisterGarageClick }) => {
                       <Box
                         p={4}
                         borderRadius="full"
-                        bg="gray.800"
+                        bg="slate-bg"
                         border="1px solid"
                         borderColor="green.400"
                         color="green.400"
@@ -865,7 +865,7 @@ const Home = ({ onRegisterGarageClick }) => {
                       <Heading size="md" color="green.300" mb={2}>
                         05. Valuation & Execution
                       </Heading>
-                      <Text color="gray.400" fontSize="lg" lineHeight="1.6">
+                      <Text color="text-muted" fontSize="lg" lineHeight="1.6">
                         Finally, our ML Price Estimator calculates a transparent cost range 
                         based on labor rates and part prices. The user confirms the booking, 
                         secures the slot, and navigates to the station with total confidence 
@@ -892,7 +892,7 @@ const Home = ({ onRegisterGarageClick }) => {
                   className="gsap-slide-up"
                   size="3xl"
                   mb={8}
-                  color="white"
+                  color="text-primary"
                   textAlign={{ lg: "right" }}
                 >
                   Vision
@@ -900,7 +900,7 @@ const Home = ({ onRegisterGarageClick }) => {
                 <Text
                   className="gsap-slide-up"
                   fontSize="2xl"
-                  color="gray.500"
+                  color="text-muted"
                   textAlign={{ lg: "right" }}
                 >
                   To create a frictionless world where your car communicates its
@@ -916,32 +916,32 @@ const Home = ({ onRegisterGarageClick }) => {
                   className="gsap-slide-up"
                   size="3xl"
                   mb={8}
-                  color="white"
+                  color="text-primary"
                 >
                   Goals
                 </Heading>
                 <Stack spacing={8}>
                   <Box className="gsap-slide-up">
-                    <Text fontSize="xl" fontWeight="bold" color="cyan.200">
+                    <Text fontSize="xl" fontWeight="bold" color="light-cyan">
                       Accuracy
                     </Text>
-                    <Text color="gray.500">
+                    <Text color="text-muted">
                       99.9% match rate for spare parts.
                     </Text>
                   </Box>
                   <Box className="gsap-slide-up">
-                    <Text fontSize="xl" fontWeight="bold" color="cyan.200">
+                    <Text fontSize="xl" fontWeight="bold" color="light-cyan">
                       Speed
                     </Text>
-                    <Text color="gray.500">
+                    <Text color="text-muted">
                       Instant booking confirmation via AI.
                     </Text>
                   </Box>
                   <Box className="gsap-slide-up">
-                    <Text fontSize="xl" fontWeight="bold" color="cyan.200">
+                    <Text fontSize="xl" fontWeight="bold" color="light-cyan">
                       Trust
                     </Text>
-                    <Text color="gray.500">
+                    <Text color="text-muted">
                       Customer-verified service history.
                     </Text>
                   </Box>
@@ -959,7 +959,7 @@ const Home = ({ onRegisterGarageClick }) => {
               textAlign="center"
               size="2xl"
               mb={20}
-              color="white"
+              color="text-primary"
             >
               Engineered for Excellence
             </Heading>
@@ -972,8 +972,8 @@ const Home = ({ onRegisterGarageClick }) => {
               <Box
                 className="feature-card"
                 p={8}
-                bg="rgba(255,255,255,0.03)"
-                border="1px solid rgba(255,255,255,0.1)"
+                bg="glass-bg"
+                border="1px solid" borderColor="border-color"
                 borderRadius="2xl"
                 h="full"
                 transition="transform 0.1s ease-out"
@@ -998,10 +998,10 @@ const Home = ({ onRegisterGarageClick }) => {
                 }}
               >
                 <Icon as={FaRobot} w={10} h={10} color="purple.400" mb={6} />
-                <Heading size="lg" mb={4} color="white">
+                <Heading size="lg" mb={4} color="text-primary">
                   Predictive AI
                 </Heading>
-                <Text color="gray.400" fontSize="lg">
+                <Text color="text-muted" fontSize="lg">
                   Our model doesn't just find mechanics; it finds specialists
                   for your specific engine fault codes.
                 </Text>
@@ -1010,8 +1010,8 @@ const Home = ({ onRegisterGarageClick }) => {
               <Box
                 className="feature-card"
                 p={8}
-                bg="rgba(255,255,255,0.03)"
-                border="1px solid rgba(255,255,255,0.1)"
+                bg="glass-bg"
+                border="1px solid" borderColor="border-color"
                 borderRadius="2xl"
                 h="full"
                 transition="transform 0.1s ease-out"
@@ -1035,11 +1035,11 @@ const Home = ({ onRegisterGarageClick }) => {
                     "perspective(1000px) rotateX(0deg) rotateY(0deg)";
                 }}
               >
-                <Icon as={FaDatabase} w={10} h={10} color="cyan.400" mb={6} />
-                <Heading size="lg" mb={4} color="white">
+                <Icon as={FaDatabase} w={10} h={10} color="accent-cyan" mb={6} />
+                <Heading size="lg" mb={4} color="text-primary">
                   Live Inventory
                 </Heading>
-                <Text color="gray.400" fontSize="lg">
+                <Text color="text-muted" fontSize="lg">
                   We sync with garage databases to ensure the parts you need are
                   physically on the shelf.
                 </Text>
@@ -1048,8 +1048,8 @@ const Home = ({ onRegisterGarageClick }) => {
               <Box
                 className="feature-card"
                 p={8}
-                bg="rgba(255,255,255,0.03)"
-                border="1px solid rgba(255,255,255,0.1)"
+                bg="glass-bg"
+                border="1px solid" borderColor="border-color"
                 borderRadius="2xl"
                 h="full"
                 transition="transform 0.1s ease-out"
@@ -1074,10 +1074,10 @@ const Home = ({ onRegisterGarageClick }) => {
                 }}
               >
                 <Icon as={FaCogs} w={10} h={10} color="pink.400" mb={6} />
-                <Heading size="lg" mb={4} color="white">
+                <Heading size="lg" mb={4} color="text-primary">
                   3D Diagnostics
                 </Heading>
-                <Text color="gray.400" fontSize="lg">
+                <Text color="text-muted" fontSize="lg">
                   Visualize your car's health with our immersive 3D digital twin
                   technology.
                 </Text>

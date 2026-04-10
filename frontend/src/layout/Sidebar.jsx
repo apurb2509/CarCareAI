@@ -39,6 +39,7 @@ import {
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
+import SettingsModal from "../components/SettingsModal";
 
 const Sidebar = ({ onAuthOpen, onLogout }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,6 +50,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
 
   // --- LOGOUT ALERT STATE ---
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const cancelRef = useRef();
 
   const handleLogoutClick = () => {
@@ -104,7 +106,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
           label: "Help Centre", 
           onClick: () => { navigate('/help-centre'); onClose(); } 
         },
-        { icon: FaCog, label: "Settings" },
+        { icon: FaCog, label: "Settings", onClick: () => { setIsSettingsOpen(true); onClose(); } },
       ];
     } else {
       return [
@@ -135,7 +137,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
           label: "Help Centre", 
           onClick: () => { navigate('/help-centre'); onClose(); } 
         },
-        { icon: FaCog, label: "Settings" },
+        { icon: FaCog, label: "Settings", onClick: () => { setIsSettingsOpen(true); onClose(); } },
       ];
     }
   };
@@ -159,7 +161,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
           fontSize="24px"
           onClick={onOpen}
           variant="unstyled"
-          color="white"
+          color="text-primary"
           aria-label="Open Menu"
           display="flex"
           alignItems="center"
@@ -173,7 +175,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
             fontSize="24px"
             onClick={() => navigate(-1)}
             variant="unstyled"
-            color="cyan.400"
+            color="accent-cyan"
             aria-label="Go Back"
             display="flex"
             alignItems="center"
@@ -200,18 +202,19 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
         />
 
         <DrawerContent
-          bg="rgba(11, 17, 32, 0.85)"
+          bg="glass-bg"
           backdropFilter="blur(24px)"
-          boxShadow="0 0 40px rgba(0, 0, 0, 0.8), 20px 0 40px -10px rgba(14, 165, 233, 0.1)"
-          borderRight="1px solid #1E293B"
+          boxShadow="0 0 40px rgba(0, 0, 0, 0.2), 20px 0 40px -10px rgba(14, 165, 233, 0.1)"
+          borderRight="1px solid"
+          borderColor="border-color"
           maxW={{ base: "100vw", md: "320px" }}
         >
           <DrawerCloseButton
-            color="whiteAlpha.600"
+            color="text-muted"
             size="lg"
             mt={6}
             mr={6}
-            _hover={{ color: "white", bg: "transparent" }}
+            _hover={{ color: "text-primary", bg: "transparent" }}
           />
 
           <DrawerBody
@@ -225,13 +228,13 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
               <Text
                 fontSize="2xl"
                 fontWeight="800"
-                color="white"
+                color="text-primary"
                 letterSpacing="-0.5px"
               >
                 CarCareAI
               </Text>
               <Text
-                color="whiteAlpha.400"
+                color="text-muted"
                 fontSize="11px"
                 fontWeight="600"
                 letterSpacing="1px"
@@ -251,20 +254,20 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                     w="100%"
                     fontSize="md"
                     fontWeight="500"
-                    color="whiteAlpha.700"
+                    color="text-muted"
                     rounded="none"
                     pl={10}
                     leftIcon={
                       <Icon
                         as={item.icon}
-                        color="whiteAlpha.500"
+                        color="text-muted"
                         boxSize={4}
                         mr={4}
                       />
                     }
                     _hover={{
-                      bg: "whiteAlpha.100",
-                      color: "white",
+                      bg: "slate-bg",
+                      color: "text-primary",
                       paddingLeft: "46px",
                       "& svg": { color: "#0BC5EA" },
                     }}
@@ -272,19 +275,20 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   >
                     {item.label}
                   </Button>
-                  <Divider borderColor="#1E293B" />
+                  <Divider borderColor="border-color" />
                 </Box>
               ))}
             </VStack>
 
             <Box px={10} mt="auto" mb={6}>
               {user ? (
-                <HStack
+                  <HStack
                   spacing={4}
                   p={3}
-                  bg="rgba(30, 41, 59, 0.5)"
+                  bg="slate-bg"
                   borderRadius="xl"
-                  border="1px solid #1E293B"
+                  border="1px solid"
+                  borderColor="border-color"
                 >
                   <Avatar
                     size="sm"
@@ -295,7 +299,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   />
                   <VStack align="start" spacing={0} flex={1}>
                     <Text
-                      color="white"
+                      color="text-primary"
                       fontWeight="bold"
                       fontSize="sm"
                       isTruncated
@@ -304,7 +308,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                       {user.name}
                     </Text>
                     <Text
-                      color="cyan.400"
+                      color="accent-cyan"
                       fontSize="10px"
                       textTransform="uppercase"
                       fontWeight="700"
@@ -316,7 +320,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                     icon={<FaSignOutAlt />}
                     size="sm"
                     variant="ghost"
-                    color="gray.400"
+                    color="text-muted"
                     _hover={{ bg: "#1E293B", color: "red.400" }}
                     onClick={handleLogoutClick} // CHANGED: Now opens the alert
                     aria-label="Logout"
@@ -330,9 +334,9 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                       onAuthOpen(false);
                     }}
                     variant="outline"
-                    colorScheme="whiteAlpha"
+                    colorScheme="gray"
                     color="cyan"
-                    borderColor="whiteAlpha.500"
+                    borderColor="border-color"
                     width="full"
                     h="50px"
                     leftIcon={<FaSignInAlt />}
@@ -347,12 +351,12 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   </Button>
 
                   <HStack spacing={1} justify="center" w="full">
-                    <Text fontSize="xs" color="gray.500">
+                    <Text fontSize="xs" color="text-muted">
                       Already have an account?
                     </Text>
                     <Button
                       variant="link"
-                      color="cyan.400"
+                      color="accent-cyan"
                       fontSize="xs"
                       onClick={() => {
                         onClose();
@@ -379,47 +383,43 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
         <AlertDialogOverlay backdropFilter="blur(10px)" bg="blackAlpha.600" />
 
         <AlertDialogContent
-           bg="rgba(15, 23, 42, 0.85)"
+           bg="glass-bg"
            backdropFilter="blur(20px)"
-           border="1px solid #1E293B"
-           boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.15)"
-           color="white"
+           border="1px solid"
+           borderColor="border-color"
+           boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+           color="text-primary"
            borderRadius="2xl"
         >
           <AlertDialogHeader
             fontSize="xl"
             fontWeight="800"
-            color="cyan.100"
+            color="cyan.500"
             letterSpacing="tight"
           >
             Confirm Logout
           </AlertDialogHeader>
 
-          <AlertDialogBody color="whiteAlpha.800" fontSize="md">
+          <AlertDialogBody color="text-muted" fontSize="md">
             Are you sure you want to log out of your account?
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            {/* "No" Button: Subtle Cyan Ghost */}
+            {/* "No" Button */}
             <Button
               ref={cancelRef}
               onClick={() => setIsLogoutOpen(false)}
               variant="ghost"
-              color="cyan.100"
-              _hover={{ bg: "whiteAlpha.100", color: "cyan.100" }}
+              color="text-muted"
             >
               No
             </Button>
 
-            {/* "Yes" Button: Solid Bright Cyan Primary Action */}
+            {/* "Yes" Button */}
             <Button
                bg="cyan.500"
-               color="gray.900"
+               color="text-primary"
                fontWeight="bold"
-               _hover={{
-                 bg: "cyan.400",
-                 boxShadow: "0 0 10px rgba(14, 165, 233, 0.4)",
-               }}
                onClick={confirmLogout}
                ml={3}
             >
@@ -428,6 +428,9 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* 4. SETTINGS MODAL */}
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </>
   );
 };

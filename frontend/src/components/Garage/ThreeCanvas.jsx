@@ -40,12 +40,12 @@ const CanvasLoader = () => {
   const { progress } = useProgress();
   return (
     <Html center>
-      <VStack spacing={3} bg="rgba(15, 23, 42, 0.8)" p={6} borderRadius="xl" backdropFilter="blur(10px)">
-        <Spinner size="xl" color="cyan.400" thickness="3px" />
-        <Text color="cyan.100" fontWeight="bold" fontSize="sm">
+      <VStack spacing={3} bg="glass-bg" p={6} borderRadius="xl" backdropFilter="blur(10px)">
+        <Spinner size="xl" color="accent-cyan" thickness="3px" />
+        <Text color="pale-cyan" fontWeight="bold" fontSize="sm">
           LOADING ASSET
         </Text>
-        <Text color="whiteAlpha.700" fontSize="xs">
+        <Text color="text-muted" fontSize="xs">
           {progress.toFixed(0)}%
         </Text>
       </VStack>
@@ -87,7 +87,7 @@ const ThreeCanvas = ({ part }) => {
               fallback={
                 <Html center>
                   <Box bg="rgba(255, 0, 0, 0.8)" p={4} borderRadius="md" backdropFilter="blur(5px)">
-                    <Text color="white" fontWeight="bold">Failed to load 3D Model</Text>
+                    <Text color="text-primary" fontWeight="bold">Failed to load 3D Model</Text>
                   </Box>
                 </Html>
               }

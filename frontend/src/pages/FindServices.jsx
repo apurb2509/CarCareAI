@@ -104,7 +104,7 @@ const FindServices = () => {
       maxW="container.xl" 
       mx="auto" 
       minH="100vh" 
-      color="white"
+      color="text-primary"
     >
       
       {/* 1. HEADER & SEARCH SECTION */}
@@ -119,7 +119,7 @@ const FindServices = () => {
         >
           Find Services & Parts
         </Text>
-        <Text color="gray.400" fontSize="lg" maxW="600px" textAlign="center">
+        <Text color="text-muted" fontSize="lg" maxW="600px" textAlign="center">
           Search for nearby mechanics, service stations, and spare parts available in your area.
         </Text>
 
@@ -132,13 +132,13 @@ const FindServices = () => {
         >
           <InputGroup size="lg">
             <InputLeftElement pointerEvents="none">
-              <Icon as={FaSearch} color="gray.500" />
+              <Icon as={FaSearch} color="text-muted" />
             </InputLeftElement>
             <Input 
               placeholder="Search 'Oil Change', 'Brake Pads'..." 
-              bg="#0F172A" 
+              bg="slate-bg" 
               border="1px solid" 
-              borderColor="#1E293B"
+              borderColor="border-color"
               _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -148,16 +148,16 @@ const FindServices = () => {
           <Select 
             size="lg" 
             maxW={{ base: "full", md: "200px" }} 
-            bg="#0F172A" 
-            borderColor="#1E293B"
+            bg="slate-bg" 
+            borderColor="border-color"
             _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
             className="category-select"
           >
-            <option value="All">All Categories</option>
-            <option value="Service">Services</option>
-            <option value="Part">Car Parts</option>
+            <option value="All" style={{color: "black"}}>All Categories</option>
+            <option value="Service" style={{color: "black"}}>Services</option>
+            <option value="Part" style={{color: "black"}}>Car Parts</option>
           </Select>
         </HStack>
       </VStack>
@@ -169,10 +169,10 @@ const FindServices = () => {
             <Card 
               key={item.id} 
               className="service-card"
-              bg="rgba(15, 23, 42, 0.75)" 
+              bg="glass-bg" 
               backdropFilter="blur(20px)"
               border="1px solid" 
-              borderColor="#1E293B"
+              borderColor="border-color"
               transition="all 0.3s"
               _hover={{ transform: "translateY(-5px)", borderColor: "cyan.500", boxShadow: "0 15px 30px -10px rgba(14, 165, 233, 0.2)" }}
             >
@@ -183,21 +183,21 @@ const FindServices = () => {
                       {item.type}
                     </Badge>
                     <HStack spacing={1}>
-                      <Icon as={FaMapMarkerAlt} color="gray.500" size="sm" />
-                      <Text fontSize="xs" color="gray.400">{item.location}</Text>
+                      <Icon as={FaMapMarkerAlt} color="text-muted" size="sm" />
+                      <Text fontSize="xs" color="text-muted">{item.location}</Text>
                     </HStack>
                   </HStack>
 
                   <Box>
-                    <Text fontSize="xl" fontWeight="bold" color="white" mb={1}>{item.name}</Text>
-                    <Text fontSize="sm" color="cyan.300" fontWeight="600">{item.stationName}</Text>
+                    <Text fontSize="xl" fontWeight="bold" color="text-primary" mb={1}>{item.name}</Text>
+                    <Text fontSize="sm" color="light-cyan" fontWeight="600">{item.stationName}</Text>
                   </Box>
 
-                  <Divider borderColor="#1E293B" />
+                  <Divider borderColor="border-color" />
 
                   <HStack justify="space-between" w="full" align="center">
                     <VStack align="start" spacing={0}>
-                      <Text fontSize="xs" color="gray.500">Price</Text>
+                      <Text fontSize="xs" color="text-muted">Price</Text>
                       <Text fontSize="lg" fontWeight="bold" color="green.300">{item.price}</Text>
                     </VStack>
                     
@@ -226,7 +226,7 @@ const FindServices = () => {
         ) : (
           <Box gridColumn="1 / -1" textAlign="center" py={20}>
             <Icon as={FaSearch} boxSize={12} color="gray.600" mb={4} />
-            <Text fontSize="xl" color="gray.500">No matching results.</Text>
+            <Text fontSize="xl" color="text-muted">No matching results.</Text>
             <Text fontSize="sm" color="gray.600">Try adjusting your filters.</Text>
           </Box>
         )}

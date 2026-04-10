@@ -127,10 +127,10 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
       <Box h="100vh" display="flex" alignItems="center" justifyContent="center" px={4} backdropFilter="blur(12px)" bg="rgba(0, 0, 0, 0.4)">
         <Box p={10} maxW="md" w="full" textAlign="center" bg="linear-gradient(145deg, #0f172a 0%, #1e293b 100%)" backdropFilter="blur(20px)" border="1px solid" borderColor="rgba(100, 200, 255, 0.15)" borderRadius="3xl" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.8)">
           <VStack spacing={6}>
-            <Box p={5} bg="rgba(59, 130, 246, 0.1)" borderRadius="full" border="1px solid" borderColor="cyan.500" color="cyan.400"><Icon as={FaLock} boxSize={8} /></Box>
+            <Box p={5} bg="rgba(59, 130, 246, 0.1)" borderRadius="full" border="1px solid" borderColor="cyan.500" color="accent-cyan"><Icon as={FaLock} boxSize={8} /></Box>
             <VStack spacing={2}>
-              <Text fontSize="2xl" fontWeight="800" color="white" letterSpacing="tight">Access Restricted</Text>
-              <Text color="gray.400" fontSize="md">Please <Button variant="link" color="cyan.400" fontWeight="bold" verticalAlign="baseline" onClick={() => onAuthOpen(false)}>Register</Button> or <Button variant="link" color="cyan.400" fontWeight="bold" verticalAlign="baseline" onClick={() => onAuthOpen(true)}>Login</Button> to view and manage your dashboard.</Text>
+              <Text fontSize="2xl" fontWeight="800" color="text-primary" letterSpacing="tight">Access Restricted</Text>
+              <Text color="text-muted" fontSize="md">Please <Button variant="link" color="accent-cyan" fontWeight="bold" verticalAlign="baseline" onClick={() => onAuthOpen(false)}>Register</Button> or <Button variant="link" color="accent-cyan" fontWeight="bold" verticalAlign="baseline" onClick={() => onAuthOpen(true)}>Login</Button> to view and manage your dashboard.</Text>
             </VStack>
           </VStack>
         </Box>
@@ -140,16 +140,16 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
 
   // --- MAIN RENDER ---
   return (
-    <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="white" bg="transparent">
+    <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="text-primary" bg="transparent">
       
       {/* 1. DASHBOARD HEADER (ALWAYS VISIBLE) */}
-      <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid #1E293B" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)" mb={8}>
+      <Card bg="glass-bg" backdropFilter="blur(20px)" border="1px solid" borderColor="border-color" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)" mb={8}>
         <CardBody>
           <HStack spacing={6} align="center" flexDirection={{ base: "column", md: "row" }}>
             <Avatar size="2xl" icon={<FaTools fontSize="3rem" />} bg="cyan.600" />
             <VStack align={{ base: "center", md: "start" }} flex={1} spacing={1}>
-              <Text fontSize="3xl" fontWeight="900" color="cyan.300">{profileData.stationName}</Text>
-              <Text fontSize="lg" color="gray.300">Owner: {profileData.ownerName}</Text>
+              <Text fontSize="3xl" fontWeight="900" color="light-cyan">{profileData.stationName}</Text>
+              <Text fontSize="lg" color="pale-gray">Owner: {profileData.ownerName}</Text>
               <HStack mt={1}>
                 <Badge colorScheme="purple" px={2} py={1} borderRadius="md">Premium Partner</Badge>
                 <Badge colorScheme="green" px={2} py={1} borderRadius="md">Online</Badge>
@@ -178,22 +178,22 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
         <>
           {/* STATS ROW */}
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={10}>
-            <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid #1E293B" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="cyan.400">
-              <CardBody><Stat><StatLabel>Total Visits</StatLabel><StatNumber color="white">{profileData.totalVisits}</StatNumber><StatHelpText>All time clients</StatHelpText></Stat></CardBody>
+            <Card bg="glass-bg" backdropFilter="blur(20px)" border="1px solid" borderColor="border-color" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="cyan.400">
+              <CardBody><Stat><StatLabel>Total Visits</StatLabel><StatNumber color="text-primary">{profileData.totalVisits}</StatNumber><StatHelpText>All time clients</StatHelpText></Stat></CardBody>
             </Card>
-            <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid #1E293B" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="yellow.400">
-              <CardBody><Stat><StatLabel>Rating</StatLabel><StatNumber color="white">4.8 / 5.0</StatNumber><StatHelpText>Based on 56 reviews</StatHelpText></Stat></CardBody>
+            <Card bg="glass-bg" backdropFilter="blur(20px)" border="1px solid" borderColor="border-color" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="yellow.400">
+              <CardBody><Stat><StatLabel>Rating</StatLabel><StatNumber color="text-primary">4.8 / 5.0</StatNumber><StatHelpText>Based on 56 reviews</StatHelpText></Stat></CardBody>
             </Card>
-            <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid #1E293B" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="green.400">
-              <CardBody><Stat><StatLabel>Live Bookings</StatLabel><StatNumber color="white">{bookings.length}</StatNumber><StatHelpText color="green.300">Action required</StatHelpText></Stat></CardBody>
+            <Card bg="glass-bg" backdropFilter="blur(20px)" border="1px solid" borderColor="border-color" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="green.400">
+              <CardBody><Stat><StatLabel>Live Bookings</StatLabel><StatNumber color="text-primary">{bookings.length}</StatNumber><StatHelpText color="green.300">Action required</StatHelpText></Stat></CardBody>
             </Card>
           </SimpleGrid>
 
           {/* ENHANCED STATION CONFIGURATION */}
-          <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid" borderColor="#1E293B" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
+          <Card bg="glass-bg" backdropFilter="blur(20px)" border="1px solid" borderColor="border-color" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
             <CardHeader borderBottom="1px solid gray" pb={4} display="flex" justifyContent="space-between" alignItems="center">
               <Text fontSize="xl" fontWeight="bold">Station Details & Configuration</Text>
-              <Icon as={FaMapMarkedAlt} color="gray.500" />
+              <Icon as={FaMapMarkedAlt} color="text-muted" />
             </CardHeader>
             <CardBody>
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
@@ -201,40 +201,40 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                 {/* Left Column: Basic Info */}
                 <VStack align="stretch" spacing={5}>
                   <FormControl>
-                    <FormLabel color="cyan.300">Service Station Name</FormLabel>
-                    <Input value={profileData.stationName} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, stationName: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
+                    <FormLabel color="light-cyan">Service Station Name</FormLabel>
+                    <Input value={profileData.stationName} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, stationName: e.target.value})} border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                     {isEditing && (
                       <Checkbox size="sm" colorScheme="cyan" mt={2} isChecked={sameAsOwner} onChange={handleCheckbox}>
-                        <Text fontSize="xs" color="gray.400">Use Owner Name</Text>
+                        <Text fontSize="xs" color="text-muted">Use Owner Name</Text>
                       </Checkbox>
                     )}
                   </FormControl>
                   <FormControl>
-                    <FormLabel color="cyan.300">Owner Name</FormLabel>
-                    <Input value={profileData.ownerName} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, ownerName: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
+                    <FormLabel color="light-cyan">Owner Name</FormLabel>
+                    <Input value={profileData.ownerName} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, ownerName: e.target.value})} border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                   </FormControl>
                   <FormControl>
-                    <FormLabel color="cyan.300">Contact Number</FormLabel>
-                    <Input value={profileData.phone} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
+                    <FormLabel color="light-cyan">Contact Number</FormLabel>
+                    <Input value={profileData.phone} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                   </FormControl>
                 </VStack>
 
                 {/* Right Column: Address & Details */}
                 <VStack align="stretch" spacing={5}>
                   <FormControl>
-                    <FormLabel color="cyan.300">Address & City</FormLabel>
-                    <Input value={profileData.address} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, address: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
+                    <FormLabel color="light-cyan">Address & City</FormLabel>
+                    <Input value={profileData.address} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, address: e.target.value})} border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                   </FormControl>
                   
                   {/* Google Map Link */}
                   <FormControl>
-                    <FormLabel color="cyan.300">Google Map Link</FormLabel>
+                    <FormLabel color="light-cyan">Google Map Link</FormLabel>
                     <Input 
                       placeholder="https://maps.google.com/..." 
                       value={profileData.mapLink} 
                       isReadOnly={!isEditing} 
                       onChange={(e) => setProfileData({...profileData, mapLink: e.target.value})} 
-                      border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} 
+                      border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} 
                       color="blue.300"
                       textDecoration="underline"
                     />
@@ -242,23 +242,23 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
 
                   {/* Operating Hours */}
                   <FormControl>
-                    <FormLabel color="cyan.300"><HStack><Icon as={FaClock} /><Text>Operating Hours</Text></HStack></FormLabel>
+                    <FormLabel color="light-cyan"><HStack><Icon as={FaClock} /><Text>Operating Hours</Text></HStack></FormLabel>
                     <HStack>
-                      <Input type="time" value={profileData.openTime} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, openTime: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
+                      <Input type="time" value={profileData.openTime} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, openTime: e.target.value})} border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                       <Text>to</Text>
-                      <Input type="time" value={profileData.closeTime} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, closeTime: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
+                      <Input type="time" value={profileData.closeTime} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, closeTime: e.target.value})} border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                     </HStack>
                   </FormControl>
                 </VStack>
 
                 {/* Full Width: About / Description */}
                 <FormControl gridColumn={{ md: "span 2" }}>
-                  <FormLabel color="cyan.300">About Service Station</FormLabel>
+                  <FormLabel color="light-cyan">About Service Station</FormLabel>
                   <Textarea 
                     value={profileData.about} 
                     isReadOnly={!isEditing} 
                     onChange={(e) => setProfileData({...profileData, about: e.target.value})} 
-                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
+                    border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     placeholder="Tell users about your expertise..."
                     rows={3}
                   />
@@ -279,19 +279,19 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
       {/* === VIEW: INCOMING BOOKINGS === */}
       {activeView === 'bookings' && (
         <Box>
-          <HStack mb={4} spacing={3}><Icon as={FaClipboardList} color="cyan.400" boxSize={6} /><Text fontSize="2xl" fontWeight="bold">Incoming Bookings</Text></HStack>
-          <Card bg="rgba(255,255,255,0.03)" borderColor="whiteAlpha.200" overflowX="auto">
+          <HStack mb={4} spacing={3}><Icon as={FaClipboardList} color="accent-cyan" boxSize={6} /><Text fontSize="2xl" fontWeight="bold">Incoming Bookings</Text></HStack>
+          <Card bg="glass-bg" borderColor="border-color" overflowX="auto">
             <Table variant="simple" size="md">
               <Thead>
-                <Tr><Th color="gray.400">Customer</Th><Th color="gray.400">Vehicle</Th><Th color="gray.400">Service</Th><Th color="gray.400">Date & Time</Th><Th color="gray.400">Status</Th><Th color="gray.400">Actions</Th></Tr>
+                <Tr><Th color="text-muted">Customer</Th><Th color="text-muted">Vehicle</Th><Th color="text-muted">Service</Th><Th color="text-muted">Date & Time</Th><Th color="text-muted">Status</Th><Th color="text-muted">Actions</Th></Tr>
               </Thead>
               <Tbody>
                 {bookings.map((b) => (
-                  <Tr key={b.id} _hover={{ bg: "whiteAlpha.50" }}>
+                  <Tr key={b.id} _hover={{ bg: "slate-bg" }}>
                     <Td fontWeight="bold">{b.user}</Td>
                     <Td>{b.car}</Td>
                     <Td>{b.service}</Td>
-                    <Td>{b.date} <br/> <Text fontSize="xs" color="gray.400">{b.time}</Text></Td>
+                    <Td>{b.date} <br/> <Text fontSize="xs" color="text-muted">{b.time}</Text></Td>
                     <Td><Badge colorScheme={b.status === "Confirmed" ? "green" : b.status === "Rejected" ? "red" : "orange"}>{b.status}</Badge></Td>
                     <Td>
                       {b.status === "Pending" && (
@@ -313,22 +313,22 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
       {activeView === 'inventory' && (
         <Box>
           <HStack mb={4} spacing={3}><Icon as={FaBoxOpen} color="purple.400" boxSize={6} /><Text fontSize="2xl" fontWeight="bold">Service & Inventory Manager</Text></HStack>
-          <Card bg="rgba(255,255,255,0.03)" borderColor="whiteAlpha.200">
+          <Card bg="glass-bg" borderColor="border-color">
             <CardBody>
               <Tabs variant="soft-rounded" colorScheme="cyan" index={activeTab} onChange={(index) => setActiveTab(index)}>
                 <TabList mb={4}>
-                  <Tab color="gray.400" _selected={{ color: "black", bg: "cyan.400" }}>My Services</Tab>
-                  <Tab color="gray.400" _selected={{ color: "white", bg: "purple.500" }}>Car Parts Inventory</Tab>
+                  <Tab color="text-muted" _selected={{ color: "black", bg: "cyan.400" }}>My Services</Tab>
+                  <Tab color="text-muted" _selected={{ color: "white", bg: "purple.500" }}>Car Parts Inventory</Tab>
                 </TabList>
                 <TabPanels>
                   <TabPanel px={0}>
-                    <HStack justify="space-between" mb={4}><Text color="gray.400" fontSize="sm">Services you offer to customers</Text><Button leftIcon={<FaPlus />} size="sm" colorScheme="cyan" variant="outline" onClick={handleAddService}>Add Service</Button></HStack>
+                    <HStack justify="space-between" mb={4}><Text color="text-muted" fontSize="sm">Services you offer to customers</Text><Button leftIcon={<FaPlus />} size="sm" colorScheme="cyan" variant="outline" onClick={handleAddService}>Add Service</Button></HStack>
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                       {myServices.map((svc) => (
-                        <HStack key={svc.id} p={4} bg="whiteAlpha.100" borderRadius="lg" justify="space-between">
+                        <HStack key={svc.id} p={4} bg="slate-bg" borderRadius="lg" justify="space-between">
                           <VStack align="start" spacing={2} w="full">
-                            <Input size="md" fontWeight="bold" value={svc.name} onChange={(e) => handleUpdateService(svc.id, 'name', e.target.value)} placeholder="Service Name" bg="#0F172A" border="1px solid" borderColor="#1E293B" _focus={{ borderColor: "cyan.400" }} />
-                            <Input size="sm" color="cyan.300" value={svc.price} onChange={(e) => handleUpdateService(svc.id, 'price', e.target.value)} placeholder="Price (e.g. ₹499)" bg="#0F172A" border="1px solid" borderColor="#1E293B" _focus={{ borderColor: "cyan.400" }} />
+                            <Input size="md" fontWeight="bold" value={svc.name} onChange={(e) => handleUpdateService(svc.id, 'name', e.target.value)} placeholder="Service Name" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.400" }} />
+                            <Input size="sm" color="light-cyan" value={svc.price} onChange={(e) => handleUpdateService(svc.id, 'price', e.target.value)} placeholder="Price (e.g. ₹499)" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.400" }} />
                           </VStack>
                           <IconButton aria-label="Delete Service" icon={<FaTrash />} size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemoveService(svc.id)} />
                         </HStack>
@@ -336,14 +336,14 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                     </SimpleGrid>
                   </TabPanel>
                   <TabPanel px={0}>
-                    <HStack justify="space-between" mb={4}><Text color="gray.400" fontSize="sm">Spare parts available in your garage</Text><Button leftIcon={<FaPlus />} size="sm" colorScheme="purple" variant="outline" onClick={handleAddPart}>Add Part</Button></HStack>
+                    <HStack justify="space-between" mb={4}><Text color="text-muted" fontSize="sm">Spare parts available in your garage</Text><Button leftIcon={<FaPlus />} size="sm" colorScheme="purple" variant="outline" onClick={handleAddPart}>Add Part</Button></HStack>
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                       {inventory.map((item) => (
-                        <HStack key={item.id} p={4} bg="whiteAlpha.100" borderRadius="lg" justify="space-between" borderLeft="4px solid" borderColor="purple.500">
+                        <HStack key={item.id} p={4} bg="slate-bg" borderRadius="lg" justify="space-between" borderLeft="4px solid" borderColor="purple.500">
                           
                           {/* 3D Preview Button */}
                           <Box 
-                            bg="whiteAlpha.200" 
+                            bg="slate-bg" 
                             p={3} 
                             borderRadius="lg" 
                             cursor="pointer" 
@@ -359,10 +359,10 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                           </Box>
 
                           <VStack align="start" spacing={2} w="full" ml={2}>
-                            <Input size="md" fontWeight="bold" value={item.name} onChange={(e) => handleUpdateInventory(item.id, 'name', e.target.value)} placeholder="Part Name" bg="#0F172A" border="1px solid" borderColor="#1E293B" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
+                            <Input size="md" fontWeight="bold" value={item.name} onChange={(e) => handleUpdateInventory(item.id, 'name', e.target.value)} placeholder="Part Name" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
                             <HStack>
-                              <Input size="sm" value={item.stock} onChange={(e) => handleUpdateInventory(item.id, 'stock', e.target.value)} placeholder="Qty" bg="#0F172A" border="1px solid" borderColor="#1E293B" w="70px" textAlign="center" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
-                              <Input size="sm" value={item.price} onChange={(e) => handleUpdateInventory(item.id, 'price', e.target.value)} placeholder="Price" bg="#0F172A" border="1px solid" borderColor="#1E293B" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
+                              <Input size="sm" value={item.stock} onChange={(e) => handleUpdateInventory(item.id, 'stock', e.target.value)} placeholder="Qty" bg="slate-bg" border="1px solid" borderColor="border-color" w="70px" textAlign="center" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
+                              <Input size="sm" value={item.price} onChange={(e) => handleUpdateInventory(item.id, 'price', e.target.value)} placeholder="Price" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
                             </HStack>
                           </VStack>
                           <IconButton aria-label="Delete Part" icon={<FaTrash />} size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemovePart(item.id)} />
@@ -381,10 +381,10 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
       <Modal isOpen={!!previewPart} onClose={() => setPreviewPart(null)} size="2xl" isCentered>
         <ModalOverlay backdropFilter="blur(10px)" bg="blackAlpha.700" />
         <ModalContent bg="gray.900" border="1px solid" borderColor="cyan.500" borderRadius="2xl" overflow="hidden">
-          <ModalHeader color="white" borderBottom="1px solid" borderColor="whiteAlpha.200">
+          <ModalHeader color="text-primary" borderBottom="1px solid" borderColor="border-color">
             {previewPart?.name} - 3D Preview
           </ModalHeader>
-          <ModalCloseButton color="white" mt={2} />
+          <ModalCloseButton color="text-primary" mt={2} />
           
           <ModalBody p={0} h="500px" bg="blackAlpha.600" position="relative">
             {previewPart && <ThreeCanvas part={previewPart} />}

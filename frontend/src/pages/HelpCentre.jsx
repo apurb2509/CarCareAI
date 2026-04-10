@@ -5,13 +5,15 @@ import {
 } from '@chakra-ui/react';
 import { FaHeadset, FaPaperPlane } from 'react-icons/fa';
 import emailjs from '@emailjs/browser';
+import { useUser } from '../context/UserContext';
 
 const HelpCentre = () => {
   const toast = useToast();
+  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    user_name: '',
-    user_email: '',
+    user_name: user?.name || '',
+    user_email: user?.email || '',
     country_code: '+91', // Default to India
     phone_number: '',
     issue_type: '',
@@ -102,25 +104,25 @@ const HelpCentre = () => {
   };
 
   return (
-    <Box pt={24} pb={10} px={6} minH="100vh" color="white" bg="transparent">
+    <Box pt={24} pb={10} px={6} minH="100vh" color="text-primary" bg="transparent">
       <Container maxW="container.md">
         <VStack spacing={8} align="stretch">
           
           <Box textAlign="center">
-            <Icon as={FaHeadset} w={12} h={12} color="cyan.400" mb={4} />
-            <Heading size="2xl" mb={4} bgGradient="linear(to-r, cyan.300, blue.500)" bgClip="text">
+            <Icon as={FaHeadset} w={12} h={12} color="accent-cyan" mb={4} />
+            <Heading size="2xl" mb={4} bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text">
               How can we help you?
             </Heading>
-            <Text color="gray.400" fontSize="lg">
+            <Text color="text-muted" fontSize="lg">
               Fill out the form below and our support team will get back to you within 24 hours.
             </Text>
           </Box>
 
           <Card 
-            bg="rgba(15, 23, 42, 0.75)" 
+            bg="glass-bg" 
             backdropFilter="blur(20px)" 
             border="1px solid" 
-            borderColor="#1E293B"
+            borderColor="border-color"
             borderRadius="2xl"
             boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.15)"
           >
@@ -130,15 +132,15 @@ const HelpCentre = () => {
                   
                   {/* NAME */}
                   <FormControl isRequired>
-                    <FormLabel color="cyan.300">Full Name</FormLabel>
+                    <FormLabel color="light-cyan">Full Name</FormLabel>
                     <Input 
                       name="user_name"
                       value={formData.user_name}
                       onChange={handleChange}
                       placeholder="Write your name.." 
-                      bg="#0F172A" 
+                      bg="slate-bg" 
                       border="1px solid" 
-                      borderColor="#1E293B"
+                      borderColor="border-color"
                       _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                     />
                   </FormControl>
@@ -146,7 +148,7 @@ const HelpCentre = () => {
                   <HStack w="full" spacing={6} align="flex-start" flexDirection={{ base: "column", md: "row" }}>
                     {/* EMAIL */}
                     <FormControl isRequired>
-                      <FormLabel color="cyan.300">Email Address</FormLabel>
+                      <FormLabel color="light-cyan">Email Address</FormLabel>
                       <Input 
                         type="email"
                         name="user_email"
@@ -155,16 +157,16 @@ const HelpCentre = () => {
                         placeholder="Email ID" 
                         bg="blackAlpha.400" 
                         border="1px solid" 
-                        borderColor="whiteAlpha.200"
+                        borderColor="border-color"
                         _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                       />
                     </FormControl>
 
                     {/* PHONE */}
                     <FormControl isRequired>
-                      <FormLabel color="cyan.300">Phone Number</FormLabel>
+                      <FormLabel color="light-cyan">Phone Number</FormLabel>
                       <InputGroup>
-                        <InputLeftAddon bg="#0F172A" border="1px solid" borderColor="#1E293B" p={0}>
+                        <InputLeftAddon bg="slate-bg" border="1px solid" borderColor="border-color" p={0}>
                           <Select 
                             name="country_code"
                             value={formData.country_code}
@@ -175,7 +177,7 @@ const HelpCentre = () => {
                             cursor="pointer"
                           >
                             {countryCodes.map((c) => (
-                              <option key={c.code} value={c.code} style={{ color: 'white', background: '#0F172A' }}>
+                              <option key={c.code} value={c.code} style={{ color: 'black' }}>
                                 {c.code}
                               </option>
                             ))}
@@ -189,7 +191,7 @@ const HelpCentre = () => {
                           placeholder="9876543210" 
                           bg="blackAlpha.400" 
                           border="1px solid" 
-                          borderColor="whiteAlpha.200"
+                          borderColor="border-color"
                           _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                         />
                       </InputGroup>
@@ -198,36 +200,36 @@ const HelpCentre = () => {
 
                   {/* ISSUE TYPE */}
                   <FormControl isRequired>
-                    <FormLabel color="cyan.300">Issue Type</FormLabel>
+                    <FormLabel color="light-cyan">Issue Type</FormLabel>
                     <Select 
                       name="issue_type"
                       value={formData.issue_type}
                       onChange={handleChange}
                       placeholder="Select the type of issue" 
-                      bg="#0F172A" 
+                      bg="slate-bg" 
                       border="1px solid" 
-                      borderColor="#1E293B"
+                      borderColor="border-color"
                       _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                       color={formData.issue_type ? "white" : "gray.400"}
                     >
                       {issueOptions.map((issue) => (
-                        <option key={issue} value={issue} style={{ color: 'white', background: '#0F172A' }}>{issue}</option>
+                        <option key={issue} value={issue} style={{ color: 'black' }}>{issue}</option>
                       ))}
                     </Select>
                   </FormControl>
 
                   {/* MESSAGE */}
                   <FormControl isRequired>
-                    <FormLabel color="cyan.300">Detailed Message</FormLabel>
+                    <FormLabel color="light-cyan">Detailed Message</FormLabel>
                     <Textarea 
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
                       placeholder="Please describe your issue in detail..." 
                       rows={5}
-                      bg="#0F172A" 
+                      bg="slate-bg" 
                       border="1px solid" 
-                      borderColor="#1E293B"
+                      borderColor="border-color"
                       _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                     />
                   </FormControl>

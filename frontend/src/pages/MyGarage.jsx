@@ -88,13 +88,13 @@ const MyGarage = () => {
   }, {});
 
   return (
-    <Box pt={24} pb={10} px={6} minH="100vh" bg="transparent" color="white">
+    <Box pt={24} pb={10} px={6} minH="100vh" bg="transparent" color="text-primary">
       <Container maxW="container.xl">
         
         {/* HEADER SECTION */}
         <Flex justify="space-between" align="center" mb={8} flexDir={{ base: "column", md: "row" }} gap={4}>
           <HStack>
-            <Icon as={FaCar} w={8} h={8} color="cyan.400" />
+            <Icon as={FaCar} w={8} h={8} color="accent-cyan" />
             <Heading size="xl" bgGradient="linear(to-r, cyan.300, blue.500)" bgClip="text">
               Digital Garage
             </Heading>
@@ -114,9 +114,9 @@ const MyGarage = () => {
         {/* MAIN CONTENT GRID */}
         {!selectedCar ? (
           // Empty State
-          <Flex h="50vh" justify="center" align="center" flexDir="column" border="2px dashed" borderColor="#1E293B" borderRadius="2xl" bg="rgba(15, 23, 42, 0.4)" backdropFilter="blur(10px)">
-            <Icon as={FaCogs} w={16} h={16} color="whiteAlpha.400" mb={4} />
-            <Text fontSize="xl" color="whiteAlpha.600">Please select a vehicle to view compatible parts.</Text>
+          <Flex h="50vh" justify="center" align="center" flexDir="column" border="2px dashed" borderColor="border-color" borderRadius="2xl" bg="glass-bg" backdropFilter="blur(10px)">
+            <Icon as={FaCogs} w={16} h={16} color="text-muted" mb={4} />
+            <Text fontSize="xl" color="text-muted">Please select a vehicle to view compatible parts.</Text>
             <Button mt={6} colorScheme="cyan" onClick={onOpen}>Choose Vehicle</Button>
           </Flex>
         ) : (
@@ -124,17 +124,17 @@ const MyGarage = () => {
             
             {/* LEFT COLUMN: PARTS CATALOG */}
             <GridItem>
-              <Box bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid" borderColor="#1E293B" borderRadius="2xl" boxShadow="0 25px 50px -12px rgba(0,0,0,0.5)" p={5} h="70vh" overflowY="auto" css={{ "&::-webkit-scrollbar": { display: "none" } }}>
-                <Heading size="md" mb={6} color="cyan.100">Compatible Parts</Heading>
+              <Box bg="glass-bg" backdropFilter="blur(20px)" border="1px solid" borderColor="border-color" borderRadius="2xl" boxShadow="0 25px 50px -12px rgba(0,0,0,0.5)" p={5} h="70vh" overflowY="auto" css={{ "&::-webkit-scrollbar": { display: "none" } }}>
+                <Heading size="md" mb={6} color="cyan.500">Compatible Parts</Heading>
                 
                 {isLoadingParts ? (
-                  <Flex justify="center" py={10}><Spinner color="cyan.400" /></Flex>
+                  <Flex justify="center" py={10}><Spinner color="accent-cyan" /></Flex>
                 ) : compatibleParts.length === 0 ? (
-                  <Text color="gray.400">No parts found for this vehicle.</Text>
+                  <Text color="text-muted">No parts found for this vehicle.</Text>
                 ) : (
                   Object.keys(groupedParts).map((category) => (
                     <Box key={category} mb={6}>
-                      <Text fontSize="sm" fontWeight="bold" color="cyan.400" textTransform="uppercase" letterSpacing="wider" mb={3}>
+                      <Text fontSize="sm" fontWeight="bold" color="accent-cyan" textTransform="uppercase" letterSpacing="wider" mb={3}>
                         {category}
                       </Text>
                       <VStack align="stretch" spacing={2}>
@@ -153,8 +153,8 @@ const MyGarage = () => {
                             onClick={() => setSelectedPart(part)}
                           >
                             <VStack align="start" spacing={1}>
-                              <Text fontSize="md" fontWeight="600" color="white" whiteSpace="normal" textAlign="left">{part.name}</Text>
-                              <Text fontSize="xs" color="gray.400" whiteSpace="normal" textAlign="left">{part.shortDescription}</Text>
+                              <Text fontSize="md" fontWeight="600" color="text-primary" whiteSpace="normal" textAlign="left">{part.name}</Text>
+                              <Text fontSize="xs" color="text-muted" whiteSpace="normal" textAlign="left">{part.shortDescription}</Text>
                             </VStack>
                           </Button>
                         ))}
@@ -167,7 +167,7 @@ const MyGarage = () => {
 
             {/* RIGHT COLUMN: 3D VIEWER & DETAILS */}
             <GridItem>
-              <Box bg="rgba(11, 17, 32, 0.6)" backdropFilter="blur(10px)" border="1px solid" borderColor="#1E293B" borderRadius="2xl" boxShadow="0 25px 50px -12px rgba(0,0,0,0.5)" h="70vh" position="relative" overflow="hidden" display="flex" flexDirection="column">
+              <Box bg="rgba(11, 17, 32, 0.6)" backdropFilter="blur(10px)" border="1px solid" borderColor="border-color" borderRadius="2xl" boxShadow="0 25px 50px -12px rgba(0,0,0,0.5)" h="70vh" position="relative" overflow="hidden" display="flex" flexDirection="column">
                 
                 {/* 3D Canvas Area */}
                 <Box flex="1" position="relative">
@@ -176,22 +176,22 @@ const MyGarage = () => {
                     <ThreeCanvas part={selectedPart} />
                   ) : (
                     <Flex h="full" justify="center" align="center" flexDir="column">
-                      <Icon as={FaInfoCircle} w={12} h={12} color="whiteAlpha.300" mb={4} />
-                      <Text color="whiteAlpha.500">Select a part from the menu to interact with its 3D model.</Text>
+                      <Icon as={FaInfoCircle} w={12} h={12} color="text-muted" mb={4} />
+                      <Text color="text-muted">Select a part from the menu to interact with its 3D model.</Text>
                     </Flex>
                   )}
                 </Box>
 
                 {/* Part Details Overlay (Bottom Panel) */}
                 {selectedPart && (
-                  <Box p={6} bg="rgba(15, 23, 42, 0.85)" backdropFilter="blur(10px)" borderTop="1px solid" borderColor="#1E293B">
+                  <Box p={6} bg="glass-bg" backdropFilter="blur(10px)" borderTop="1px solid" borderColor="border-color">
                     <Flex justify="space-between" align="flex-start" flexDir={{ base: "column", md: "row" }} gap={4}>
                       <Box flex="1">
                         <HStack mb={2}>
-                          <Heading size="lg" color="white">{selectedPart.name}</Heading>
+                          <Heading size="lg" color="text-primary">{selectedPart.name}</Heading>
                           <Badge colorScheme="cyan" variant="subtle">{selectedPart.category}</Badge>
                         </HStack>
-                        <Text color="gray.300" fontSize="md" mb={1}>{selectedPart.detailedFunction}</Text>
+                        <Text color="pale-gray" fontSize="md" mb={1}>{selectedPart.detailedFunction}</Text>
                       </Box>
                       
                       <Button 

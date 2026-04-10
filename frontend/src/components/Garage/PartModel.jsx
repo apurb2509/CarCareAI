@@ -71,7 +71,7 @@ const PartModel = ({ part }) => {
             zIndexRange={[100, 0]} // Ensures the HTML renders above the WebGL canvas
           >
             <Box
-              bg="rgba(15, 23, 42, 0.9)"
+              bg="glass-bg"
               backdropFilter="blur(12px)"
               border="1px solid"
               borderColor="cyan.500"
@@ -86,10 +86,10 @@ const PartModel = ({ part }) => {
                 <Badge colorScheme="cyan" variant="solid" mb={1}>
                   {part.category}
                 </Badge>
-                <Text color="white" fontWeight="800" fontSize="lg" lineHeight="tight">
+                <Text color="text-primary" fontWeight="800" fontSize="lg" lineHeight="tight">
                   {part.name}
                 </Text>
-                <Text color="gray.300" fontSize="sm">
+                <Text color="pale-gray" fontSize="sm">
                   {part.shortDescription}
                 </Text>
               </VStack>

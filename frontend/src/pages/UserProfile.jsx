@@ -65,22 +65,22 @@ const UserProfile = ({ onAuthOpen }) => {
               borderRadius="full" 
               border="1px solid"
               borderColor="cyan.500"
-              color="cyan.400"
+              color="accent-cyan"
             >
               <Icon as={FaLock} boxSize={8} />
             </Box>
             
             <VStack spacing={2}>
-              <Text fontSize="2xl" fontWeight="800" color="white" letterSpacing="tight">
+              <Text fontSize="2xl" fontWeight="800" color="text-primary" letterSpacing="tight">
                 Access Restricted
               </Text>
               
               {/* INTERACTIVE TEXT LINKS */}
-              <Text color="gray.400" fontSize="md">
+              <Text color="text-muted" fontSize="md">
                 Please{' '}
                 <Button 
                   variant="link" 
-                  color="cyan.400" 
+                  color="accent-cyan" 
                   fontWeight="bold" 
                   verticalAlign="baseline"
                   onClick={() => onAuthOpen(false)} // Open Register
@@ -90,7 +90,7 @@ const UserProfile = ({ onAuthOpen }) => {
                 {' '}or{' '}
                 <Button 
                   variant="link" 
-                  color="cyan.400" 
+                  color="accent-cyan" 
                   fontWeight="bold"
                   verticalAlign="baseline"
                   onClick={() => onAuthOpen(true)} // Open Login
@@ -108,8 +108,8 @@ const UserProfile = ({ onAuthOpen }) => {
 
   // --- NORMAL PROFILE CONTENT ---
   return (
-    <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="white" bg="transparent">
-      <Card bg="rgba(15, 23, 42, 0.75)" border="1px solid" borderColor="#1E293B" backdropFilter="blur(20px)" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
+    <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="text-primary" bg="transparent">
+      <Card bg="glass-bg" border="1px solid" borderColor="border-color" backdropFilter="blur(20px)" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
         <CardBody>
           <HStack spacing={8} align="flex-start" flexDirection={{ base: "column", md: "row" }}>
             <Box position="relative">
@@ -137,9 +137,9 @@ const UserProfile = ({ onAuthOpen }) => {
                   {isEditing ? "Save Changes" : "Edit Profile"}
                 </Button>
               </HStack>
-              <Text color="gray.400">{profileData.email} • {profileData.phone}</Text>
+              <Text color="text-muted">{profileData.email} • {profileData.phone}</Text>
               <Badge colorScheme="green" mt={2}>Verified User</Badge>
-              <Text mt={4} color="whiteAlpha.800" fontStyle="italic">"{profileData.bio}"</Text>
+              <Text mt={4} color="text-muted" fontStyle="italic">"{profileData.bio}"</Text>
             </VStack>
           </HStack>
         </CardBody>
@@ -147,70 +147,70 @@ const UserProfile = ({ onAuthOpen }) => {
 
       <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={8} mt={8}>
         <Box gridColumn={{ lg: "span 2" }}>
-          <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid" borderColor="#1E293B" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
+          <Card bg="glass-bg" backdropFilter="blur(20px)" border="1px solid" borderColor="border-color" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
             <CardHeader>
               <Text fontSize="xl" fontWeight="bold" borderBottom="1px solid gray" pb={2}>Personal Information</Text>
             </CardHeader>
             <CardBody>
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                 <FormControl>
-                  <FormLabel color="cyan.300">Full Name</FormLabel>
+                  <FormLabel color="light-cyan">Full Name</FormLabel>
                   <Input 
                     value={profileData.name} 
                     isReadOnly={!isEditing} 
-                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
+                    border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, name: e.target.value})}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="cyan.300">Date of Birth</FormLabel>
+                  <FormLabel color="light-cyan">Date of Birth</FormLabel>
                   <Input 
                     type="date" 
                     value={profileData.dob} 
                     isReadOnly={!isEditing} 
-                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
+                    border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, dob: e.target.value})}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="cyan.300">Gender</FormLabel>
+                  <FormLabel color="light-cyan">Gender</FormLabel>
                   <Select 
                     value={profileData.gender} 
                     isDisabled={!isEditing} 
-                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
+                    border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, gender: e.target.value})}
                     sx={{ '> option': { background: '#1A202C' } }}
                   >
                     <option value="">Select</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="Male" style={{color: "black"}}>Male</option>
+                    <option value="Female" style={{color: "black"}}>Female</option>
+                    <option value="Other" style={{color: "black"}}>Other</option>
                   </Select>
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="cyan.300">Area / Locality</FormLabel>
+                  <FormLabel color="light-cyan">Area / Locality</FormLabel>
                   <Input 
                     value={profileData.area} 
                     isReadOnly={!isEditing} 
-                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
+                    border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, area: e.target.value})}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="cyan.300">State</FormLabel>
+                  <FormLabel color="light-cyan">State</FormLabel>
                   <Input 
                     value={profileData.state} 
                     isReadOnly={!isEditing} 
-                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
+                    border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, state: e.target.value})}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="cyan.300">Pincode</FormLabel>
+                  <FormLabel color="light-cyan">Pincode</FormLabel>
                   <Input 
                     value={profileData.pincode} 
                     isReadOnly={!isEditing} 
-                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
+                    border="1px solid" borderColor="border-color" bg="slate-bg" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, pincode: e.target.value})}
                   />
                 </FormControl>
@@ -220,7 +220,7 @@ const UserProfile = ({ onAuthOpen }) => {
         </Box>
 
         <Box>
-          <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid" borderColor="#1E293B" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)" h="full">
+          <Card bg="glass-bg" backdropFilter="blur(20px)" border="1px solid" borderColor="border-color" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)" h="full">
             <CardHeader>
               <Text fontSize="xl" fontWeight="bold" borderBottom="1px solid gray" pb={2}>Service History</Text>
             </CardHeader>
@@ -229,7 +229,7 @@ const UserProfile = ({ onAuthOpen }) => {
                 {serviceHistory.map((item) => (
                   <Box key={item.id} p={3} bg="rgba(30, 41, 59, 0.5)" borderRadius="md" borderLeft="4px solid cyan">
                     <Text fontWeight="bold" fontSize="md">{item.station}</Text>
-                    <Text fontSize="sm" color="gray.400">{item.date}</Text>
+                    <Text fontSize="sm" color="text-muted">{item.date}</Text>
                     <Divider my={2} />
                     <HStack justify="space-between">
                       <Text fontSize="sm">{item.service}</Text>
@@ -237,7 +237,7 @@ const UserProfile = ({ onAuthOpen }) => {
                     </HStack>
                   </Box>
                 ))}
-                <Button variant="link" color="cyan.400">View All History</Button>
+                <Button variant="link" color="accent-cyan">View All History</Button>
               </VStack>
             </CardBody>
           </Card>

@@ -1,5 +1,6 @@
-import { Box, useDisclosure } from "@chakra-ui/react";
+import { Box, useDisclosure, useColorMode, IconButton } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { FaSun, FaMoon } from "react-icons/fa";
 import Sidebar from "./layout/Sidebar";
 import ThreeBackground from "./components/ThreeBackground";
 import Home from "./pages/Home";
@@ -17,6 +18,7 @@ import Pricing from './pages/Pricing'; // <-- NEW IMPORT FOR PRICING
 
 function App() {
   const { isOpen: isAuthOpen, onOpen: onAuthOpen, onClose: onAuthClose } = useDisclosure();
+  const { colorMode, toggleColorMode } = useColorMode();
   
   // 1. ADD 'isLogin' to state (default false)
   const [authProps, setAuthProps] = useState({ step: 1, role: '', isLogin: false });
@@ -40,11 +42,25 @@ function App() {
   const handleLoginSuccess = (userData) => login(userData);
 
   return (
-    <Box minH="100vh" w="100%" overflowX="hidden" bg="black" position="relative">
+    <Box minH="100vh" w="100%" overflowX="hidden" bg="page-bg" position="relative">
       
       {/* Background */}
       <Box position="fixed" top="0" left="0" w="100%" h="100%" zIndex="0">
-        <ThreeBackground />
+        <ThreeBackground colorMode={colorMode} />
+      </Box>
+
+      {/* Theme Toggler */}
+      <Box position="fixed" top={8} right={8} zIndex={100}>
+        <IconButton
+          icon={colorMode === 'light' ? <FaMoon color="white" /> : <FaSun color="#EAB308" />}
+          onClick={toggleColorMode}
+          isRound
+          size="lg"
+          bg={colorMode === 'light' ? 'gray.800' : 'white'}
+          _hover={{ transform: 'scale(1.1) rotate(15deg)', bg: colorMode === 'light' ? 'black' : 'gray.100' }}
+          boxShadow="0 4px 15px rgba(0,0,0,0.2)"
+          aria-label="Toggle Theme"
+        />
       </Box>
 
       {/* Sidebar */}

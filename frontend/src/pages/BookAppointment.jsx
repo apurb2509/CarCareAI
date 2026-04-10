@@ -33,6 +33,7 @@ import { useDropzone } from "react-dropzone";
 import { State, City } from "country-state-city";
 import html2pdf from "html2pdf.js";
 import QRCode from "qrcode";
+import { useUser } from "../context/UserContext";
 
 // Mapping for full fault category names
 const faultCategoryMap = {
@@ -66,6 +67,7 @@ const faultCategoryMap = {
 const BookAppointment = () => {
   const toast = useToast();
   const pdfRef = useRef();
+  const { user } = useUser();
   
   // State Management
   const [carImage, setCarImage] = useState(null);
@@ -82,10 +84,10 @@ const BookAppointment = () => {
 
   // Form Data State
   const [formData, setFormData] = useState({
-    ownerName: "",
-    pincode: "",
-    block: "",
-    locality: "",
+    ownerName: user?.name || "",
+    pincode: user?.pincode || "",
+    block: user?.addressLine1 || "",
+    locality: user?.addressLine2 || "",
     city: "",
     state: "",
     carModel: "",
@@ -225,108 +227,109 @@ const BookAppointment = () => {
         <VStack
           spacing={6}
           w={{ base: "95%", md: "800px" }}
-          bg="rgba(15, 23, 42, 0.75)"
+          bg="glass-bg"
           backdropFilter="blur(20px)"
           p={{ base: 6, md: 10 }}
           borderRadius="2xl"
-          boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.15)"
-          border="1px solid #1E293B"
-          color="white"
+          boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+          border="1px solid"
+          borderColor="border-color"
+          color="text-primary"
           className="a4-container"
         >
           <Heading size="xl" bgGradient="linear(to-r, cyan.400, blue.500)" bgClip="text">Appointment Booking</Heading>
-          <Text color="whiteAlpha.600" fontSize="sm">Reliable service that keeps you moving!</Text>
-          <Divider borderColor="whiteAlpha.200" />
+          <Text color="text-muted" fontSize="sm">Reliable service that keeps you moving!</Text>
+          <Divider borderColor="border-color" />
 
-          <Heading size="md" w="full" color="cyan.400">1. Personal & Address Details</Heading>
+          <Heading size="md" w="full" color="accent-cyan">1. Personal & Address Details</Heading>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">OWNER NAME</FormLabel>
-              <Input name="ownerName" placeholder="Name" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">OWNER NAME</FormLabel>
+              <Input name="ownerName" value={formData.ownerName} placeholder="Name" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">PINCODE</FormLabel>
-              <Input name="pincode" type="number" placeholder="XXXXXX" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">PINCODE</FormLabel>
+              <Input name="pincode" type="number" value={formData.pincode} placeholder="XXXXXX" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">BLOCK / HOUSE NO</FormLabel>
-              <Input name="block" placeholder="Flat No" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">BLOCK / HOUSE NO</FormLabel>
+              <Input name="block" value={formData.block} placeholder="Flat No" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">LOCALITY</FormLabel>
-              <Input name="locality" placeholder="Area" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">LOCALITY</FormLabel>
+              <Input name="locality" value={formData.locality} placeholder="Area" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">STATE</FormLabel>
-              <Select placeholder="Select State" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} name="state" onChange={(e) => { setSelectedStateCode(e.target.value); handleInputChange(e); }}>
-                {allStates.map((s) => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>)}
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">STATE</FormLabel>
+              <Select placeholder="Select State" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} name="state" onChange={(e) => { setSelectedStateCode(e.target.value); handleInputChange(e); }}>
+                {allStates.map((s) => <option key={s.isoCode} value={s.isoCode} style={{color: 'black'}}>{s.name}</option>)}
               </Select>
             </FormControl>
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">CITY</FormLabel>
-              <Select placeholder="Select City" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} isDisabled={!selectedStateCode} name="city" onChange={handleInputChange}>
-                {citiesOfSelectedState.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">CITY</FormLabel>
+              <Select placeholder="Select City" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} isDisabled={!selectedStateCode} name="city" onChange={handleInputChange}>
+                {citiesOfSelectedState.map((c) => <option key={c.name} value={c.name} style={{color: 'black'}}>{c.name}</option>)}
               </Select>
             </FormControl>
           </SimpleGrid>
 
-          <Divider borderColor="whiteAlpha.200" />
-          <Heading size="md" w="full" color="cyan.400">2. Vehicle Specifications</Heading>
+          <Divider borderColor="border-color" />
+          <Heading size="md" w="full" color="accent-cyan">2. Vehicle Specifications</Heading>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">CAR MODEL</FormLabel>
-              <Input name="carModel" placeholder="Swift" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">CAR MODEL</FormLabel>
+              <Input name="carModel" placeholder="Swift" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">VEHICLE NUMBER</FormLabel>
-              <Input name="vehicleNumber" placeholder="MH 01 AB 1234" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} textTransform="uppercase" />
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">VEHICLE NUMBER</FormLabel>
+              <Input name="vehicleNumber" placeholder="MH 01 AB 1234" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} textTransform="uppercase" />
             </FormControl>
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">PURCHASE DATE</FormLabel>
-              <Input name="purchaseDate" type="date" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} css={{ "&::-webkit-calendar-picker-indicator": { filter: "invert(1)" }}} />
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">PURCHASE DATE</FormLabel>
+              <Input name="purchaseDate" type="date" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
           </SimpleGrid>
 
           <Box w="full" pt={2}>
             <FormControl isRequired>
-              <FormLabel fontSize="xs" color="cyan.400" fontWeight="bold"><Icon as={FaCalendarAlt} mr={2} />SELECT APPOINTMENT SLOT</FormLabel>
-              <Select name="appointmentSlot" placeholder="Choose time..." bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
-                {availableSlots.map((slot, index) => <option key={index} value={slot}>{slot}</option>)}
+              <FormLabel fontSize="xs" color="accent-cyan" fontWeight="bold"><Icon as={FaCalendarAlt} mr={2} />SELECT APPOINTMENT SLOT</FormLabel>
+              <Select name="appointmentSlot" placeholder="Choose time..." bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
+                {availableSlots.map((slot, index) => <option key={index} value={slot} style={{color: 'black'}}>{slot}</option>)}
               </Select>
             </FormControl>
           </Box>
 
-          <Box w="full" p={5} bg="rgba(30, 41, 59, 0.5)" border="1px solid #1E293B" borderRadius="xl">
+          <Box w="full" p={5} bg="slate-bg" border="1px solid" borderColor="border-color" borderRadius="xl">
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
-              <FormControl><FormLabel fontSize="xs" color="gray.500">TRANSMISSION</FormLabel>
+              <FormControl><FormLabel fontSize="xs" color="text-muted">TRANSMISSION</FormLabel>
                 <RadioGroup onChange={(v) => setFormData({ ...formData, transmission: v })} value={formData.transmission}>
-                  <Stack direction="row"><Radio value="automatic">Auto</Radio><Radio value="manual">Manual</Radio></Stack>
+                  <Stack direction="row"><Radio value="automatic" borderColor="border-color">Auto</Radio><Radio value="manual" borderColor="border-color">Manual</Radio></Stack>
                 </RadioGroup>
               </FormControl>
-              <FormControl><FormLabel fontSize="xs" color="gray.500">FUEL TYPE</FormLabel>
+              <FormControl><FormLabel fontSize="xs" color="text-muted">FUEL TYPE</FormLabel>
                 <RadioGroup onChange={(v) => setFormData({ ...formData, fuel: v })} value={formData.fuel}>
-                  <SimpleGrid columns={2} spacing={2}><Radio value="petrol">Petrol</Radio><Radio value="diesel">Diesel</Radio></SimpleGrid>
+                  <SimpleGrid columns={2} spacing={2}><Radio value="petrol" borderColor="border-color">Petrol</Radio><Radio value="diesel" borderColor="border-color">Diesel</Radio></SimpleGrid>
                 </RadioGroup>
               </FormControl>
             </SimpleGrid>
           </Box>
 
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">CONDITION</FormLabel>
-              <Select name="condition" placeholder="Select" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
-                <option value="stocked">Stocked</option><option value="modified">Modified</option>
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">CONDITION</FormLabel>
+              <Select name="condition" placeholder="Select" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
+                <option value="stocked" style={{color: 'black'}}>Stocked</option><option value="modified" style={{color: 'black'}}>Modified</option>
               </Select>
             </FormControl>
-            <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">DISTANCE TRAVELLED</FormLabel>
-              <Select name="distance" placeholder="Select Range" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
-                <option value="5000">Under 5,000</option><option value="20000">Under 20,000</option>
+            <FormControl isRequired><FormLabel fontSize="xs" color="text-muted">DISTANCE TRAVELLED</FormLabel>
+              <Select name="distance" placeholder="Select Range" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
+                <option value="5000" style={{color: 'black'}}>Under 5,000</option><option value="20000" style={{color: 'black'}}>Under 20,000</option>
               </Select>
             </FormControl>
           </SimpleGrid>
 
           <FormControl isRequired>
-            <FormLabel fontSize="xs" color="gray.500">FAULT CATEGORY</FormLabel>
-            <Select placeholder="Select Issue" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} value={faultCategory} onChange={(e) => setFaultCategory(e.target.value)}>
-              {Object.entries(faultCategoryMap).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
+            <FormLabel fontSize="xs" color="text-muted">FAULT CATEGORY</FormLabel>
+            <Select placeholder="Select Issue" bg="slate-bg" border="1px solid" borderColor="border-color" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} value={faultCategory} onChange={(e) => setFaultCategory(e.target.value)}>
+              {Object.entries(faultCategoryMap).map(([key, value]) => <option key={key} value={key} style={{color: 'black'}}>{value}</option>)}
             </Select>
-            {faultCategory === "other" && <Textarea mt={3} placeholder="Describe..." bg="whiteAlpha.100" border="none" onChange={(e) => setOtherElaboration(e.target.value)} />}
+            {faultCategory === "other" && <Textarea mt={3} placeholder="Describe..." bg="slate-bg" border="1px solid" borderColor="border-color" onChange={(e) => setOtherElaboration(e.target.value)} />}
           </FormControl>
 
           <Box w="full">
-            <FormLabel fontSize="xs" color="gray.500">CAR PHOTOGRAPH (OPTIONAL)</FormLabel>
-            <Box {...getRootProps()} p={8} border="2px dashed" borderColor={isDragActive ? "cyan.400" : "whiteAlpha.200"} borderRadius="xl" textAlign="center" cursor="pointer">
-              <input {...getInputProps()} /><Icon as={FaCloudUploadAlt} w={8} h={8} color="cyan.400" mb={2} />
+            <FormLabel fontSize="xs" color="text-muted">CAR PHOTOGRAPH (OPTIONAL)</FormLabel>
+            <Box {...getRootProps()} p={8} border="2px dashed" borderColor={isDragActive ? "cyan.400" : "border-color"} borderRadius="xl" textAlign="center" cursor="pointer">
+              <input {...getInputProps()} /><Icon as={FaCloudUploadAlt} w={8} h={8} color="accent-cyan" mb={2} />
               <Text fontSize="xs">{carImage ? carImage.name : "Drag & drop car image"}</Text>
             </Box>
           </Box>

@@ -55,13 +55,13 @@ const CarSelectorModal = ({ isOpen, onClose, cars, onSelectCar, currentCar }) =>
       
       <ModalContent 
         bg="gray.900" 
-        color="white" 
+        color="text-primary" 
         border="1px solid" 
-        borderColor="whiteAlpha.200"
+        borderColor="border-color"
         borderRadius="2xl"
         boxShadow="0 0 40px rgba(0, 255, 255, 0.1)"
       >
-        <ModalHeader borderBottom="1px solid" borderColor="whiteAlpha.100" pb={4}>
+        <ModalHeader borderBottom="1px solid" borderColor="border-color" pb={4}>
           <HStack>
             <Box p={2} bg="cyan.500" borderRadius="lg">
               <Icon as={FaCarSide} w={5} h={5} color="gray.900" />
@@ -71,17 +71,17 @@ const CarSelectorModal = ({ isOpen, onClose, cars, onSelectCar, currentCar }) =>
         </ModalHeader>
         
         {/* Only show close button if they already have a car selected (forces initial choice) */}
-        {currentCar && <ModalCloseButton color="whiteAlpha.600" mt={2} />}
+        {currentCar && <ModalCloseButton color="text-muted" mt={2} />}
 
         <ModalBody py={6}>
           <VStack spacing={6}>
-            <Text color="gray.400" fontSize="sm" textAlign="center">
+            <Text color="text-muted" fontSize="sm" textAlign="center">
               Choose your vehicle make and model to see compatible 3D parts and local inventory.
             </Text>
 
             {/* MAKE DROPDOWN */}
             <FormControl>
-              <FormLabel color="cyan.300" fontWeight="600">Vehicle Make</FormLabel>
+              <FormLabel color="light-cyan" fontWeight="600">Vehicle Make</FormLabel>
               <Select 
                 placeholder="Select Make" 
                 value={selectedMake}
@@ -91,7 +91,7 @@ const CarSelectorModal = ({ isOpen, onClose, cars, onSelectCar, currentCar }) =>
                 }}
                 bg="blackAlpha.400" 
                 border="1px solid" 
-                borderColor="whiteAlpha.200"
+                borderColor="border-color"
                 _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                 _hover={{ borderColor: "whiteAlpha.400" }}
                 size="lg"
@@ -116,7 +116,7 @@ const CarSelectorModal = ({ isOpen, onClose, cars, onSelectCar, currentCar }) =>
                 onChange={(e) => setSelectedModelId(e.target.value)}
                 bg="blackAlpha.400" 
                 border="1px solid" 
-                borderColor="whiteAlpha.200"
+                borderColor="border-color"
                 _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                 _hover={{ borderColor: "whiteAlpha.400" }}
                 size="lg"
@@ -132,7 +132,7 @@ const CarSelectorModal = ({ isOpen, onClose, cars, onSelectCar, currentCar }) =>
           </VStack>
         </ModalBody>
 
-        <ModalFooter borderTop="1px solid" borderColor="whiteAlpha.100" pt={4}>
+        <ModalFooter borderTop="1px solid" borderColor="border-color" pt={4}>
           <Button 
             w="full" 
             size="lg"
