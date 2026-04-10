@@ -102,7 +102,7 @@ const HelpCentre = () => {
   };
 
   return (
-    <Box pt={24} pb={10} px={6} minH="100vh" color="white">
+    <Box pt={24} pb={10} px={6} minH="100vh" color="white" bg="transparent">
       <Container maxW="container.md">
         <VStack spacing={8} align="stretch">
           
@@ -117,12 +117,12 @@ const HelpCentre = () => {
           </Box>
 
           <Card 
-            bg="rgba(15, 23, 42, 0.6)" 
-            backdropFilter="blur(16px)" 
+            bg="rgba(15, 23, 42, 0.75)" 
+            backdropFilter="blur(20px)" 
             border="1px solid" 
-            borderColor="whiteAlpha.200"
+            borderColor="#1E293B"
             borderRadius="2xl"
-            boxShadow="0 0 40px rgba(0, 255, 255, 0.05)"
+            boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.15)"
           >
             <CardBody p={{ base: 6, md: 10 }}>
               <form onSubmit={handleSubmit}>
@@ -136,9 +136,9 @@ const HelpCentre = () => {
                       value={formData.user_name}
                       onChange={handleChange}
                       placeholder="Write your name.." 
-                      bg="blackAlpha.400" 
+                      bg="#0F172A" 
                       border="1px solid" 
-                      borderColor="whiteAlpha.200"
+                      borderColor="#1E293B"
                       _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                     />
                   </FormControl>
@@ -164,7 +164,7 @@ const HelpCentre = () => {
                     <FormControl isRequired>
                       <FormLabel color="cyan.300">Phone Number</FormLabel>
                       <InputGroup>
-                        <InputLeftAddon bg="blackAlpha.500" border="1px solid" borderColor="whiteAlpha.200" p={0}>
+                        <InputLeftAddon bg="#0F172A" border="1px solid" borderColor="#1E293B" p={0}>
                           <Select 
                             name="country_code"
                             value={formData.country_code}
@@ -175,7 +175,7 @@ const HelpCentre = () => {
                             cursor="pointer"
                           >
                             {countryCodes.map((c) => (
-                              <option key={c.code} value={c.code} style={{ color: 'black' }}>
+                              <option key={c.code} value={c.code} style={{ color: 'white', background: '#0F172A' }}>
                                 {c.code}
                               </option>
                             ))}
@@ -204,14 +204,14 @@ const HelpCentre = () => {
                       value={formData.issue_type}
                       onChange={handleChange}
                       placeholder="Select the type of issue" 
-                      bg="blackAlpha.400" 
+                      bg="#0F172A" 
                       border="1px solid" 
-                      borderColor="whiteAlpha.200"
+                      borderColor="#1E293B"
                       _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                       color={formData.issue_type ? "white" : "gray.400"}
                     >
                       {issueOptions.map((issue) => (
-                        <option key={issue} value={issue} style={{ color: 'black' }}>{issue}</option>
+                        <option key={issue} value={issue} style={{ color: 'white', background: '#0F172A' }}>{issue}</option>
                       ))}
                     </Select>
                   </FormControl>
@@ -225,9 +225,9 @@ const HelpCentre = () => {
                       onChange={handleChange}
                       placeholder="Please describe your issue in detail..." 
                       rows={5}
-                      bg="blackAlpha.400" 
+                      bg="#0F172A" 
                       border="1px solid" 
-                      borderColor="whiteAlpha.200"
+                      borderColor="#1E293B"
                       _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px #0BC5EA" }}
                     />
                   </FormControl>

@@ -88,7 +88,7 @@ const MyGarage = () => {
   }, {});
 
   return (
-    <Box pt={24} pb={10} px={6} minH="100vh" bg="gray.900" color="white">
+    <Box pt={24} pb={10} px={6} minH="100vh" bg="transparent" color="white">
       <Container maxW="container.xl">
         
         {/* HEADER SECTION */}
@@ -114,7 +114,7 @@ const MyGarage = () => {
         {/* MAIN CONTENT GRID */}
         {!selectedCar ? (
           // Empty State
-          <Flex h="50vh" justify="center" align="center" flexDir="column" border="2px dashed" borderColor="whiteAlpha.200" borderRadius="2xl">
+          <Flex h="50vh" justify="center" align="center" flexDir="column" border="2px dashed" borderColor="#1E293B" borderRadius="2xl" bg="rgba(15, 23, 42, 0.4)" backdropFilter="blur(10px)">
             <Icon as={FaCogs} w={16} h={16} color="whiteAlpha.400" mb={4} />
             <Text fontSize="xl" color="whiteAlpha.600">Please select a vehicle to view compatible parts.</Text>
             <Button mt={6} colorScheme="cyan" onClick={onOpen}>Choose Vehicle</Button>
@@ -124,7 +124,7 @@ const MyGarage = () => {
             
             {/* LEFT COLUMN: PARTS CATALOG */}
             <GridItem>
-              <Box bg="rgba(15, 23, 42, 0.6)" backdropFilter="blur(16px)" border="1px solid" borderColor="whiteAlpha.200" borderRadius="2xl" p={5} h="70vh" overflowY="auto" css={{ "&::-webkit-scrollbar": { display: "none" } }}>
+              <Box bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid" borderColor="#1E293B" borderRadius="2xl" boxShadow="0 25px 50px -12px rgba(0,0,0,0.5)" p={5} h="70vh" overflowY="auto" css={{ "&::-webkit-scrollbar": { display: "none" } }}>
                 <Heading size="md" mb={6} color="cyan.100">Compatible Parts</Heading>
                 
                 {isLoadingParts ? (
@@ -149,7 +149,7 @@ const MyGarage = () => {
                             bg={selectedPart?._id === part._id ? "whiteAlpha.200" : "transparent"}
                             borderLeft="3px solid"
                             borderColor={selectedPart?._id === part._id ? "cyan.400" : "transparent"}
-                            _hover={{ bg: "whiteAlpha.100" }}
+                            _hover={{ bg: "rgba(30, 41, 59, 0.8)" }}
                             onClick={() => setSelectedPart(part)}
                           >
                             <VStack align="start" spacing={1}>
@@ -167,7 +167,7 @@ const MyGarage = () => {
 
             {/* RIGHT COLUMN: 3D VIEWER & DETAILS */}
             <GridItem>
-              <Box bg="blackAlpha.600" border="1px solid" borderColor="whiteAlpha.200" borderRadius="2xl" h="70vh" position="relative" overflow="hidden" display="flex" flexDirection="column">
+              <Box bg="rgba(11, 17, 32, 0.6)" backdropFilter="blur(10px)" border="1px solid" borderColor="#1E293B" borderRadius="2xl" boxShadow="0 25px 50px -12px rgba(0,0,0,0.5)" h="70vh" position="relative" overflow="hidden" display="flex" flexDirection="column">
                 
                 {/* 3D Canvas Area */}
                 <Box flex="1" position="relative">
@@ -184,7 +184,7 @@ const MyGarage = () => {
 
                 {/* Part Details Overlay (Bottom Panel) */}
                 {selectedPart && (
-                  <Box p={6} bg="rgba(15, 23, 42, 0.85)" backdropFilter="blur(10px)" borderTop="1px solid" borderColor="whiteAlpha.200">
+                  <Box p={6} bg="rgba(15, 23, 42, 0.85)" backdropFilter="blur(10px)" borderTop="1px solid" borderColor="#1E293B">
                     <Flex justify="space-between" align="flex-start" flexDir={{ base: "column", md: "row" }} gap={4}>
                       <Box flex="1">
                         <HStack mb={2}>

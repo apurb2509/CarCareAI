@@ -136,10 +136,10 @@ const FindServices = () => {
             </InputLeftElement>
             <Input 
               placeholder="Search 'Oil Change', 'Brake Pads'..." 
-              bg="whiteAlpha.100" 
+              bg="#0F172A" 
               border="1px solid" 
-              borderColor="whiteAlpha.200"
-              _focus={{ borderColor: "cyan.400", boxShadow: "0 0 0 1px cyan.400" }}
+              borderColor="#1E293B"
+              _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -148,8 +148,9 @@ const FindServices = () => {
           <Select 
             size="lg" 
             maxW={{ base: "full", md: "200px" }} 
-            bg="whiteAlpha.100" 
-            borderColor="whiteAlpha.200"
+            bg="#0F172A" 
+            borderColor="#1E293B"
+            _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
             className="category-select"
@@ -168,11 +169,12 @@ const FindServices = () => {
             <Card 
               key={item.id} 
               className="service-card"
-              bg="rgba(255,255,255,0.03)" 
+              bg="rgba(15, 23, 42, 0.75)" 
+              backdropFilter="blur(20px)"
               border="1px solid" 
-              borderColor="whiteAlpha.200"
+              borderColor="#1E293B"
               transition="all 0.3s"
-              _hover={{ transform: "translateY(-5px)", borderColor: "cyan.500", boxShadow: "0 10px 20px -10px rgba(0, 255, 255, 0.3)" }}
+              _hover={{ transform: "translateY(-5px)", borderColor: "cyan.500", boxShadow: "0 15px 30px -10px rgba(14, 165, 233, 0.2)" }}
             >
               <CardBody>
                 <VStack align="start" spacing={4}>
@@ -191,7 +193,7 @@ const FindServices = () => {
                     <Text fontSize="sm" color="cyan.300" fontWeight="600">{item.stationName}</Text>
                   </Box>
 
-                  <Divider borderColor="whiteAlpha.200" />
+                  <Divider borderColor="#1E293B" />
 
                   <HStack justify="space-between" w="full" align="center">
                     <VStack align="start" spacing={0}>
@@ -203,7 +205,9 @@ const FindServices = () => {
                       <Button 
                         className="book-btn"
                         size="sm" 
-                        colorScheme="cyan" 
+                        bg="cyan.500" 
+                        color="gray.900"
+                        _hover={{ bg: "cyan.400", boxShadow: "0 4px 12px rgba(14, 165, 233, 0.4)" }}
                         leftIcon={<FaCalendarCheck />}
                         onClick={() => handleBookNow(item.name, item.stationName)}
                       >

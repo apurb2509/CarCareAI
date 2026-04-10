@@ -196,7 +196,7 @@ const BookAppointment = () => {
   const sectionTitleStyle = { fontSize: "13px", color: "#006192", fontWeight: "700", borderBottom: "1px solid #e2e8f0", paddingBottom: "5px", marginBottom: "12px" };
 
   return (
-    <Box minH="100vh" bg="#0a0a0a" py={10} className="book-appointment-container">
+    <Box minH="100vh" bg="transparent" pt={{ base: 24, md: 32 }} pb={10} className="book-appointment-container">
       {/* --- HIDDEN PDF TEMPLATE --- */}
       <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
         <div ref={pdfRef} style={{ width: "210mm", height: "296mm", backgroundColor: "#fff", display: "flex", flexDirection: "column" }}>
@@ -225,11 +225,12 @@ const BookAppointment = () => {
         <VStack
           spacing={6}
           w={{ base: "95%", md: "800px" }}
-          bg="rgba(20, 20, 20, 0.98)"
-          p={{ base: 6, md: 16 }}
-          borderRadius="xl"
-          boxShadow="dark-lg"
-          border="1px solid rgba(255,255,255,0.05)"
+          bg="rgba(15, 23, 42, 0.75)"
+          backdropFilter="blur(20px)"
+          p={{ base: 6, md: 10 }}
+          borderRadius="2xl"
+          boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.15)"
+          border="1px solid #1E293B"
           color="white"
           className="a4-container"
         >
@@ -240,24 +241,24 @@ const BookAppointment = () => {
           <Heading size="md" w="full" color="cyan.400">1. Personal & Address Details</Heading>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">OWNER NAME</FormLabel>
-              <Input name="ownerName" placeholder="Name" bg="whiteAlpha.50" border="none" onChange={handleInputChange} />
+              <Input name="ownerName" placeholder="Name" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">PINCODE</FormLabel>
-              <Input name="pincode" type="number" placeholder="XXXXXX" bg="whiteAlpha.50" border="none" onChange={handleInputChange} />
+              <Input name="pincode" type="number" placeholder="XXXXXX" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">BLOCK / HOUSE NO</FormLabel>
-              <Input name="block" placeholder="Flat No" bg="whiteAlpha.50" border="none" onChange={handleInputChange} />
+              <Input name="block" placeholder="Flat No" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">LOCALITY</FormLabel>
-              <Input name="locality" placeholder="Area" bg="whiteAlpha.50" border="none" onChange={handleInputChange} />
+              <Input name="locality" placeholder="Area" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">STATE</FormLabel>
-              <Select placeholder="Select State" bg="gray.800" border="none" name="state" onChange={(e) => { setSelectedStateCode(e.target.value); handleInputChange(e); }}>
+              <Select placeholder="Select State" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} name="state" onChange={(e) => { setSelectedStateCode(e.target.value); handleInputChange(e); }}>
                 {allStates.map((s) => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>)}
               </Select>
             </FormControl>
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">CITY</FormLabel>
-              <Select placeholder="Select City" bg="gray.800" border="none" isDisabled={!selectedStateCode} name="city" onChange={handleInputChange}>
+              <Select placeholder="Select City" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} isDisabled={!selectedStateCode} name="city" onChange={handleInputChange}>
                 {citiesOfSelectedState.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
               </Select>
             </FormControl>
@@ -267,26 +268,26 @@ const BookAppointment = () => {
           <Heading size="md" w="full" color="cyan.400">2. Vehicle Specifications</Heading>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">CAR MODEL</FormLabel>
-              <Input name="carModel" placeholder="Swift" bg="whiteAlpha.50" border="none" onChange={handleInputChange} />
+              <Input name="carModel" placeholder="Swift" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} />
             </FormControl>
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">VEHICLE NUMBER</FormLabel>
-              <Input name="vehicleNumber" placeholder="MH 01 AB 1234" bg="whiteAlpha.50" border="none" onChange={handleInputChange} textTransform="uppercase" />
+              <Input name="vehicleNumber" placeholder="MH 01 AB 1234" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} textTransform="uppercase" />
             </FormControl>
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">PURCHASE DATE</FormLabel>
-              <Input name="purchaseDate" type="date" bg="whiteAlpha.50" border="none" onChange={handleInputChange} css={{ "&::-webkit-calendar-picker-indicator": { filter: "invert(1)" }}} />
+              <Input name="purchaseDate" type="date" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange} css={{ "&::-webkit-calendar-picker-indicator": { filter: "invert(1)" }}} />
             </FormControl>
           </SimpleGrid>
 
           <Box w="full" pt={2}>
             <FormControl isRequired>
               <FormLabel fontSize="xs" color="cyan.400" fontWeight="bold"><Icon as={FaCalendarAlt} mr={2} />SELECT APPOINTMENT SLOT</FormLabel>
-              <Select name="appointmentSlot" placeholder="Choose time..." bg="gray.800" border="1px solid" borderColor="cyan.800" onChange={handleInputChange}>
+              <Select name="appointmentSlot" placeholder="Choose time..." bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
                 {availableSlots.map((slot, index) => <option key={index} value={slot}>{slot}</option>)}
               </Select>
             </FormControl>
           </Box>
 
-          <Box w="full" p={5} bg="whiteAlpha.50" borderRadius="lg">
+          <Box w="full" p={5} bg="rgba(30, 41, 59, 0.5)" border="1px solid #1E293B" borderRadius="xl">
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
               <FormControl><FormLabel fontSize="xs" color="gray.500">TRANSMISSION</FormLabel>
                 <RadioGroup onChange={(v) => setFormData({ ...formData, transmission: v })} value={formData.transmission}>
@@ -303,12 +304,12 @@ const BookAppointment = () => {
 
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">CONDITION</FormLabel>
-              <Select name="condition" placeholder="Select" bg="gray.800" border="none" onChange={handleInputChange}>
+              <Select name="condition" placeholder="Select" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
                 <option value="stocked">Stocked</option><option value="modified">Modified</option>
               </Select>
             </FormControl>
             <FormControl isRequired><FormLabel fontSize="xs" color="gray.500">DISTANCE TRAVELLED</FormLabel>
-              <Select name="distance" placeholder="Select Range" bg="gray.800" border="none" onChange={handleInputChange}>
+              <Select name="distance" placeholder="Select Range" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} onChange={handleInputChange}>
                 <option value="5000">Under 5,000</option><option value="20000">Under 20,000</option>
               </Select>
             </FormControl>
@@ -316,7 +317,7 @@ const BookAppointment = () => {
 
           <FormControl isRequired>
             <FormLabel fontSize="xs" color="gray.500">FAULT CATEGORY</FormLabel>
-            <Select placeholder="Select Issue" bg="gray.800" border="none" value={faultCategory} onChange={(e) => setFaultCategory(e.target.value)}>
+            <Select placeholder="Select Issue" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} value={faultCategory} onChange={(e) => setFaultCategory(e.target.value)}>
               {Object.entries(faultCategoryMap).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
             </Select>
             {faultCategory === "other" && <Textarea mt={3} placeholder="Describe..." bg="whiteAlpha.100" border="none" onChange={(e) => setOtherElaboration(e.target.value)} />}
@@ -332,7 +333,7 @@ const BookAppointment = () => {
 
           <VStack w="full" spacing={4} pt={6}>
             {!isSubmitted ? (
-              <Button size="lg" w="full" bgGradient="linear(to-r, cyan.400, blue.600)" color="white" onClick={handleSubmit}>Confirm Booking</Button>
+              <Button size="lg" w="full" bg="cyan.500" color="gray.900" fontWeight="bold" _hover={{ bg: "cyan.400", transform: "translateY(-2px)", boxShadow: "0 10px 20px -5px rgba(14, 165, 233, 0.4)" }} transition="all 0.3s" onClick={handleSubmit}>Confirm Booking</Button>
             ) : (
               <HStack w="full" spacing={4}>
                 <Button leftIcon={<FaCheckCircle />} colorScheme="green" flex={1}>Confirmed</Button>

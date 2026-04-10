@@ -140,10 +140,10 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
 
   // --- MAIN RENDER ---
   return (
-    <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="white">
+    <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="white" bg="transparent">
       
       {/* 1. DASHBOARD HEADER (ALWAYS VISIBLE) */}
-      <Card bg="linear-gradient(135deg, rgba(6, 11, 25, 0.95) 0%, rgba(10, 25, 41, 0.9) 100%)" border="1px solid cyan" mb={8}>
+      <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid #1E293B" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)" mb={8}>
         <CardBody>
           <HStack spacing={6} align="center" flexDirection={{ base: "column", md: "row" }}>
             <Avatar size="2xl" icon={<FaTools fontSize="3rem" />} bg="cyan.600" />
@@ -178,19 +178,19 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
         <>
           {/* STATS ROW */}
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={10}>
-            <Card bg="whiteAlpha.100" borderLeft="4px solid" borderColor="cyan.400">
+            <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid #1E293B" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="cyan.400">
               <CardBody><Stat><StatLabel>Total Visits</StatLabel><StatNumber color="white">{profileData.totalVisits}</StatNumber><StatHelpText>All time clients</StatHelpText></Stat></CardBody>
             </Card>
-            <Card bg="whiteAlpha.100" borderLeft="4px solid" borderColor="yellow.400">
+            <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid #1E293B" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="yellow.400">
               <CardBody><Stat><StatLabel>Rating</StatLabel><StatNumber color="white">4.8 / 5.0</StatNumber><StatHelpText>Based on 56 reviews</StatHelpText></Stat></CardBody>
             </Card>
-            <Card bg="whiteAlpha.100" borderLeft="4px solid" borderColor="green.400">
+            <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid #1E293B" boxShadow="0 10px 30px -10px rgba(0,0,0,0.5)" borderLeft="4px solid" borderColor="green.400">
               <CardBody><Stat><StatLabel>Live Bookings</StatLabel><StatNumber color="white">{bookings.length}</StatNumber><StatHelpText color="green.300">Action required</StatHelpText></Stat></CardBody>
             </Card>
           </SimpleGrid>
 
           {/* ENHANCED STATION CONFIGURATION */}
-          <Card bg="rgba(255,255,255,0.03)" borderColor="whiteAlpha.200">
+          <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid" borderColor="#1E293B" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
             <CardHeader borderBottom="1px solid gray" pb={4} display="flex" justifyContent="space-between" alignItems="center">
               <Text fontSize="xl" fontWeight="bold">Station Details & Configuration</Text>
               <Icon as={FaMapMarkedAlt} color="gray.500" />
@@ -202,7 +202,7 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                 <VStack align="stretch" spacing={5}>
                   <FormControl>
                     <FormLabel color="cyan.300">Service Station Name</FormLabel>
-                    <Input value={profileData.stationName} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, stationName: e.target.value})} bg="whiteAlpha.100" border="none" />
+                    <Input value={profileData.stationName} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, stationName: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                     {isEditing && (
                       <Checkbox size="sm" colorScheme="cyan" mt={2} isChecked={sameAsOwner} onChange={handleCheckbox}>
                         <Text fontSize="xs" color="gray.400">Use Owner Name</Text>
@@ -211,11 +211,11 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                   </FormControl>
                   <FormControl>
                     <FormLabel color="cyan.300">Owner Name</FormLabel>
-                    <Input value={profileData.ownerName} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, ownerName: e.target.value})} bg="whiteAlpha.100" border="none" />
+                    <Input value={profileData.ownerName} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, ownerName: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                   </FormControl>
                   <FormControl>
                     <FormLabel color="cyan.300">Contact Number</FormLabel>
-                    <Input value={profileData.phone} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} bg="whiteAlpha.100" border="none" />
+                    <Input value={profileData.phone} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, phone: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                   </FormControl>
                 </VStack>
 
@@ -223,7 +223,7 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                 <VStack align="stretch" spacing={5}>
                   <FormControl>
                     <FormLabel color="cyan.300">Address & City</FormLabel>
-                    <Input value={profileData.address} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, address: e.target.value})} bg="whiteAlpha.100" border="none" />
+                    <Input value={profileData.address} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, address: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                   </FormControl>
                   
                   {/* Google Map Link */}
@@ -234,7 +234,7 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                       value={profileData.mapLink} 
                       isReadOnly={!isEditing} 
                       onChange={(e) => setProfileData({...profileData, mapLink: e.target.value})} 
-                      bg="whiteAlpha.100" border="none" 
+                      border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} 
                       color="blue.300"
                       textDecoration="underline"
                     />
@@ -244,9 +244,9 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                   <FormControl>
                     <FormLabel color="cyan.300"><HStack><Icon as={FaClock} /><Text>Operating Hours</Text></HStack></FormLabel>
                     <HStack>
-                      <Input type="time" value={profileData.openTime} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, openTime: e.target.value})} bg="whiteAlpha.100" border="none" />
+                      <Input type="time" value={profileData.openTime} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, openTime: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                       <Text>to</Text>
-                      <Input type="time" value={profileData.closeTime} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, closeTime: e.target.value})} bg="whiteAlpha.100" border="none" />
+                      <Input type="time" value={profileData.closeTime} isReadOnly={!isEditing} onChange={(e) => setProfileData({...profileData, closeTime: e.target.value})} border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
                     </HStack>
                   </FormControl>
                 </VStack>
@@ -258,7 +258,7 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                     value={profileData.about} 
                     isReadOnly={!isEditing} 
                     onChange={(e) => setProfileData({...profileData, about: e.target.value})} 
-                    bg="whiteAlpha.100" border="none" 
+                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     placeholder="Tell users about your expertise..."
                     rows={3}
                   />
@@ -327,8 +327,8 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                       {myServices.map((svc) => (
                         <HStack key={svc.id} p={4} bg="whiteAlpha.100" borderRadius="lg" justify="space-between">
                           <VStack align="start" spacing={2} w="full">
-                            <Input size="md" fontWeight="bold" value={svc.name} onChange={(e) => handleUpdateService(svc.id, 'name', e.target.value)} placeholder="Service Name" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" _focus={{ borderColor: "cyan.400" }} />
-                            <Input size="sm" color="cyan.300" value={svc.price} onChange={(e) => handleUpdateService(svc.id, 'price', e.target.value)} placeholder="Price (e.g. ₹499)" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" _focus={{ borderColor: "cyan.400" }} />
+                            <Input size="md" fontWeight="bold" value={svc.name} onChange={(e) => handleUpdateService(svc.id, 'name', e.target.value)} placeholder="Service Name" bg="#0F172A" border="1px solid" borderColor="#1E293B" _focus={{ borderColor: "cyan.400" }} />
+                            <Input size="sm" color="cyan.300" value={svc.price} onChange={(e) => handleUpdateService(svc.id, 'price', e.target.value)} placeholder="Price (e.g. ₹499)" bg="#0F172A" border="1px solid" borderColor="#1E293B" _focus={{ borderColor: "cyan.400" }} />
                           </VStack>
                           <IconButton aria-label="Delete Service" icon={<FaTrash />} size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemoveService(svc.id)} />
                         </HStack>
@@ -359,10 +359,10 @@ const ServicePartnerProfile = ({ onAuthOpen }) => {
                           </Box>
 
                           <VStack align="start" spacing={2} w="full" ml={2}>
-                            <Input size="md" fontWeight="bold" value={item.name} onChange={(e) => handleUpdateInventory(item.id, 'name', e.target.value)} placeholder="Part Name" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" _focus={{ borderColor: "purple.400" }} />
+                            <Input size="md" fontWeight="bold" value={item.name} onChange={(e) => handleUpdateInventory(item.id, 'name', e.target.value)} placeholder="Part Name" bg="#0F172A" border="1px solid" borderColor="#1E293B" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
                             <HStack>
-                              <Input size="sm" value={item.stock} onChange={(e) => handleUpdateInventory(item.id, 'stock', e.target.value)} placeholder="Qty" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" w="70px" textAlign="center" _focus={{ borderColor: "purple.400" }} />
-                              <Input size="sm" value={item.price} onChange={(e) => handleUpdateInventory(item.id, 'price', e.target.value)} placeholder="Price" bg="blackAlpha.300" border="1px solid" borderColor="whiteAlpha.200" _focus={{ borderColor: "purple.400" }} />
+                              <Input size="sm" value={item.stock} onChange={(e) => handleUpdateInventory(item.id, 'stock', e.target.value)} placeholder="Qty" bg="#0F172A" border="1px solid" borderColor="#1E293B" w="70px" textAlign="center" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
+                              <Input size="sm" value={item.price} onChange={(e) => handleUpdateInventory(item.id, 'price', e.target.value)} placeholder="Price" bg="#0F172A" border="1px solid" borderColor="#1E293B" _focus={{ borderColor: "purple.400", boxShadow: "0 0 0 1px #9f7aea" }} />
                             </HStack>
                           </VStack>
                           <IconButton aria-label="Delete Part" icon={<FaTrash />} size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemovePart(item.id)} />

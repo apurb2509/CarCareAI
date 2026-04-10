@@ -4,7 +4,7 @@ import { FaTwitter, FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa';
 
 const Footer = () => {
   return (
-    <Box bg="black" borderTop="1px solid rgba(255,255,255,0.1)" color="gray.400" mt={20}>
+    <Box bg="#0B1120" borderTop="1px solid #1E293B" color="gray.400" mt={20} position="relative" zIndex="10">
       <Container maxW="container.xl" py={16}>
         <SimpleGrid columns={{ base: 1, md: 4 }} spacing={10}>
           
@@ -35,14 +35,14 @@ const Footer = () => {
           <Stack align="flex-start">
             <Text fontWeight="bold" color="white" mb={2}>Stay Updated</Text>
             <Stack direction="row">
-              <Input placeholder="Your email" bg="gray.900" border="none" _focus={{ border: "1px solid cyan" }} />
-              <Button colorScheme="cyan" variant="solid"><Icon as={FaEnvelope} /></Button>
+              <Input placeholder="Your email" bg="#0F172A" border="1px solid #1E293B" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }} />
+              <Button bg="cyan.500" color="gray.900" _hover={{ bg: "cyan.400" }}><Icon as={FaEnvelope} /></Button>
             </Stack>
           </Stack>
           
         </SimpleGrid>
         
-        <Text pt={10} fontSize="xs" textAlign="center" borderTop="1px solid rgba(255,255,255,0.05)" mt={10}>
+        <Text pt={10} fontSize="xs" textAlign="center" borderTop="1px solid #1E293B" mt={10}>
           © 2025 CarCareAI. Built for the Future.
         </Text>
       </Container>

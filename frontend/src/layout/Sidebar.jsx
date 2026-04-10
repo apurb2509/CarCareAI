@@ -178,10 +178,10 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
         />
 
         <DrawerContent
-          bg="rgba(15, 15, 15, 0.85)"
+          bg="rgba(11, 17, 32, 0.85)"
           backdropFilter="blur(24px)"
-          boxShadow="0 0 40px rgba(0,0,0,0.5)"
-          borderRight="1px solid rgba(255,255,255,0.05)"
+          boxShadow="0 0 40px rgba(0, 0, 0, 0.8), 20px 0 40px -10px rgba(14, 165, 233, 0.1)"
+          borderRight="1px solid #1E293B"
           maxW={{ base: "100vw", md: "320px" }}
         >
           <DrawerCloseButton
@@ -202,7 +202,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
             <Stack spacing={2} mb={8} px={10}>
               <Text
                 fontSize="2xl"
-                fontWeight="700"
+                fontWeight="800"
                 color="white"
                 letterSpacing="-0.5px"
               >
@@ -250,7 +250,7 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                   >
                     {item.label}
                   </Button>
-                  <Divider borderColor="whiteAlpha.5" />
+                  <Divider borderColor="#1E293B" />
                 </Box>
               ))}
             </VStack>
@@ -260,9 +260,9 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                 <HStack
                   spacing={4}
                   p={3}
-                  bg="whiteAlpha.100"
+                  bg="rgba(30, 41, 59, 0.5)"
                   borderRadius="xl"
-                  border="1px solid rgba(255,255,255,0.05)"
+                  border="1px solid #1E293B"
                 >
                   <Avatar
                     size="sm"
@@ -294,8 +294,8 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                     icon={<FaSignOutAlt />}
                     size="sm"
                     variant="ghost"
-                    color="red.500"
-                    _hover={{ bg: "whiteAlpha.200", color: "red.300" }}
+                    color="gray.400"
+                    _hover={{ bg: "#1E293B", color: "red.400" }}
                     onClick={handleLogoutClick} // CHANGED: Now opens the alert
                     aria-label="Logout"
                   />
@@ -315,9 +315,9 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
                     h="50px"
                     leftIcon={<FaSignInAlt />}
                     _hover={{
-                      bg: "cyan.400",
-                      color: "black",
-                      borderColor: "white",
+                      bg: "cyan.500",
+                      color: "gray.900",
+                      borderColor: "cyan.500",
                     }} // <--- ADD THIS
                     transition="all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)" // <--- ADD THIS
                   >
@@ -357,13 +357,12 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
         <AlertDialogOverlay backdropFilter="blur(10px)" bg="blackAlpha.600" />
 
         <AlertDialogContent
-          // 1. Card Background: Dark Cyan Gradient
-          bgGradient="linear(to-br, cyan.900, blue.900)"
-          // 2. Shadow: Cyan Glow (instead of a border line)
-          boxShadow="0 0 25px rgba(0, 255, 255, 0.2)"
-          color="white"
-          borderRadius="2xl"
-          border="none"
+           bg="rgba(15, 23, 42, 0.85)"
+           backdropFilter="blur(20px)"
+           border="1px solid #1E293B"
+           boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(14, 165, 233, 0.15)"
+           color="white"
+           borderRadius="2xl"
         >
           <AlertDialogHeader
             fontSize="xl"
@@ -392,15 +391,15 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
 
             {/* "Yes" Button: Solid Bright Cyan Primary Action */}
             <Button
-              bg="cyan.400"
-              color="gray.900" // Dark text on bright button for readability
-              fontWeight="bold"
-              _hover={{
-                bg: "cyan.200",
-                boxShadow: "0 0 10px rgba(0, 0, 0, 0)",
-              }}
-              onClick={confirmLogout}
-              ml={3}
+               bg="cyan.500"
+               color="gray.900"
+               fontWeight="bold"
+               _hover={{
+                 bg: "cyan.400",
+                 boxShadow: "0 0 10px rgba(14, 165, 233, 0.4)",
+               }}
+               onClick={confirmLogout}
+               ml={3}
             >
               Yes, Log Out
             </Button>

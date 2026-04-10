@@ -108,8 +108,8 @@ const UserProfile = ({ onAuthOpen }) => {
 
   // --- NORMAL PROFILE CONTENT ---
   return (
-    <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="white">
-      <Card bg="rgba(255,255,255,0.05)" border="1px solid rgba(255,255,255,0.1)" backdropFilter="blur(10px)">
+    <Box pt={24} pb={10} px={6} maxW="container.xl" mx="auto" color="white" bg="transparent">
+      <Card bg="rgba(15, 23, 42, 0.75)" border="1px solid" borderColor="#1E293B" backdropFilter="blur(20px)" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
         <CardBody>
           <HStack spacing={8} align="flex-start" flexDirection={{ base: "column", md: "row" }}>
             <Box position="relative">
@@ -147,7 +147,7 @@ const UserProfile = ({ onAuthOpen }) => {
 
       <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={8} mt={8}>
         <Box gridColumn={{ lg: "span 2" }}>
-          <Card bg="rgba(255,255,255,0.03)" borderColor="whiteAlpha.200">
+          <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid" borderColor="#1E293B" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)">
             <CardHeader>
               <Text fontSize="xl" fontWeight="bold" borderBottom="1px solid gray" pb={2}>Personal Information</Text>
             </CardHeader>
@@ -158,7 +158,7 @@ const UserProfile = ({ onAuthOpen }) => {
                   <Input 
                     value={profileData.name} 
                     isReadOnly={!isEditing} 
-                    border="none" bg="whiteAlpha.100" 
+                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, name: e.target.value})}
                   />
                 </FormControl>
@@ -168,7 +168,7 @@ const UserProfile = ({ onAuthOpen }) => {
                     type="date" 
                     value={profileData.dob} 
                     isReadOnly={!isEditing} 
-                    border="none" bg="whiteAlpha.100" 
+                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, dob: e.target.value})}
                   />
                 </FormControl>
@@ -177,7 +177,7 @@ const UserProfile = ({ onAuthOpen }) => {
                   <Select 
                     value={profileData.gender} 
                     isDisabled={!isEditing} 
-                    border="none" bg="whiteAlpha.100" 
+                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, gender: e.target.value})}
                     sx={{ '> option': { background: '#1A202C' } }}
                   >
@@ -192,7 +192,7 @@ const UserProfile = ({ onAuthOpen }) => {
                   <Input 
                     value={profileData.area} 
                     isReadOnly={!isEditing} 
-                    border="none" bg="whiteAlpha.100" 
+                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, area: e.target.value})}
                   />
                 </FormControl>
@@ -201,7 +201,7 @@ const UserProfile = ({ onAuthOpen }) => {
                   <Input 
                     value={profileData.state} 
                     isReadOnly={!isEditing} 
-                    border="none" bg="whiteAlpha.100" 
+                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, state: e.target.value})}
                   />
                 </FormControl>
@@ -210,7 +210,7 @@ const UserProfile = ({ onAuthOpen }) => {
                   <Input 
                     value={profileData.pincode} 
                     isReadOnly={!isEditing} 
-                    border="none" bg="whiteAlpha.100" 
+                    border="1px solid" borderColor="#1E293B" bg="#0F172A" _focus={{ borderColor: "cyan.500", boxShadow: "0 0 0 1px #0EA5E9" }}
                     onChange={(e) => setProfileData({...profileData, pincode: e.target.value})}
                   />
                 </FormControl>
@@ -220,14 +220,14 @@ const UserProfile = ({ onAuthOpen }) => {
         </Box>
 
         <Box>
-          <Card bg="rgba(255,255,255,0.03)" borderColor="whiteAlpha.200" h="full">
+          <Card bg="rgba(15, 23, 42, 0.75)" backdropFilter="blur(20px)" border="1px solid" borderColor="#1E293B" boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.5)" h="full">
             <CardHeader>
               <Text fontSize="xl" fontWeight="bold" borderBottom="1px solid gray" pb={2}>Service History</Text>
             </CardHeader>
             <CardBody>
               <VStack spacing={4} align="stretch">
                 {serviceHistory.map((item) => (
-                  <Box key={item.id} p={3} bg="whiteAlpha.100" borderRadius="md" borderLeft="4px solid cyan">
+                  <Box key={item.id} p={3} bg="rgba(30, 41, 59, 0.5)" borderRadius="md" borderLeft="4px solid cyan">
                     <Text fontWeight="bold" fontSize="md">{item.station}</Text>
                     <Text fontSize="sm" color="gray.400">{item.date}</Text>
                     <Divider my={2} />
