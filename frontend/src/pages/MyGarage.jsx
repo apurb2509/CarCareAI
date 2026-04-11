@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 // We will build these two components next!
 import CarSelectorModal from '../components/Garage/CarSelectorModal';
 import ThreeCanvas from '../components/Garage/ThreeCanvas';
+import { API_BASE_URL } from '../utils/api';
 
 const MyGarage = () => {
   const toast = useToast();
@@ -28,7 +29,7 @@ const MyGarage = () => {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await fetch('http://localhost:5002/api/inventory/cars');
+        const response = await fetch(`${API_BASE_URL}/api/inventory/cars`);
         const data = await response.json();
         if (data.success) {
           setAvailableCars(data.data);
@@ -53,7 +54,7 @@ const MyGarage = () => {
       setIsLoadingParts(true);
       setSelectedPart(null); // Reset the 3D canvas
       try {
-        const response = await fetch(`http://localhost:5002/api/inventory/parts/${selectedCar._id}`);
+        const response = await fetch(`${API_BASE_URL}/api/inventory/parts/${selectedCar._id}`);
         const data = await response.json();
         
         if (data.success) {

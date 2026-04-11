@@ -25,6 +25,7 @@ import {
   GridItem,
 } from '@chakra-ui/react';
 import { FaUser, FaTools, FaEye, FaEyeSlash, FaCheckCircle, FaTimesCircle, FaArrowLeft } from 'react-icons/fa';
+import { API_BASE_URL } from '../utils/api';
 
 const initialFormState = {
   name: '',
@@ -90,7 +91,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
   // SIGN IN LOGIC (Verifies against MongoDB Cluster)
  const handleLogin = async () => {
   try {
-    const response = await fetch('http://localhost:5002/api/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -117,7 +118,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1, initialRo
   const handleSubmit = async () => {
     try {
       const registrationData = { ...formData, role };
-      const response = await fetch('http://localhost:5002/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(registrationData),

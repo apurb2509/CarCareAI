@@ -24,9 +24,13 @@ const app = express();
 connectDB();
 
 // 3. Middleware
-// Enable CORS for frontend requests
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: "http://localhost:5173", // Ensure this matches your Frontend URL
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));

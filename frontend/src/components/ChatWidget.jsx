@@ -12,6 +12,7 @@ import {
   SlideFade,
 } from "@chakra-ui/react";
 import { FaRobot, FaPaperPlane, FaTimes, FaCommentDots } from "react-icons/fa";
+import { API_BASE_URL } from "../utils/api";
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -66,7 +67,7 @@ const ChatWidget = () => {
     setIsTyping(true);
 
     try {
-      const response = await fetch('http://localhost:5002/api/chat', { 
+      const response = await fetch(`${API_BASE_URL}/api/chat`, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -123,7 +124,7 @@ const ChatWidget = () => {
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const res = await fetch("http://localhost:5002/");
+        const res = await fetch(`${API_BASE_URL}/`);
         setIsOnline(res.ok);
       } catch (error) {
         setIsOnline(false);

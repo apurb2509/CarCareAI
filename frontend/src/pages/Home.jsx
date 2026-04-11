@@ -15,6 +15,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
+import { API_BASE_URL } from "../utils/api";
 import {
   FaSearch,
   FaArrowRight,
@@ -132,7 +133,7 @@ const Home = ({ onRegisterGarageClick }) => {
   useEffect(() => {
     const checkServerStatus = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5002/");
+        const response = await fetch(`${API_BASE_URL}/`);
         if (response.ok) {
           setIsServerOnline(true);
         } else {
