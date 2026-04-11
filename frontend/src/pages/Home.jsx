@@ -9,9 +9,10 @@ import {
   SimpleGrid,
   Icon,
   useToast,
-  VStack, // <--- ADDED
-  HStack, // <--- ADDED
-  Flex,   // <--- ADDED
+  useColorMode,
+  VStack,
+  HStack,
+  Flex,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import {
@@ -67,6 +68,7 @@ const getRoadY = (progress, height) => {
 const TypewriterText = () => {
   const fullText = "SMART AUTOMOTIVE CARE";
   const [displayedText, setDisplayedText] = useState("");
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     let index = 0;
@@ -89,7 +91,11 @@ const TypewriterText = () => {
     <Box as="span" display="inline-flex" alignItems="center">
       <Text
         as="span"
-        bgGradient="linear(to-b, white, gray.600)"
+        bgGradient={
+          colorMode === "light"
+            ? "linear(to-b, gray.800, gray.500)"
+            : "linear(to-b, white, gray.600)"
+        }
         bgClip="text"
         color="transparent"
       >
@@ -100,7 +106,7 @@ const TypewriterText = () => {
         ml={2}
         w="4px"
         h="0.9em"
-        bg="gray.500"
+        bg={colorMode === "light" ? "gray.600" : "gray.500"}
         animation={`${blink} 0.9s step-end infinite`}
       />
     </Box>
@@ -113,6 +119,8 @@ const Home = ({ onRegisterGarageClick }) => {
   const wrapperRef = useRef(null);
   const carRef = useRef(null);
   const [pathData, setPathData] = useState("");
+  const { colorMode } = useColorMode();
+  const isLight = colorMode === "light";
 
   // -- NEW STATE FOR LOCATION --
   const [isLocating, setIsLocating] = useState(false);
@@ -140,6 +148,30 @@ const Home = ({ onRegisterGarageClick }) => {
     const intervalId = setInterval(checkServerStatus, 5000);
     return () => clearInterval(intervalId);
   }, []);
+
+  // --- THEME-AWARE SERVER BADGE COMPUTED VALUES ---
+  // These recompute on every render so color mode + server status changes are reflected
+  const serverBadgeBg = isServerOnline
+    ? (isLight ? "rgba(236, 253, 245, 0.95)" : "rgba(0, 20, 0, 0.6)")
+    : (isLight ? "rgba(255, 241, 242, 0.95)" : "rgba(20, 0, 0, 0.6)");
+  const serverDotColor = isServerOnline
+    ? (isLight ? "green.600" : "green.400")
+    : (isLight ? "red.600" : "red.400");
+  const serverTextColor = isServerOnline
+    ? (isLight ? "green.700" : "green.400")
+    : (isLight ? "red.700" : "red.400");
+  const serverTextShadow = isLight
+    ? "none"
+    : isServerOnline
+    ? "0 0 8px rgba(72, 187, 120, 0.8)"
+    : "0 0 8px rgba(245, 101, 101, 0.8)";
+  const serverBoxShadow = isLight
+    ? isServerOnline
+      ? "0 4px 12px rgba(72, 187, 120, 0.25), inset 0 0 6px rgba(72, 187, 120, 0.08)"
+      : "0 4px 12px rgba(245, 101, 101, 0.25), inset 0 0 6px rgba(245, 101, 101, 0.08)"
+    : isServerOnline
+    ? "0 0 20px rgba(72, 187, 120, 0.3), inset 0 0 10px rgba(72, 187, 120, 0.1)"
+    : "0 0 20px rgba(245, 101, 101, 0.3), inset 0 0 10px rgba(245, 101, 101, 0.1)";
 
   // -- LOCATION HANDLER (UPDATED) --
   const handleLocateService = () => {
@@ -210,6 +242,17 @@ const Home = ({ onRegisterGarageClick }) => {
         stagger: 0.15,
         ease: "power3.out",
         delay: 0.2,
+      });
+
+      // Server badge — separate, blur-free entrance animation.
+      // Badge is positioned OUTSIDE .hero-top-content in the DOM, so it
+      // is never affected by the scroll-triggered blur on that container.
+      gsap.from(".server-badge-animate", {
+        y: -15,
+        opacity: 0,
+        duration: 0.6,
+        ease: "power2.out",
+        delay: 0.1,
       });
 
       gsap.to(".hero-top-content", {
@@ -374,57 +417,58 @@ const Home = ({ onRegisterGarageClick }) => {
         position="relative"
         zIndex="20"
       >
+        {/* SERVER STATUS BADGE
+            Positioned absolutely OUTSIDE .hero-top-content so GSAP's
+            scroll-triggered filter:blur on .hero-top-content never affects it.
+            It also gets its own clean entrance animation (no blur). */}
+        <Box
+          className="server-badge-animate"
+          position="absolute"
+          top={{ base: "80px", md: "96px" }}
+          left="50%"
+          style={{ transform: "translateX(-50%)" }}
+          display="inline-flex"
+          alignItems="center"
+          justifyContent="center"
+          px={4}
+          py={2}
+          bg={serverBadgeBg}
+          border="1px solid"
+          borderColor={isServerOnline ? "green.500" : "red.500"}
+          borderRadius="sm"
+          boxShadow={serverBoxShadow}
+          transition="all 0.3s ease"
+          zIndex={30}
+          whiteSpace="nowrap"
+        >
+          <Box
+            w="8px"
+            h="8px"
+            bg={serverDotColor}
+            borderRadius="full"
+            mr={3}
+            animation={
+              isServerOnline
+                ? `${blink} 1.5s infinite ease-in-out`
+                : `${blinkRed} 1.5s infinite ease-in-out`
+            }
+          />
+          <Text
+            fontSize={{ base: "xs", md: "sm" }}
+            letterSpacing="0.2em"
+            fontWeight="bold"
+            color={serverTextColor}
+            textTransform="uppercase"
+            fontFamily="'Courier New', Courier, monospace"
+            textShadow={serverTextShadow}
+          >
+            {isServerOnline ? "Server Online" : "Server Offline"}
+          </Text>
+        </Box>
+
         <Container maxW="container.xl" className="hero-content">
           <Box className="hero-top-content">
             <Stack spacing={6} textAlign="center" alignItems="center">
-              {/* BADGE (DYNAMIC) */}
-              <Box
-                className="hero-animate"
-                display="inline-flex"
-                alignItems="center"
-                justifyContent="center"
-                px={4}
-                py={2}
-                bg={isServerOnline ? "rgba(0, 20, 0, 0.6)" : "rgba(20, 0, 0, 0.6)"}
-                border="1px solid"
-                borderColor={isServerOnline ? "green.500" : "red.500"}
-                borderRadius="sm"
-                boxShadow={
-                  isServerOnline
-                    ? "0 0 20px rgba(72, 187, 120, 0.3), inset 0 0 10px rgba(72, 187, 120, 0.1)"
-                    : "0 0 20px rgba(245, 101, 101, 0.3), inset 0 0 10px rgba(245, 101, 101, 0.1)"
-                }
-                backdropFilter="blur(5px)"
-                transition="all 0.3s ease"
-              >
-                <Box
-                  w="8px"
-                  h="8px"
-                  bg={isServerOnline ? "green.400" : "red.400"}
-                  borderRadius="full"
-                  mr={3}
-                  animation={
-                    isServerOnline
-                      ? `${blink} 1.5s infinite ease-in-out`
-                      : `${blinkRed} 1.5s infinite ease-in-out`
-                  }
-                />
-                <Text
-                  fontSize={{ base: "xs", md: "sm" }}
-                  letterSpacing="0.2em"
-                  fontWeight="bold"
-                  color={isServerOnline ? "green.400" : "red.400"}
-                  textTransform="uppercase"
-                  fontFamily="'Courier New', Courier, monospace"
-                  textShadow={
-                    isServerOnline
-                      ? "0 0 8px rgba(72, 187, 120, 0.8)"
-                      : "0 0 8px rgba(245, 101, 101, 0.8)"
-                  }
-                >
-                  {isServerOnline ? "Server Online" : "Server Offline"}
-                </Text>
-              </Box>
 
               <Heading
                 className="hero-animate"
@@ -862,7 +906,7 @@ const Home = ({ onRegisterGarageClick }) => {
                       </Box>
                     </Flex>
                     <Box pb={0}>
-                      <Heading size="md" color="green.300" mb={2}>
+                      <Heading size="md" color={isLight ? "green.600" : "green.300"} mb={2}>
                         05. Valuation & Execution
                       </Heading>
                       <Text color="text-muted" fontSize="lg" lineHeight="1.6">

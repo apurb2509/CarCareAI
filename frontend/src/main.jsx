@@ -15,19 +15,19 @@ const theme = extendTheme({
   semanticTokens: {
     colors: {
       "glass-bg": {
-        default: "rgba(255, 255, 255, 0.85)", // Light Mode: Frosty White
+        default: "rgba(224, 242, 254, 0.8)", // Light Mode: Sky Tinted Glass
         _dark: "rgba(15, 23, 42, 0.75)",      // Dark Mode: Navy Slate
       },
       "solid-bg": {
-        default: "white",
+        default: "#F0F9FF",
         _dark: "#0F172A",
       },
       "slate-bg": {
-        default: "#F8FAFC",
+        default: "#E0F2FE", // Sky 100
         _dark: "#0F172A",
       },
       "border-color": {
-        default: "#E2E8F0",
+        default: "#BAE6FD", // Sky 200
         _dark: "#1E293B",
       },
       "text-primary": {
@@ -39,7 +39,7 @@ const theme = extendTheme({
         _dark: "gray.400",
       },
       "page-bg": {
-        default: "#F1F5F9",
+        default: "#F0F9FF", // Sky 50
         _dark: "#0a0a0a",
       },
       "accent-cyan": {

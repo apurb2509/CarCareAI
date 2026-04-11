@@ -191,7 +191,6 @@ const Sidebar = ({ onAuthOpen, onLogout }) => {
         isOpen={isOpen}
         placement="left"
         onClose={onClose}
-        finalFocusRef={btnRef}
         blockScrollOnMount={false}
         returnFocusOnClose={false}
       >

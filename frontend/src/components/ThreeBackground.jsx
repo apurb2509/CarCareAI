@@ -103,8 +103,8 @@ const ProfessionalSaaSGrid = ({ worldPointer, scrollMomentum, colorMode }) => {
   const count = gridX * gridY; // 7,200 performant particles
   const meshRef = useRef();
 
-  const baseColor = useMemo(() => new THREE.Color(colorMode === 'light' ? '#E2E8F0' : '#101D33'), [colorMode]);  
-  const hoverColor = useMemo(() => new THREE.Color(colorMode === 'light' ? '#3182CE' : '#0EA5E9'), [colorMode]); 
+  const baseColor = useMemo(() => new THREE.Color(colorMode === 'light' ? '#BAE6FD' : '#101D33'), [colorMode]);  
+  const hoverColor = useMemo(() => new THREE.Color(colorMode === 'light' ? '#0EA5E9' : '#0EA5E9'), [colorMode]); 
   const scratchColor = useMemo(() => new THREE.Color(), []);
 
   const particles = useMemo(() => {
@@ -185,7 +185,7 @@ const ProfessionalSaaSGrid = ({ worldPointer, scrollMomentum, colorMode }) => {
     <instancedMesh ref={meshRef} args={[null, null, count]} rotation={[-0.15, 0, 0]}>
       <circleGeometry args={[0.015, 8]} />
       <meshBasicMaterial 
-        color={colorMode === 'light' ? "#A0AEC0" : "#ffffff"} 
+        color={colorMode === 'light' ? "#7DD3FC" : "#ffffff"} 
         transparent 
         opacity={0.85} 
         depthWrite={false} 
@@ -250,7 +250,7 @@ const EnvironmentContainer = ({ colorMode }) => {
 
 // Application Mount
 const ThreeBackground = ({ colorMode }) => {
-  const bgColor = colorMode === 'light' ? '#FFFFFF' : '#030712';
+  const bgColor = colorMode === 'light' ? '#F0F9FF' : '#030712';
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', zIndex: 0, pointerEvents: 'none' }}>
       {/* Deep, luxurious SaaS visual configuration */}
