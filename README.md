@@ -25,10 +25,17 @@
 *   **Trusted Network**: Only registered and verified stations appear in the ecosystem, ensuring quality and trust.
 *   **Real-Time Status**: Live server-side monitoring of service station availability.
 
-### 🏠 Virtual Garage & Profile
-*   **Inventory Management**: Track multiple vehicles, their service history, and health status in a digital garage.
-*   **Personalized Experience**: Advanced profile settings to customize your car care journey.
-*   **Part Model Selection**: Choose and preview different car models and parts in real-time.
+### 📅 Advanced Service Booking
+*   **Secure Reservations**: Book service slots in advance through our integrated scheduling system.
+*   **Real-Time Confirmation**: Instant slot booking with automated service station synchronization.
+
+### 🌗 Dynamic Theme Ecosystem
+- **Seamless Toggling**: Switch between a sleek Dark Mode and a premium Sky Blue Light Mode.
+- **Persistent Preferences**: Your visual preference is saved across sessions for a personalized experience.
+
+### ✉️ 24/7 Support & Automation
+- **AI Customer Care**: Round-the-clock support powered by our Support team.
+- **Automatic Email Replies**: Integration with EmailJS for instant confirmation and support ticket tracking.
 
 ---
 
