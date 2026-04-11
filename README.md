@@ -128,8 +128,8 @@ graph TD
 ## 🤝 Contact & Credits
 
 **CarCare AI Team**
-*   **Lead Developer**: Apurb ([GitHub](https://github.com/apurb2509))
-*   **Project**: Smart Automotive Ecosystem
+*   **Developers**: Apurb ([GitHub](https://github.com/apurb2509)) & Susovon ([GitHub](https://github.com/susovonpatra))
+*   **Project**: CarCare AI - Smart Automotive Ecosystem
 
 ---
 

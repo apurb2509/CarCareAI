@@ -45,7 +45,7 @@ const Footer = ({ onRegisterGarageClick }) => {
         </SimpleGrid>
         
         <Text pt={10} fontSize="xs" textAlign="center" borderTop="1px solid" borderColor="border-color" mt={10}>
-          © 2025 CarCareAI. Built for the Future.
+          © 2026 CarCareAI. Built for the Future.
         </Text>
       </Container>
     </Box>
